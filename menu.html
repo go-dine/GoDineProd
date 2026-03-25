@@ -588,9 +588,7 @@ function closeSheet() {
 
 function renderSheet() {
   const items = Object.values(cart);
-  const subtotal = items.reduce((s, i) => s + i.dish.price * i.qty, 0);
-  const tax = Math.round(subtotal * 0.05);
-  const total = subtotal + tax;
+  const total = items.reduce((s, i) => s + i.dish.price * i.qty, 0);
 
   document.getElementById('sheet-items').innerHTML = items.map(({dish, qty}) =>
     `<div class="cart-item">
@@ -610,8 +608,6 @@ function renderSheet() {
   ).join('');
 
   document.getElementById('bill').innerHTML = `
-    <div class="bill-row"><span>Subtotal</span><span>₹${subtotal}</span></div>
-    <div class="bill-row"><span>GST (5%)</span><span>₹${tax}</span></div>
     <div class="bill-row total"><span>Total</span><span>₹${total}</span></div>
   `;
 }
@@ -676,8 +672,7 @@ async function actualPlaceOrder(name, phone, uid) {
   const btn = document.getElementById('place-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Placing order...'; }
 
-  const subtotal = items.reduce((s, i) => s + i.dish.price * i.qty, 0);
-  const total = subtotal + Math.round(subtotal * 0.05);
+  const total = items.reduce((s, i) => s + i.dish.price * i.qty, 0);
   
   const originalNote = document.getElementById('order-note').value.trim();
   const orderItems = items.map(({dish, qty}) => ({id: dish.id, name: dish.name, emoji: dish.emoji, price: dish.price, qty}));
