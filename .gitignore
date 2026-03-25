@@ -26,7 +26,6 @@ yarn-error.*
 # Environment & Secrets
 .env
 .env*.local
-config.js
 
 # OS & Misc
 .DS_Store
