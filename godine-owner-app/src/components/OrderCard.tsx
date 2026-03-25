@@ -35,6 +35,18 @@ export default function OrderCard({ order, onAdvanceStatus, onComplete }: OrderC
         <StatusBadge status={order.status} />
       </View>
 
+      {/* Customer Info */}
+      {(order.customer_name || order.customer_phone) && (
+        <Text style={styles.customerText}>👤 {order.customer_name || 'Anonymous'} ({order.customer_phone || 'No phone'})</Text>
+      )}
+
+      {/* ETA Badge */}
+      {order.status === 'preparing' && order.estimated_time && (
+        <View style={styles.etaBadge}>
+          <Text style={styles.etaText}>⏱️ ETA: {order.estimated_time}</Text>
+        </View>
+      )}
+
       {/* Items */}
       <View style={styles.items}>
         {order.items.map((item, i) => (
@@ -113,6 +125,27 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.muted,
     marginTop: 2,
+  },
+  customerText: {
+    fontSize: 13,
+    color: COLORS.white,
+    ...FONTS.medium,
+    marginBottom: 10,
+  },
+  etaBadge: {
+    backgroundColor: 'rgba(182,255,42,0.1)',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(182,255,42,0.2)',
+  },
+  etaText: {
+    fontSize: 12,
+    color: COLORS.lime,
+    ...FONTS.bold,
   },
   items: {
     marginBottom: 14,

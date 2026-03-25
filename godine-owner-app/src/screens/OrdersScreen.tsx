@@ -37,9 +37,19 @@ export default function OrdersScreen({ restaurant, onPendingCount }: OrdersScree
 
   useEffect(() => {
     load();
-    const interval = setInterval(load, 15000);
-    return () => clearInterval(interval);
-  }, [load]);
+    const channel = supabase.channel(`owner-orders-${restaurant.id}`)
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'orders', filter: `restaurant_id=eq.${restaurant.id}` }, 
+        () => {
+          load();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [load, restaurant.id]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -48,10 +58,37 @@ export default function OrdersScreen({ restaurant, onPendingCount }: OrdersScree
   }, [load]);
 
   async function updateStatus(id: string, status: string) {
+    let estimatedTime = '';
+    
+    if (status === 'preparing') {
+      // Simple prompt for mobile (Alert.prompt is iOS only, using a basic selection or just update for now)
+      // To stay cross-platform and simple for this MVP update:
+      return new Promise((resolve) => {
+        Alert.alert(
+          'Preparation Time',
+          'How long will this take?',
+          [
+            { text: '10 mins', onPress: () => performUpdate(id, status, '10 mins') },
+            { text: '20 mins', onPress: () => performUpdate(id, status, '20 mins') },
+            { text: '30 mins', onPress: () => performUpdate(id, status, '30 mins') },
+            { text: 'Skip', onPress: () => performUpdate(id, status) },
+          ]
+        );
+      });
+    }
+
+    await performUpdate(id, status);
+  }
+
+  async function performUpdate(id: string, status: string, eta?: string) {
     try {
-      await supabase.from('orders').update({ status }).eq('id', id);
+      const payload: any = { status };
+      if (eta) payload.estimated_time = eta;
+
+      await supabase.from('orders').update(payload).eq('id', id);
+      
       // Optimistic update
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, status: status as Order['status'] } : o));
+      setOrders(prev => prev.map(o => o.id === id ? { ...o, status: status as Order['status'], estimated_time: eta || o.estimated_time } : o));
       const newPending = orders.filter(o => o.id !== id ? o.status === 'pending' : status === 'pending').length;
       onPendingCount?.(newPending);
     } catch (e) {

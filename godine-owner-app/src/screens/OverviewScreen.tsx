@@ -35,9 +35,19 @@ export default function OverviewScreen({ restaurant }: OverviewScreenProps) {
 
   useEffect(() => {
     load();
-    const interval = setInterval(load, 30000);
-    return () => clearInterval(interval);
-  }, [load]);
+    const channel = supabase.channel(`owner-stats-${restaurant.id}`)
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'orders', filter: `restaurant_id=eq.${restaurant.id}` }, 
+        () => {
+          load();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [load, restaurant.id]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

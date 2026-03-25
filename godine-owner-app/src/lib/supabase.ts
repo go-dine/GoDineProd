@@ -53,9 +53,13 @@ export interface Order {
   id: string;
   restaurant_id: string;
   table_number: string;
+  customer_name?: string;
+  customer_phone?: string;
+  customer_uid?: string;
   items: OrderItem[];
   total: number;
   status: 'pending' | 'preparing' | 'ready' | 'completed';
   note: string;
+  estimated_time?: string;
   created_at: string;
 }
