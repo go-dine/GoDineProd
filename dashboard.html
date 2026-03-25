@@ -251,12 +251,12 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
     <!-- SIGN IN FORM -->
     <div id="auth-login">
       <div class="auth-sub">Owner Dashboard · Sign In</div>
-      <label class="auth-label">Restaurant Slug</label>
+      <label class="auth-label">Username</label>
       <input class="auth-input" type="text" id="login-slug" placeholder="e.g. rustic-fork" onkeydown="if(event.key==='Enter')document.getElementById('login-pw').focus()"/>
       <label class="auth-label">Password</label>
       <input class="auth-input" type="password" id="login-pw" placeholder="Enter owner password" onkeydown="if(event.key==='Enter')doLogin()"/>
       <button class="auth-btn" onclick="doLogin()">Sign In →</button>
-      <div class="auth-error" id="login-err">Invalid slug or password.</div>
+      <div class="auth-error" id="login-err">Invalid username or password.</div>
       <div class="auth-toggle">New restaurant? <a onclick="showAuthMode('register')">Register here</a></div>
     </div>
 
@@ -265,9 +265,9 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <div class="auth-sub">Register your restaurant</div>
       <label class="auth-label">Restaurant Name *</label>
       <input class="auth-input" type="text" id="reg-name" placeholder="e.g. The Rustic Fork" oninput="updateSlugPreview()"/>
-      <label class="auth-label">URL Slug *</label>
+      <label class="auth-label">Username *</label>
       <input class="auth-input" type="text" id="reg-slug" placeholder="e.g. rustic-fork" oninput="updateSlugPreview()"/>
-      <div class="slug-preview" id="slug-preview">Menu URL: <span>menu.html?r=your-slug</span></div>
+      <div class="slug-preview" id="slug-preview">Menu URL: <span>menu.html?r=username</span></div>
       <label class="auth-label">Password *</label>
       <input class="auth-input" type="password" id="reg-pw" placeholder="Create a password"/>
       <label class="auth-label">Number of Tables</label>
@@ -396,7 +396,7 @@ function updateSlugPreview() {
   if (!slugInput.dataset.manual) {
     slugInput.value = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   }
-  const slug = slugInput.value || 'your-slug';
+  const slug = slugInput.value || 'username';
   document.getElementById('slug-preview').innerHTML = 'Menu URL: <span>menu.html?r=' + slug + '</span>';
 }
 // Allow manual slug editing
@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function doLogin() {
   const slug = document.getElementById('login-slug').value.trim().toLowerCase();
   const pw = document.getElementById('login-pw').value;
-  if (!slug || !pw) { showAuthError('login', 'Please enter slug and password'); return; }
+  if (!slug || !pw) { showAuthError('login', 'Please enter username and password'); return; }
 
   if (isDemo) {
     showAuthError('login', 'Please add your Supabase URL to config.js');
@@ -418,7 +418,7 @@ async function doLogin() {
 
   try {
     const { data, error } = await sb.from('restaurants').select('*').eq('slug', slug).single();
-    if (error || !data) { showAuthError('login', 'Restaurant not found'); return; }
+    if (error || !data) { showAuthError('login', 'Username not found'); return; }
     if (data.owner_password !== pw) { showAuthError('login', 'Incorrect password'); return; }
     restaurant = data;
     enterDashboard();
@@ -434,8 +434,8 @@ async function doRegister() {
   const pw = document.getElementById('reg-pw').value;
   const tables = parseInt(document.getElementById('reg-tables').value) || 10;
 
-  if (!name || !slug || !pw) { showAuthError('reg', 'Name, slug and password are required'); return; }
-  if (slug.length < 3) { showAuthError('reg', 'Slug must be at least 3 characters'); return; }
+  if (!name || !slug || !pw) { showAuthError('reg', 'Name, username and password are required'); return; }
+  if (slug.length < 3) { showAuthError('reg', 'Username must be at least 3 characters'); return; }
 
   if (isDemo) {
     showAuthError('reg', 'Please add your Supabase URL to config.js to register');
@@ -448,7 +448,7 @@ async function doRegister() {
     }).select().single();
     if (error) {
       if (error.message.includes('duplicate') || error.message.includes('unique')) {
-        showAuthError('reg', 'This slug is already taken. Try another.');
+        showAuthError('reg', 'This username is already taken. Try another.');
       } else {
         showAuthError('reg', 'Failed to register: ' + error.message);
       }
