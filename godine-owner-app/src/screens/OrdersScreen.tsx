@@ -40,8 +40,16 @@ export default function OrdersScreen({ restaurant, onPendingCount }: OrdersScree
     const channel = supabase.channel(`owner-orders-${restaurant.id}`)
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'orders', filter: `restaurant_id=eq.${restaurant.id}` }, 
-        () => {
+        (payload) => {
           load();
+          if (payload.eventType === 'INSERT') {
+            const newOrder = payload.new as Order;
+            Alert.alert(
+              '🔔 New Order!',
+              `Table ${newOrder.table_number} just placed an order (₹${newOrder.total}).`,
+              [{ text: 'View', onPress: () => load() }]
+            );
+          }
         }
       )
       .subscribe();
