@@ -1,0 +1,38 @@
+name: godine_owner_app
+description: GoDine Owner App — Restaurant management for GoDine platform.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.10.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  supabase_flutter: ^2.3.0
+  flutter_secure_storage: ^9.0.0
+  google_fonts: ^6.1.0
+  intl: ^0.19.0
+  qr_flutter: ^4.1.0
+  share_plus: ^7.0.0
+  url_launcher: ^6.2.0
+  flutter_local_notifications: ^21.0.0
+  flutter_launcher_icons: ^0.13.1
+
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/Logo1.png"
+  # For Android 8.0+ adaptive icons
+  adaptive_icon_background: "#FFFFFF" 
+  adaptive_icon_foreground: "assets/Logo1.png"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

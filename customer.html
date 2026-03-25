@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Orders — GoDine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<style>
+/* Base Styles */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min-height:100vh;display:flex;flex-direction:column;padding-bottom:100px;overflow-x:hidden;}
+.header{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(18,18,18,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.08);}
+.h-left{display:flex;flex-direction:column;}
+.rest-name{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:-0.5px;color:#fff;}
+.rest-meta{font-size:0.8rem;color:#888;margin-top:2px;font-weight:500;}
+.content{padding:20px;flex:1;}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:16px;color:#fff;}
+
+/* Order Card */
+.order-card{background:#1e1e1e;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.05);box-shadow:0 8px 32px rgba(0,0,0,0.2);}
+.order-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.order-id{font-family:'Space Grotesk',monospace;font-size:0.9rem;color:#888;}
+.order-status{padding:6px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.status-pending{background:rgba(245,166,35,0.15);color:#f5a623;}
+.status-preparing{background:rgba(52,152,219,0.15);color:#3498db;}
+.status-ready{background:rgba(46,204,113,0.15);color:#2ecc71;}
+.status-completed{background:rgba(155,89,182,0.15);color:#9b59b6;}
+
+.eta-box{margin-top:12px;padding:12px;border-radius:12px;background:rgba(52,152,219,0.08);border:1px solid rgba(52,152,219,0.2);display:flex;align-items:center;gap:12px;display:none;}
+.eta-box.show{display:flex;}
+.eta-icon{font-size:1.5rem;}
+.eta-text{font-size:0.9rem;color:#fff;}
+.eta-highlight{font-weight:700;color:#3498db;}
+
+.order-items{margin-top:16px;border-top:1px solid rgba(255,255,255,0.05);padding-top:16px;}
+.ci-item{display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:8px;color:#bbb;}
+.ci-name{display:flex;gap:8px;}
+.ci-qty{font-weight:700;color:#fff;}
+.order-total{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;}
+
+.empty-state{text-align:center;padding:40px 20px;color:#888;}
+.empty-icon{font-size:3rem;margin-bottom:16px;}
+.back-btn{display:inline-block;margin-top:20px;padding:12px 24px;border-radius:24px;background:#c1ff00;color:#000;text-decoration:none;font-weight:700;font-family:'Space Grotesk';}
+
+/* Auth Guard */
+#auth-guard{position:fixed;inset:0;background:#121212;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;}
+.spinner{width:40px;height:40px;border:4px solid rgba(193,255,0,0.2);border-top-color:#c1ff00;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* App Banner */
+.app-strip{display:none;align-items:center;gap:12px;margin:0 20px 16px;padding:12px 16px;background:linear-gradient(135deg,rgba(193,255,0,0.08) 0%,rgba(193,255,0,0.02) 100%);border:1px solid rgba(193,255,0,0.18);border-radius:12px;text-decoration:none;transition:border-color 0.2s;}
+.app-strip:hover{border-color:rgba(193,255,0,0.4);}
+.app-strip.show{display:flex;}
+.app-strip-icon{font-size:24px;flex-shrink:0;}
+.app-strip-text{flex:1;}
+.app-strip-title{font-size:12px;font-weight:700;color:#c1ff00;margin-bottom:2px;}
+.app-strip-sub{font-size:10px;color:#888;line-height:1.4;}
+.app-strip-arrow{font-size:14px;color:#c1ff00;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div id="auth-guard">
+  <div class="spinner"></div>
+  <div style="font-weight:500;">Loading your orders...</div>
+</div>
+
+<header class="header" id="header" style="display:none;">
+  <div class="h-left">
+    <div class="rest-name" id="rest-name">GoDine</div>
+    <div class="rest-meta">Live Order Tracking</div>
+  </div>
+  <a href="#" class="back-link" style="color:#c1ff00;text-decoration:none;font-weight:600;font-size:0.9rem;">← Menu</a>
+</header>
+
+<main class="content" id="content" style="display:none;">
+  <a href="#" class="app-strip" id="app-strip" onclick="window.open(CONFIG.appDownloadUrl,'_blank');return false;">
+    <span class="app-strip-icon">📱</span>
+    <div class="app-strip-text">
+      <div class="app-strip-title">Get GoDine App</div>
+      <div class="app-strip-sub">Push notifications for real-time order updates</div>
+    </div>
+    <span class="app-strip-arrow">→</span>
+  </a>
+  <div class="section-title">Active Orders</div>
+  <div id="orders-container"></div>
+</main>
+
+<script>
+const { createClient } = supabase;
+let sb;
+if (CONFIG.supabaseUrl !== 'YOUR_SUPABASE_PROJECT_URL') {
+  sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+}
+
+const params = new URLSearchParams(location.search);
+const restaurantSlug = params.get('r') || 'demo';
+const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL';
+
+let customerInfo = null;
+let orders = [];
+
+// Load saved customer info from localStorage
+const savedCustomer = localStorage.getItem('godine_customer');
+if (savedCustomer) {
+  try { customerInfo = JSON.parse(savedCustomer); } catch(e){}
+}
+
+async function boot() {
+  if (isDemo) {
+    document.getElementById('auth-guard').style.display = 'none';
+    document.getElementById('header').style.display = 'flex';
+    document.getElementById('content').style.display = 'block';
+    renderOrders([{
+      id: 'demo-1234',
+      status: 'preparing',
+      estimated_time: '15 mins',
+      created_at: new Date().toISOString(),
+      total: 650,
+      items: [{qty: 2, name: 'Smash Burger'}, {qty: 1, name: 'Cold Coffee'}]
+    }]);
+    return;
+  }
+
+  // No Google auth — use saved customer phone to look up orders
+  if (!customerInfo || !customerInfo.phone) {
+    window.location.href = `menu.html?r=${restaurantSlug}`;
+    return;
+  }
+
+  document.getElementById('auth-guard').style.display = 'none';
+  document.getElementById('header').style.display = 'flex';
+  document.getElementById('content').style.display = 'block';
+  // Show app download banner if configured
+  if (CONFIG.appDownloadUrl && CONFIG.appDownloadUrl !== '#') {
+    document.getElementById('app-strip').classList.add('show');
+  }
+
+  document.querySelector('.back-link').href = `menu.html?r=${restaurantSlug}`;
+  document.getElementById('rest-name').textContent = `Hello, ${customerInfo.name || 'there'}!`;
+
+  await fetchOrders();
+  setupRealtime();
+}
+
+async function fetchOrders() {
+  const { data } = await sb.from('orders')
+    .select('*')
+    .eq('customer_phone', customerInfo.phone)
+    .order('created_at', { ascending: false });
+  
+  orders = data || [];
+  renderOrders(orders);
+}
+
+function renderOrders(list) {
+  const container = document.getElementById('orders-container');
+  
+  const active = list.filter(o => o.status !== 'completed');
+  const past = list.filter(o => o.status === 'completed');
+  
+  if (!list.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🍽️</div>
+        <h3>No orders found</h3>
+        <p>Looks like you haven't ordered anything yet.</p>
+        <a href="menu.html?r=${restaurantSlug}" class="back-btn">Go to Menu</a>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  
+  if (active.length) {
+    html += active.map(o => createOrderCard(o)).join('');
+  } else {
+    html += `<div style="color:#aaa;margin-bottom:20px;">No active orders.</div>`;
+  }
+
+  if (past.length) {
+    html += `<div class="section-title" style="margin-top:40px;font-size:1.2rem;">Past Orders</div>`;
+    html += past.map(o => createOrderCard(o)).join('');
+  }
+
+  container.innerHTML = html;
+}
+
+function createOrderCard(o) {
+  const idShort = ('#' + o.id.split('-').pop()).substring(0, 8).toUpperCase();
+  const date = new Date(o.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  let statusText = 'Pending';
+  switch (o.status) {
+    case 'preparing': statusText = 'Preparing'; break;
+    case 'ready': statusText = 'Ready for Pickup'; break;
+    case 'completed': statusText = 'Completed'; break;
+  }
+
+  const hasEta = o.status === 'preparing' && o.estimated_time;
+
+  return `
+    <div class="order-card">
+      <div class="order-head">
+        <div>
+          <div class="order-id">${idShort}</div>
+          <div style="font-size:0.8rem;color:#666;margin-top:2px;">${date}</div>
+        </div>
+        <div class="order-status status-${o.status}">${statusText}</div>
+      </div>
+      
+      <div class="eta-box ${hasEta ? 'show' : ''}">
+        <div class="eta-icon">⏱️</div>
+        <div class="eta-text">Estimated wait: <span class="eta-highlight">${o.estimated_time || ''}</span></div>
+      </div>
+
+      <div class="order-items">
+        ${o.items.map(i => `
+          <div class="ci-item">
+            <span class="ci-name"><span class="ci-qty">${i.qty}×</span> ${i.name}</span>
+          </div>
+        `).join('')}
+      </div>
+      
+      <div class="order-total">
+        <span>Total</span>
+        <span>₹${o.total}</span>
+      </div>
+    </div>
+  `;
+}
+
+function setupRealtime() {
+  sb.channel('customer-orders')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `customer_phone=eq.${customerInfo.phone}` }, payload => {
+      fetchOrders();
+    }).subscribe();
+}
+
+boot();
+</script>
+</body>
+</html>
