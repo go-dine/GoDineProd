@@ -5,6 +5,7 @@ import {
 import { COLORS, FONTS } from '../theme';
 import { supabase, Restaurant, Order } from '../lib/supabase';
 import OrderCard from '../components/OrderCard';
+import { CheckCircle2, Loader2, Bell } from 'lucide-react-native';
 
 interface OrdersScreenProps {
   restaurant: Restaurant;
@@ -45,7 +46,7 @@ export default function OrdersScreen({ restaurant, onPendingCount }: OrdersScree
           if (payload.eventType === 'INSERT') {
             const newOrder = payload.new as Order;
             Alert.alert(
-              '🔔 New Order!',
+              'New Order!',
               `Table ${newOrder.table_number} just placed an order (₹${newOrder.total}).`,
               [{ text: 'View', onPress: () => load() }]
             );
@@ -122,12 +123,12 @@ export default function OrdersScreen({ restaurant, onPendingCount }: OrdersScree
 
       {loading ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyIcon}>⏳</Text>
+          <Loader2 size={36} color={COLORS.muted} style={{ marginBottom: 12 }} />
           <Text style={styles.emptyText}>Loading orders...</Text>
         </View>
       ) : orders.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyIcon}>✅</Text>
+          <CheckCircle2 size={36} color={COLORS.lime} style={{ marginBottom: 12 }} />
           <Text style={styles.emptyText}>No active orders right now</Text>
         </View>
       ) : (
@@ -168,10 +169,6 @@ const styles = StyleSheet.create({
   empty: {
     alignItems: 'center',
     paddingVertical: 60,
-  },
-  emptyIcon: {
-    fontSize: 36,
-    marginBottom: 12,
   },
   emptyText: {
     fontSize: 14,

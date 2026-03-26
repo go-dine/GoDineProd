@@ -2,17 +2,23 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS, RADIUS, FONTS } from '../theme';
 
+import { LucideIcon } from 'lucide-react-native';
+
 interface StatCardProps {
   label: string;
   value: string;
   sub: string;
   accent?: boolean;
+  Icon?: LucideIcon;
 }
 
-export default function StatCard({ label, value, sub, accent = false }: StatCardProps) {
+export default function StatCard({ label, value, sub, accent = false, Icon }: StatCardProps) {
   return (
     <View style={styles.card}>
-      <Text style={styles.label}>{label}</Text>
+      <View style={styles.header}>
+        <Text style={styles.label}>{label}</Text>
+        {Icon && <Icon size={14} color={COLORS.muted} />}
+      </View>
       <Text style={[styles.value, accent && styles.accentValue]}>{value}</Text>
       <Text style={styles.sub}>{sub}</Text>
     </View>
@@ -29,12 +35,17 @@ const styles = StyleSheet.create({
     padding: 16,
     minWidth: '45%',
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
   label: {
     fontSize: 10,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     color: COLORS.muted,
-    marginBottom: 6,
     ...FONTS.medium,
   },
   value: {

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { COLORS, RADIUS, FONTS } from '../theme';
 import StatusBadge from './StatusBadge';
+import { User, Clock, StickyNote, Utensils } from 'lucide-react-native';
 import { Order } from '../lib/supabase';
 
 interface OrderCardProps {
@@ -11,9 +12,9 @@ interface OrderCardProps {
 }
 
 const NEXT_STATUS: Record<string, { status: string; label: string }> = {
-  pending: { status: 'preparing', label: '🔥 Start Preparing' },
-  preparing: { status: 'ready', label: '✅ Mark Ready' },
-  ready: { status: 'completed', label: '🎉 Complete' },
+  pending: { status: 'preparing', label: 'Start Preparing' },
+  preparing: { status: 'ready', label: 'Mark Ready' },
+  ready: { status: 'completed', label: 'Complete' },
 };
 
 export default function OrderCard({ order, onAdvanceStatus, onComplete }: OrderCardProps) {
@@ -37,13 +38,17 @@ export default function OrderCard({ order, onAdvanceStatus, onComplete }: OrderC
 
       {/* Customer Info */}
       {(order.customer_name || order.customer_phone) && (
-        <Text style={styles.customerText}>👤 {order.customer_name || 'Anonymous'} ({order.customer_phone || 'No phone'})</Text>
+        <View style={styles.customerRow}>
+          <User size={14} color={COLORS.muted} style={{ marginRight: 6 }} />
+          <Text style={styles.customerText}>{order.customer_name || 'Anonymous'} ({order.customer_phone || 'No phone'})</Text>
+        </View>
       )}
 
       {/* ETA Badge */}
       {order.status === 'preparing' && order.estimated_time && (
         <View style={styles.etaBadge}>
-          <Text style={styles.etaText}>⏱️ ETA: {order.estimated_time}</Text>
+          <Clock size={12} color={COLORS.lime} style={{ marginRight: 4 }} />
+          <Text style={styles.etaText}>ETA: {order.estimated_time}</Text>
         </View>
       )}
 
@@ -51,7 +56,8 @@ export default function OrderCard({ order, onAdvanceStatus, onComplete }: OrderC
       <View style={styles.items}>
         {order.items.map((item, i) => (
           <Text key={i} style={styles.itemText}>
-            {item.emoji || '🍽'} <Text style={styles.itemBold}>{item.qty}×</Text> {item.name} — ₹{item.price * item.qty}
+            <Utensils size={12} color={COLORS.muted} style={{ marginRight: 6 }} />
+            <Text style={styles.itemBold}>{item.qty}×</Text> {item.name} — ₹{item.price * item.qty}
           </Text>
         ))}
       </View>
@@ -59,7 +65,8 @@ export default function OrderCard({ order, onAdvanceStatus, onComplete }: OrderC
       {/* Note */}
       {order.note ? (
         <View style={styles.noteBox}>
-          <Text style={styles.noteText}>📝 {order.note}</Text>
+          <StickyNote size={14} color={COLORS.muted} style={{ marginRight: 8, marginTop: 2 }} />
+          <Text style={styles.noteText}>{order.note}</Text>
         </View>
       ) : null}
 
@@ -126,11 +133,15 @@ const styles = StyleSheet.create({
     color: COLORS.muted,
     marginTop: 2,
   },
+  customerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   customerText: {
     fontSize: 13,
     color: COLORS.white,
     ...FONTS.medium,
-    marginBottom: 10,
   },
   etaBadge: {
     backgroundColor: 'rgba(182,255,42,0.1)',
@@ -141,6 +152,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: 'rgba(182,255,42,0.2)',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   etaText: {
     fontSize: 12,
@@ -155,6 +168,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.muted,
     lineHeight: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   itemBold: {
     color: COLORS.white,
@@ -165,6 +180,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     marginBottom: 14,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
   },
   noteText: {
     fontSize: 12,

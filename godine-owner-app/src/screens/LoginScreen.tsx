@@ -4,6 +4,7 @@ import {
   KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator,
 } from 'react-native';
 import { COLORS, RADIUS, FONTS } from '../theme';
+import { LogIn, UserPlus } from 'lucide-react-native';
 import { supabase, SecureStorage, Restaurant } from '../lib/supabase';
 
 interface LoginScreenProps {
@@ -38,7 +39,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       await SecureStorage.save('gd_auth', JSON.stringify({ id: data.id, slug: data.slug }));
       onLogin(data as Restaurant);
     } catch (e) {
-      setError('Connection error. Check internet and try again.');
+      setError('Connection error: ' + (e as any).message);
     }
     setLoading(false);
   }
@@ -70,7 +71,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       await SecureStorage.save('gd_auth', JSON.stringify({ id: data.id, slug: data.slug }));
       onLogin(data as Restaurant);
     } catch (e) {
-      setError('Connection error. Try again.');
+      setError('Connection error: ' + (e as any).message);
     }
     setLoading(false);
   }
@@ -86,7 +87,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       >
         <View style={styles.box}>
           {/* Logo */}
-          <Text style={styles.logo}>Go<Text style={styles.logoAccent}>Dine</Text></Text>
+          <Text style={styles.logo}>Go <Text style={styles.logoAccent}>Dine</Text></Text>
           <Text style={styles.subtitle}>
             {mode === 'login' ? 'Owner Dashboard · Sign In' : 'Register your restaurant'}
           </Text>
@@ -163,9 +164,12 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             {loading ? (
               <ActivityIndicator color="#050505" size="small" />
             ) : (
-              <Text style={styles.btnText}>
-                {mode === 'login' ? 'Sign In →' : 'Create Restaurant →'}
-              </Text>
+              <View style={styles.btnRow}>
+                <Text style={styles.btnText}>
+                  {mode === 'login' ? 'Sign In' : 'Create Restaurant'}
+                </Text>
+                {mode === 'login' ? <LogIn size={18} color="#050505" /> : <UserPlus size={18} color="#050505" />}
+              </View>
             )}
           </TouchableOpacity>
 
@@ -269,6 +273,11 @@ const styles = StyleSheet.create({
     color: '#050505',
     fontSize: 14,
     ...FONTS.bold,
+    marginRight: 8,
+  },
+  btnRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   toggle: {
     flexDirection: 'row',

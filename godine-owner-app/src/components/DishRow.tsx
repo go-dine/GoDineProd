@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Switch, TouchableOpacity, StyleSheet } from 'react-native';
 import { COLORS, RADIUS, FONTS } from '../theme';
+import { Utensils } from 'lucide-react-native';
 import { Dish } from '../lib/supabase';
 
 interface DishRowProps {
@@ -12,7 +13,13 @@ interface DishRowProps {
 export default function DishRow({ dish, onToggle, onDelete }: DishRowProps) {
   return (
     <View style={styles.row}>
-      <Text style={styles.emoji}>{dish.emoji || '🍽️'}</Text>
+      <View style={styles.iconContainer}>
+        {dish.emoji && dish.emoji !== '🍽️' ? (
+          <Text style={styles.emoji}>{dish.emoji}</Text>
+        ) : (
+          <Utensils size={20} color={COLORS.muted} />
+        )}
+      </View>
       <View style={styles.info}>
         <Text style={styles.name}>{dish.name}</Text>
         <Text style={styles.meta} numberOfLines={1}>
@@ -48,9 +55,16 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border,
     gap: 12,
   },
-  emoji: {
-    fontSize: 24,
+  iconContainer: {
     width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: COLORS.surface2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emoji: {
+    fontSize: 20,
     textAlign: 'center',
   },
   info: {

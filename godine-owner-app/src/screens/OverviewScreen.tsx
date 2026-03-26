@@ -4,6 +4,7 @@ import { COLORS, RADIUS, FONTS } from '../theme';
 import { supabase, Restaurant, Order } from '../lib/supabase';
 import StatCard from '../components/StatCard';
 import StatusBadge from '../components/StatusBadge';
+import { Clock, ScrollText, IndianRupee, UtensilsCrossed } from 'lucide-react-native';
 
 interface OverviewScreenProps {
   restaurant: Restaurant;
@@ -70,12 +71,12 @@ export default function OverviewScreen({ restaurant }: OverviewScreenProps) {
 
       {/* Stats */}
       <View style={styles.statsRow}>
-        <StatCard label="Today's Orders" value={String(stats.orders)} sub="Total orders today" accent />
-        <StatCard label="Revenue" value={'₹' + stats.revenue.toLocaleString('en-IN')} sub="Today's earnings" accent />
+        <StatCard label="Today's Orders" value={String(stats.orders)} sub="Total orders today" accent Icon={ScrollText} />
+        <StatCard label="Revenue" value={'₹' + stats.revenue.toLocaleString('en-IN')} sub="Today's earnings" accent Icon={IndianRupee} />
       </View>
       <View style={styles.statsRow}>
-        <StatCard label="Pending" value={String(stats.pending)} sub="Awaiting action" />
-        <StatCard label="Menu Items" value={String(stats.dishes)} sub="Active dishes" />
+        <StatCard label="Pending" value={String(stats.pending)} sub="Awaiting action" Icon={Clock} />
+        <StatCard label="Menu Items" value={String(stats.dishes)} sub="Active dishes" Icon={UtensilsCrossed} />
       </View>
 
       {/* Recent Orders */}
@@ -83,7 +84,7 @@ export default function OverviewScreen({ restaurant }: OverviewScreenProps) {
         <Text style={styles.cardTitle}>Recent Orders</Text>
         {recentOrders.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>🕐</Text>
+            <Clock size={32} color={COLORS.muted} style={{ marginBottom: 12 }} />
             <Text style={styles.emptyText}>No orders yet today</Text>
           </View>
         ) : (
@@ -171,10 +172,6 @@ const styles = StyleSheet.create({
   empty: {
     alignItems: 'center',
     paddingVertical: 30,
-  },
-  emptyIcon: {
-    fontSize: 32,
-    marginBottom: 8,
   },
   emptyText: {
     fontSize: 14,

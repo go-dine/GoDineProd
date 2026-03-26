@@ -6,6 +6,7 @@ import {
 import { COLORS, RADIUS, FONTS } from '../theme';
 import { supabase, Restaurant, Dish } from '../lib/supabase';
 import DishRow from '../components/DishRow';
+import { Utensils, Plus } from 'lucide-react-native';
 
 interface MenuScreenProps {
   restaurant: Restaurant;
@@ -124,7 +125,7 @@ export default function MenuScreen({ restaurant }: MenuScreenProps) {
 
         {dishes.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>🍽</Text>
+            <Utensils size={36} color={COLORS.muted} style={{ marginBottom: 12 }} />
             <Text style={styles.emptyText}>No dishes yet. Tap + to add your first dish!</Text>
           </View>
         ) : (
@@ -141,7 +142,7 @@ export default function MenuScreen({ restaurant }: MenuScreenProps) {
 
       {/* FAB */}
       <TouchableOpacity style={styles.fab} onPress={() => setShowAdd(true)} activeOpacity={0.8}>
-        <Text style={styles.fabText}>+</Text>
+        <Plus size={28} color="#050505" />
       </TouchableOpacity>
 
       {/* Add Dish Modal */}
@@ -254,7 +255,6 @@ const styles = StyleSheet.create({
     shadowColor: COLORS.lime, shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3, shadowRadius: 8,
   },
-  fabText: { fontSize: 28, color: '#050505', marginTop: -2, ...FONTS.bold },
 
   modalOverlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.6)',

@@ -4,6 +4,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { COLORS, FONTS } from '../theme';
 import { Restaurant } from '../lib/supabase';
+import { LayoutDashboard, ScrollText, IndianRupee, UtensilsCrossed } from 'lucide-react-native';
 import OverviewScreen from '../screens/OverviewScreen';
 import OrdersScreen from '../screens/OrdersScreen';
 import RevenueScreen from '../screens/RevenueScreen';
@@ -49,7 +50,7 @@ export default function AppNavigator({ restaurant }: AppNavigatorProps) {
         <Tab.Screen
           name="Overview"
           options={{
-            tabBarIcon: ({ focused }) => <Text style={styles.tabIcon}>📊</Text>,
+            tabBarIcon: ({ color, size }) => <LayoutDashboard size={size} color={color} />,
             tabBarLabel: 'Overview',
           }}
         >
@@ -59,7 +60,7 @@ export default function AppNavigator({ restaurant }: AppNavigatorProps) {
         <Tab.Screen
           name="Orders"
           options={{
-            tabBarIcon: ({ focused }) => <Text style={styles.tabIcon}>🧾</Text>,
+            tabBarIcon: ({ color, size }) => <ScrollText size={size} color={color} />,
             tabBarLabel: 'Orders',
             tabBarBadge: pendingCount > 0 ? pendingCount : undefined,
             tabBarBadgeStyle: styles.badge,
@@ -71,7 +72,7 @@ export default function AppNavigator({ restaurant }: AppNavigatorProps) {
         <Tab.Screen
           name="Revenue"
           options={{
-            tabBarIcon: ({ focused }) => <Text style={styles.tabIcon}>💰</Text>,
+            tabBarIcon: ({ color, size }) => <IndianRupee size={size} color={color} />,
             tabBarLabel: 'Revenue',
           }}
         >
@@ -81,7 +82,7 @@ export default function AppNavigator({ restaurant }: AppNavigatorProps) {
         <Tab.Screen
           name="Menu"
           options={{
-            tabBarIcon: ({ focused }) => <Text style={styles.tabIcon}>🍽</Text>,
+            tabBarIcon: ({ color, size }) => <UtensilsCrossed size={size} color={color} />,
             tabBarLabel: 'Menu',
           }}
         >
@@ -107,9 +108,6 @@ const styles = StyleSheet.create({
   },
   tabItem: {
     paddingVertical: 2,
-  },
-  tabIcon: {
-    fontSize: 20,
   },
   badge: {
     backgroundColor: COLORS.lime,

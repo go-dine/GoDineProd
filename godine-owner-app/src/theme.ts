@@ -1,4 +1,4 @@
-// GoDine Theme — matches web dashboard CSS variables exactly
+// Go Dine Theme — matches web dashboard CSS variables exactly
 export const COLORS = {
   bg: '#050505',
   surface1: '#0e0e0e',

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "GoDine Owner",
-    "slug": "go-dine",
+    "name": "Go Dine",
+    "slug": "go-dine-owner",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.godine.owner"
+      "bundleIdentifier": "com.go_dine.owner"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,7 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.godine.owner",
+      "package": "com.go_dine.owner",
       "predictiveBackGestureEnabled": false
     },
     "web": {

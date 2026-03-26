@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GoDine — Owner Dashboard</title>
-<meta name="description" content="GoDine Owner Dashboard — manage your restaurant menu, orders, and QR codes."/>
+<title>Go Dine — Owner Dashboard</title>
+<link rel="icon" type="image/png" href="assets/favicon.png"/>
+<link rel="apple-touch-icon" href="assets/icon.png"/>
+<meta name="description" content="Go Dine Owner Dashboard — manage your restaurant menu, orders, and QR codes."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <script src="config.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -246,7 +249,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
   <div class="auth-box">
-    <div class="auth-logo">Go<b>Dine</b></div>
+    <div class="auth-logo">Go <b>Dine</b></div>
 
     <!-- SIGN IN FORM -->
     <div id="auth-login">
@@ -285,13 +288,13 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
   <div class="sidebar" id="sidebar">
-    <div class="sb-logo">Go<b>Dine</b></div>
+    <div class="sb-logo">Go <b>Dine</b></div>
     <div class="sb-rest-name" id="sb-rest-name">—</div>
     <div class="sb-nav">
-      <div class="sb-item active" data-page="overview" onclick="showPage('overview')"><span class="icon">📊</span>Overview</div>
-      <div class="sb-item" data-page="orders" onclick="showPage('orders')"><span class="icon">🧾</span>Live Orders<span class="sb-badge" id="pending-badge" style="display:none">0</span></div>
-      <div class="sb-item" data-page="menu" onclick="showPage('menu')"><span class="icon">🍽</span>Menu</div>
-      <div class="sb-item" data-page="qr" onclick="showPage('qr')"><span class="icon">📱</span>QR Codes</div>
+      <div class="sb-item active" data-page="overview" onclick="showPage('overview')"><span class="icon"><i data-lucide="layout-dashboard" style="width:18px;height:18px"></i></span>Overview</div>
+      <div class="sb-item" data-page="orders" onclick="showPage('orders')"><span class="icon"><i data-lucide="scroll-text" style="width:18px;height:18px"></i></span>Live Orders<span class="sb-badge" id="pending-badge" style="display:none">0</span></div>
+      <div class="sb-item" data-page="menu" onclick="showPage('menu')"><span class="icon"><i data-lucide="utensils-crosses" style="width:18px;height:18px"></i></span>Menu</div>
+      <div class="sb-item" data-page="qr" onclick="showPage('qr')"><span class="icon"><i data-lucide="qr-code" style="width:18px;height:18px"></i></span>QR Codes</div>
     </div>
     <div class="sb-footer">
       <button class="logout-btn" onclick="doLogout()">Sign Out</button>
@@ -316,7 +319,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
     <div class="page" id="page-orders">
       <div class="page-title">Live Orders</div>
       <div class="page-sub">Auto-refreshes every 15 seconds · Click status to update</div>
-      <div id="orders-list"><div class="empty-state"><div class="icon">✅</div><p>No active orders right now</p></div></div>
+      <div id="orders-list"><div class="empty-state"><div class="icon"><i data-lucide="check-circle-2" style="width:32px;height:32px"></i></div><p>No active orders right now</p></div></div>
     </div>
 
     <!-- MENU -->
@@ -334,7 +337,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
         </div>
         <button class="btn-lime" onclick="addDish()">+ Add to Menu</button>
       </div>
-      <div class="card"><div class="card-head"><div class="card-title">Current Menu</div><span id="dish-count" style="font-size:12px;color:var(--muted)"></span></div><div id="dish-list"><div class="empty-state"><div class="icon">🍽</div><p>No dishes yet. Add one above!</p></div></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Current Menu</div><span id="dish-count" style="font-size:12px;color:var(--muted)"></span></div><div id="dish-list"><div class="empty-state"><div class="icon"><i data-lucide="utensils" style="width:32px;height:32px"></i></div><p>No dishes yet. Add one above!</p></div></div></div>
     </div>
 
     <!-- QR CODES -->
@@ -526,6 +529,7 @@ function init() {
   requestNotificationPermission();
   loadOverview();
   loadDishes();
+  lucide.createIcons();
   setInterval(loadOrders, 30000); // slower fallback polling
   setInterval(loadOverview, 60000);
   
@@ -644,6 +648,7 @@ function renderOrders() {
       </div></div>
     </div>`;
   }).join('');
+  lucide.createIcons();
 }
 
 async function updateStatus(id, status) {

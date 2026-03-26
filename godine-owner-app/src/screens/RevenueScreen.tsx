@@ -5,6 +5,7 @@ import {
 import { COLORS, RADIUS, FONTS } from '../theme';
 import { supabase, Restaurant, Order } from '../lib/supabase';
 import StatusBadge from '../components/StatusBadge';
+import { TrendingUp, Clock, CheckCircle2, History, Utensils, Trophy } from 'lucide-react-native';
 
 interface RevenueScreenProps {
   restaurant: Restaurant;
@@ -111,6 +112,7 @@ export default function RevenueScreen({ restaurant }: RevenueScreenProps) {
 
       {/* Big Revenue */}
       <View style={styles.revenueCard}>
+        <TrendingUp size={24} color={COLORS.lime} style={{ marginBottom: 10 }} />
         <Text style={styles.revLabel}>TOTAL REVENUE</Text>
         <Text style={styles.revValue}>₹{totalRevenue.toLocaleString('en-IN')}</Text>
         <Text style={styles.revSub}>{orders.length} orders · Avg ₹{avgOrder.toLocaleString('en-IN')}</Text>
@@ -135,11 +137,20 @@ export default function RevenueScreen({ restaurant }: RevenueScreenProps) {
       {/* Top Items */}
       {topItems.length > 0 && (
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>🏆 Top Items</Text>
+          <View style={styles.cardHeader}>
+            <Trophy size={18} color={COLORS.lime} style={{ marginRight: 8 }} />
+            <Text style={styles.cardTitle}>Top Items</Text>
+          </View>
           {topItems.map((item, i) => (
             <View key={item.name} style={styles.topRow}>
               <Text style={styles.topRank}>{i + 1}</Text>
-              <Text style={styles.topEmoji}>{item.emoji}</Text>
+              <View style={styles.topIconContainer}>
+                {item.emoji && item.emoji !== '🍽' ? (
+                  <Text style={styles.topEmoji}>{item.emoji}</Text>
+                ) : (
+                  <Utensils size={16} color={COLORS.muted} />
+                )}
+              </View>
               <View style={styles.topInfo}>
                 <Text style={styles.topName}>{item.name}</Text>
                 <Text style={styles.topMeta}>{item.qty} sold</Text>
@@ -152,10 +163,13 @@ export default function RevenueScreen({ restaurant }: RevenueScreenProps) {
 
       {/* Order History */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Order History</Text>
+        <View style={styles.cardHeader}>
+          <History size={18} color={COLORS.white} style={{ marginRight: 8 }} />
+          <Text style={styles.cardTitle}>Order History</Text>
+        </View>
         {orders.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>📊</Text>
+            <History size={32} color={COLORS.muted} style={{ marginBottom: 8 }} />
             <Text style={styles.emptyText}>No orders in this period</Text>
           </View>
         ) : (
@@ -220,14 +234,19 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface1, borderWidth: 1, borderColor: COLORS.border,
     borderRadius: RADIUS.md, padding: 20, marginBottom: 14,
   },
-  cardTitle: { fontSize: 16, color: COLORS.white, marginBottom: 16, ...FONTS.semibold },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+  cardTitle: { fontSize: 16, color: COLORS.white, ...FONTS.semibold },
 
   topRow: {
     flexDirection: 'row', alignItems: 'center', paddingVertical: 10,
     borderBottomWidth: 1, borderBottomColor: COLORS.border, gap: 10,
   },
   topRank: { fontSize: 14, color: COLORS.muted, width: 20, textAlign: 'center', ...FONTS.bold },
-  topEmoji: { fontSize: 20, width: 28, textAlign: 'center' },
+  topIconContainer: {
+    width: 28, height: 28, borderRadius: 6, backgroundColor: COLORS.surface2,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  topEmoji: { fontSize: 16, textAlign: 'center' },
   topInfo: { flex: 1 },
   topName: { fontSize: 13, color: COLORS.white, ...FONTS.semibold },
   topMeta: { fontSize: 11, color: COLORS.muted },
@@ -244,7 +263,6 @@ const styles = StyleSheet.create({
   histTotal: { fontSize: 14, color: COLORS.lime, ...FONTS.bold },
 
   empty: { alignItems: 'center', paddingVertical: 30 },
-  emptyIcon: { fontSize: 32, marginBottom: 8 },
   emptyText: { fontSize: 14, color: COLORS.muted },
   moreText: { fontSize: 12, color: COLORS.muted, textAlign: 'center', marginTop: 12 },
 });
