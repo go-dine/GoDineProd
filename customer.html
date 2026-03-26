@@ -50,16 +50,6 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
 #auth-guard{position:fixed;inset:0;background:#121212;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;}
 .spinner{width:40px;height:40px;border:4px solid rgba(193,255,0,0.2);border-top-color:#c1ff00;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* App Banner */
-.app-strip{display:none;align-items:center;gap:12px;margin:0 20px 16px;padding:12px 16px;background:linear-gradient(135deg,rgba(193,255,0,0.08) 0%,rgba(193,255,0,0.02) 100%);border:1px solid rgba(193,255,0,0.18);border-radius:12px;text-decoration:none;transition:border-color 0.2s;}
-.app-strip:hover{border-color:rgba(193,255,0,0.4);}
-.app-strip.show{display:flex;}
-.app-strip-icon{font-size:24px;flex-shrink:0;}
-.app-strip-text{flex:1;}
-.app-strip-title{font-size:12px;font-weight:700;color:#c1ff00;margin-bottom:2px;}
-.app-strip-sub{font-size:10px;color:#888;line-height:1.4;}
-.app-strip-arrow{font-size:14px;color:#c1ff00;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -78,14 +68,6 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
 </header>
 
 <main class="content" id="content" style="display:none;">
-  <a href="#" class="app-strip" id="app-strip" onclick="window.open(CONFIG.appDownloadUrl,'_blank');return false;">
-    <span class="app-strip-icon">📱</span>
-    <div class="app-strip-text">
-      <div class="app-strip-title">Get GoDine App</div>
-      <div class="app-strip-sub">Push notifications for real-time order updates</div>
-    </div>
-    <span class="app-strip-arrow">→</span>
-  </a>
   <div class="section-title">Active Orders</div>
   <div id="orders-container"></div>
 </main>
@@ -101,14 +83,8 @@ const params = new URLSearchParams(location.search);
 const restaurantSlug = params.get('r') || 'demo';
 const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL';
 
-let customerInfo = null;
+let currentUser = null;
 let orders = [];
-
-// Load saved customer info from localStorage
-const savedCustomer = localStorage.getItem('godine_customer');
-if (savedCustomer) {
-  try { customerInfo = JSON.parse(savedCustomer); } catch(e){}
-}
 
 async function boot() {
   if (isDemo) {
@@ -126,22 +102,19 @@ async function boot() {
     return;
   }
 
-  // No Google auth — use saved customer phone to look up orders
-  if (!customerInfo || !customerInfo.phone) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
     window.location.href = `menu.html?r=${restaurantSlug}`;
     return;
   }
-
+  
+  currentUser = session.user;
   document.getElementById('auth-guard').style.display = 'none';
   document.getElementById('header').style.display = 'flex';
   document.getElementById('content').style.display = 'block';
-  // Show app download banner if configured
-  if (CONFIG.appDownloadUrl && CONFIG.appDownloadUrl !== '#') {
-    document.getElementById('app-strip').classList.add('show');
-  }
-
+  
   document.querySelector('.back-link').href = `menu.html?r=${restaurantSlug}`;
-  document.getElementById('rest-name').textContent = `Hello, ${customerInfo.name || 'there'}!`;
+  document.getElementById('rest-name').textContent = `Hello, ${currentUser.user_metadata?.full_name?.split(' ')[0] || 'there'}!`;
 
   await fetchOrders();
   setupRealtime();
@@ -150,7 +123,7 @@ async function boot() {
 async function fetchOrders() {
   const { data } = await sb.from('orders')
     .select('*')
-    .eq('customer_phone', customerInfo.phone)
+    .eq('customer_uid', currentUser.id)
     .order('created_at', { ascending: false });
   
   orders = data || [];
@@ -236,7 +209,7 @@ function createOrderCard(o) {
 
 function setupRealtime() {
   sb.channel('customer-orders')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `customer_phone=eq.${customerInfo.phone}` }, payload => {
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `customer_uid=eq.${currentUser.id}` }, payload => {
       fetchOrders();
     }).subscribe();
 }

@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>GoDine — Menu</title>
-<meta name="description" content="Browse the menu and place your order. Powered by GoDine."/>
+<title>Go Dine — Menu</title>
+<link rel="icon" type="image/png" href="assets/favicon.png"/>
+<link rel="apple-touch-icon" href="assets/icon.png"/>
+<meta name="description" content="Browse the menu and place your order. Powered by Go Dine."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <script src="config.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -273,7 +276,7 @@ a{color:inherit;text-decoration:none}
 <!-- HEADER -->
 <div class="header" id="header">
   <div class="header-top">
-    <a href="index.html" class="logo">Go<b>Dine</b></a>
+    <a href="index.html" class="logo">Go <b>Dine</b></a>
     <div class="table-badge" id="table-display">TABLE —</div>
   </div>
   <div class="rest-info">
@@ -281,7 +284,7 @@ a{color:inherit;text-decoration:none}
     <div class="rest-meta" id="rest-meta">Dine In · Scan &amp; Order</div>
   </div>
   <div class="search-wrap">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon"><i data-lucide="search" style="width:16px;height:16px"></i></span>
     <input class="search-input" id="search-input" type="text" placeholder="Search dishes..."/>
   </div>
 </div>
@@ -340,20 +343,17 @@ a{color:inherit;text-decoration:none}
 <!-- TOAST -->
 <div id="toast"></div>
 
-<!-- CUSTOMER DETAILS MODAL -->
-<div id="customer-modal" class="modal-overlay" onclick="if(event.target===this)closeCustomerModal()">
+<!-- PHONE MODAL -->
+<div id="phone-modal" class="modal-overlay" onclick="if(event.target===this)closePhoneModal()">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeCustomerModal()">✕</button>
-    <div class="modal-title">Your Details</div>
-    <div class="modal-sub">We need your name and phone number for order updates.</div>
-    
-    <label class="modal-label">Your Name</label>
-    <input type="text" id="customer-name" class="modal-input" placeholder="e.g. Rahul" onkeypress="if(event.key==='Enter')document.getElementById('customer-phone').focus()">
+    <button class="modal-close" onclick="closePhoneModal()">✕</button>
+    <div class="modal-title">Almost there!</div>
+    <div class="modal-sub">We just need your phone number for order updates.</div>
     
     <label class="modal-label">Phone Number</label>
-    <input type="tel" id="customer-phone" class="modal-input" placeholder="e.g. 9876543210" onkeypress="if(event.key==='Enter')submitCustomerDetails()">
+    <input type="tel" id="profile-phone" class="modal-input" placeholder="e.g. 9876543210" onkeypress="if(event.key==='Enter')savePhoneAndOrder()">
     
-    <button class="place-order-btn" id="submit-details-btn" onclick="submitCustomerDetails()" style="margin-top:16px;">Place Order →</button>
+    <button class="place-order-btn" id="save-phone-btn" onclick="savePhoneAndOrder()" style="margin-top:16px;">Save & Place Order →</button>
   </div>
 </div>
 
@@ -396,13 +396,20 @@ document.getElementById('search-input').addEventListener('input', e => renderMen
 
 /* ── BOOT ── */
 async function boot() {
+  let currentUser = undefined;
+  
   const saved = localStorage.getItem('godine_cart');
   if (saved) { try { cart = JSON.parse(saved); updateCartBar(); } catch(e){} }
 
-  // Load saved customer details
-  const savedCustomer = localStorage.getItem('godine_customer');
-  if (savedCustomer) {
-    try { window.customerInfo = JSON.parse(savedCustomer); } catch(e){}
+  if (!isDemo) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      window.currentUser = session.user;
+      const name = window.currentUser.user_metadata?.full_name || 'Guest';
+      showToast(`👋 Welcome back, ${name}!`);
+    } else {
+      window.currentUser = null;
+    }
   }
 
   if (isDemo) {
@@ -439,12 +446,13 @@ async function boot() {
 
   renderCategories();
   renderMenu();
+  lucide.createIcons();
 }
 
 function applyRestaurant() {
   document.getElementById('rest-name').textContent = restaurant.name;
   document.getElementById('rest-meta').textContent = 'Table ' + tableNum + ' · Dine In · Scan & Order';
-  document.title = restaurant.name + ' — Menu';
+  document.title = restaurant.name + ' — Menu | Go Dine';
 }
 
 function showError(title, msg) {
@@ -455,7 +463,7 @@ function showError(title, msg) {
       <div class="e-icon">🚫</div>
       <h2>${title}</h2>
       <p>${msg}</p>
-      <a href="index.html">← Back to GoDine</a>
+      <a href="index.html">← Back to Go Dine</a>
     </div>`;
 }
 
@@ -489,7 +497,7 @@ function renderMenu(search = '') {
 
   const el = document.getElementById('content');
   if (!filtered.length) {
-    el.innerHTML = `<div class="empty"><div class="e-icon">🔍</div><p>No dishes found</p></div>`;
+    el.innerHTML = `<div class="empty"><div class="e-icon"><i data-lucide="search-x" style="width:40px;height:40px"></i></div><p>No dishes found</p></div>`;
     return;
   }
 
@@ -618,35 +626,48 @@ async function triggerCheckout() {
     return;
   }
 
-  // Check if we already have customer info saved
-  if (window.customerInfo && window.customerInfo.name && window.customerInfo.phone) {
-    actualPlaceOrder(window.customerInfo.name, window.customerInfo.phone, null);
+  if (!currentUser) {
+    showToast('Redirecting to Google Sign-In...');
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.href }
+    });
+    if (error) showToast('⚠️ Auth Error');
     return;
   }
 
-  // Show customer details modal
-  document.getElementById('customer-modal').classList.add('open');
-  // Pre-fill if we have partial data
-  if (window.customerInfo?.name) document.getElementById('customer-name').value = window.customerInfo.name;
-  if (window.customerInfo?.phone) document.getElementById('customer-phone').value = window.customerInfo.phone;
+  const phone = currentUser.user_metadata?.phone;
+  if (!phone) {
+    document.getElementById('phone-modal').classList.add('open');
+    return;
+  }
+
+  const name = currentUser.user_metadata?.full_name || 'Customer';
+  actualPlaceOrder(name, phone, currentUser.id);
 }
 
-function closeCustomerModal() { document.getElementById('customer-modal').classList.remove('open'); }
+function closePhoneModal() { document.getElementById('phone-modal').classList.remove('open'); }
 
-async function submitCustomerDetails() {
-  const name = document.getElementById('customer-name').value.trim();
-  let phone = document.getElementById('customer-phone').value.trim();
-  if (!name) { showToast('⚠️ Please enter your name'); return; }
-  if (!phone) { showToast('⚠️ Please enter your phone number'); return; }
+async function savePhoneAndOrder() {
+  let phone = document.getElementById('profile-phone').value.trim();
+  if (!phone) { showToast('⚠️ Enter phone'); return; }
   phone = phone.replace(/[\s\-\(\)]/g, '');
   if (!phone.startsWith('+')) phone = '+91' + phone;
 
-  // Save for future orders
-  window.customerInfo = { name, phone };
-  localStorage.setItem('godine_customer', JSON.stringify({ name, phone }));
+  const btn = document.getElementById('save-phone-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
 
-  closeCustomerModal();
-  actualPlaceOrder(name, phone, null);
+  const { data, error } = await sb.auth.updateUser({ data: { phone } });
+  if (error) {
+    showToast('⚠️ Failed to save phone');
+    btn.disabled = false; btn.textContent = 'Save & Place Order →';
+    return;
+  }
+
+  currentUser = data.user;
+  closePhoneModal();
+  const name = currentUser.user_metadata?.full_name || 'Customer';
+  actualPlaceOrder(name, phone, currentUser.id);
 }
 
 async function actualPlaceOrder(name, phone, uid) {
