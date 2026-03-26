@@ -44,6 +44,20 @@ class SupabaseService {
     await _storage.delete(key: _authKey);
   }
 
+  // ───── Admin Auth Persistence ─────
+
+  static Future<void> saveAdminAuth() async {
+    await _storage.write(key: 'gd_admin_auth', value: 'true');
+  }
+
+  static Future<bool> getSavedAdminAuth() async {
+    return await _storage.read(key: 'gd_admin_auth') == 'true';
+  }
+
+  static Future<void> clearAdminAuth() async {
+    await _storage.delete(key: 'gd_admin_auth');
+  }
+
   // ───── Restaurant Auth ─────
 
   static Future<Restaurant?> login(String slug, String password) async {

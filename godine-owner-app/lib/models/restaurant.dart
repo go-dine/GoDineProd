@@ -4,6 +4,8 @@ class Restaurant {
   final String slug;
   final String ownerPassword;
   final int totalTables;
+  final bool isActive;
+  final int sortOrder;
   final String createdAt;
 
   Restaurant({
@@ -12,6 +14,8 @@ class Restaurant {
     required this.slug,
     required this.ownerPassword,
     required this.totalTables,
+    this.isActive = true,
+    this.sortOrder = 0,
     required this.createdAt,
   });
 
@@ -22,6 +26,8 @@ class Restaurant {
       slug: json['slug'] as String,
       ownerPassword: json['owner_password'] as String,
       totalTables: (json['total_tables'] as num?)?.toInt() ?? 10,
+      isActive: json['is_active'] as bool? ?? true,
+      sortOrder: (json['sort_order'] as num?)?.toInt() ?? 0,
       createdAt: json['created_at'] as String? ?? '',
     );
   }
@@ -32,5 +38,7 @@ class Restaurant {
         'slug': slug,
         'owner_password': ownerPassword,
         'total_tables': totalTables,
+        'is_active': isActive,
+        'sort_order': sortOrder,
       };
 }

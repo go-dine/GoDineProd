@@ -5,11 +5,13 @@ import '../services/supabase_service.dart';
 
 class LoginScreen extends StatefulWidget {
   final void Function(Restaurant restaurant) onLogin;
+  final VoidCallback onAdminLogin;
   final bool isInitializing;
   
   const LoginScreen({
     super.key, 
     required this.onLogin,
+    required this.onAdminLogin,
     this.isInitializing = false,
   });
 
@@ -46,6 +48,13 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _error = 'Please enter username and password');
       return;
     }
+
+    if (slug == 'godine_master' && pw == 'GODINE@MASTER#2025') {
+      await SupabaseService.saveAdminAuth();
+      widget.onAdminLogin();
+      return;
+    }
+
     setState(() { _loading = true; _error = ''; });
     try {
       final restaurant = await SupabaseService.login(slug, pw);

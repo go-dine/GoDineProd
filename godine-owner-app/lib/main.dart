@@ -12,6 +12,7 @@ import 'screens/orders_screen.dart';
 import 'screens/revenue_screen.dart';
 import 'screens/menu_screen.dart';
 import 'screens/qr_codes_screen.dart';
+import 'screens/admin_dashboard_screen.dart';
 import 'services/notification_service.dart';
 import 'models/order.dart';
 
@@ -48,6 +49,7 @@ class AuthGate extends StatefulWidget {
 
 class _AuthGateState extends State<AuthGate> {
   Restaurant? _restaurant;
+  bool _isAdmin = false;
   bool _isInitializing = true;
 
   @override
@@ -71,16 +73,23 @@ class _AuthGateState extends State<AuthGate> {
       // Notifications are non-critical
     }
 
-    Restaurant? restaurant;
+    bool isAdmin = false;
     try {
-      // Try auto-login (with timeout)
-      restaurant = await SupabaseService.autoLogin()
-          .timeout(const Duration(seconds: 5));
+      isAdmin = await SupabaseService.getSavedAdminAuth();
     } catch (_) {}
+
+    Restaurant? restaurant;
+    if (!isAdmin) {
+      try {
+        restaurant = await SupabaseService.autoLogin()
+            .timeout(const Duration(seconds: 5));
+      } catch (_) {}
+    }
 
     if (mounted) {
       setState(() {
         _isInitializing = false;
+        _isAdmin = isAdmin;
         _restaurant = restaurant;
       });
     }
@@ -90,19 +99,44 @@ class _AuthGateState extends State<AuthGate> {
     setState(() => _restaurant = restaurant);
   }
 
+  void _handleAdminLogin() {
+    setState(() => _isAdmin = true);
+  }
+
   Future<void> _handleLogout() async {
     await SupabaseService.clearAuth();
-    setState(() => _restaurant = null);
+    await SupabaseService.clearAdminAuth();
+    setState(() {
+      _restaurant = null;
+      _isAdmin = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isAdmin && _restaurant == null) {
+      return AdminDashboardScreen(
+        onLogout: _handleLogout,
+        onImpersonate: _handleLogin,
+      );
+    }
+    
     if (_restaurant != null) {
-      return _MainScaffold(restaurant: _restaurant!, onLogout: _handleLogout);
+      return _MainScaffold(
+        restaurant: _restaurant!, 
+        onLogout: () {
+          if (_isAdmin) {
+            setState(() => _restaurant = null);
+          } else {
+            _handleLogout();
+          }
+        },
+      );
     }
 
     return LoginScreen(
       onLogin: _handleLogin,
+      onAdminLogin: _handleAdminLogin,
       isInitializing: _isInitializing,
     );
   }
