@@ -283,7 +283,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 </div>
 
 <!-- APP -->
-<div id="admin-banner" style="display:none;background:#7f1d1d;color:#fca5a5;padding:12px 20px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #991b1b;">
+<div id="admin-banner" style="display:none;background:#7f1d1d;color:#fca5a5;padding:12px 20px;font-size:13px;font-weight:700;align-items:center;justify-content:space-between;border-bottom:1px solid #991b1b;">
   <div><span style="font-size:16px;margin-right:8px;">🔐</span> Master Admin Mode — Full Platform Access</div>
   <button style="background:transparent;border:none;color:#fca5a5;font-weight:700;cursor:pointer;font-size:12px;text-decoration:underline;" onclick="doLogout()">Sign Out</button>
 </div>
@@ -492,6 +492,7 @@ async function doLogin() {
   try {
     const { data, error } = await sb.from('restaurants').select('*').eq('slug', cleanSlug).single();
     if (error || !data) { showAuthError('login', 'Username not found'); return; }
+    if (data.is_active === false) { showAuthError('login', 'Your account has been suspended by the platform.'); return; }
     if (data.owner_password !== pw) { showAuthError('login', 'Incorrect password'); return; }
     restaurant = data;
     enterDashboard();
@@ -598,6 +599,10 @@ function doLogout() {
     if (isDemo) return;
     const { data, error } = await sb.from('restaurants').select('*').eq('id', id).single();
     if (!error && data) {
+      if (data.is_active === false) {
+        localStorage.removeItem('gd_auth');
+        return;
+      }
       restaurant = data;
       enterDashboard();
     }
