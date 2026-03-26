@@ -417,10 +417,25 @@ async function boot() {
   try {
     const { data: restData, error: restErr } = await sb
       .from('restaurants').select('*').eq('slug', restaurantSlug).single();
+      
     if (restErr || !restData) {
       showError('Restaurant not found', `No restaurant with slug "${restaurantSlug}" exists.`);
       return;
     }
+    
+    // GUARD: Check if restaurant is active
+    if (restData.is_active === false) {
+      document.body.innerHTML = `
+        <div style="display:grid;place-items:center;height:100vh;font-family:sans-serif;text-align:center;color:#fff;">
+          <div>
+            <div style="font-size:3rem">🚫</div>
+            <h2>${restData.name}</h2>
+            <p style="color:#888;margin-top:10px;">This restaurant is currently closed. Please check back later.</p>
+          </div>
+        </div>`;
+      return;
+    }
+    
     restaurant = restData;
     applyRestaurant();
 

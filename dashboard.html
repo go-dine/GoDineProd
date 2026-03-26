@@ -283,6 +283,10 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 </div>
 
 <!-- APP -->
+<div id="admin-banner" style="display:none;background:#7f1d1d;color:#fca5a5;padding:12px 20px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #991b1b;">
+  <div><span style="font-size:16px;margin-right:8px;">🔐</span> Master Admin Mode — Full Platform Access</div>
+  <button style="background:transparent;border:none;color:#fca5a5;font-weight:700;cursor:pointer;font-size:12px;text-decoration:underline;" onclick="doLogout()">Sign Out</button>
+</div>
 <div id="app">
   <button class="mobile-toggle" id="mobile-toggle" onclick="toggleSidebar()">☰</button>
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
@@ -295,6 +299,13 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <div class="sb-item" data-page="orders" onclick="showPage('orders')"><span class="icon"><i data-lucide="scroll-text" style="width:18px;height:18px"></i></span>Live Orders<span class="sb-badge" id="pending-badge" style="display:none">0</span></div>
       <div class="sb-item" data-page="menu" onclick="showPage('menu')"><span class="icon"><i data-lucide="utensils-crosses" style="width:18px;height:18px"></i></span>Menu</div>
       <div class="sb-item" data-page="qr" onclick="showPage('qr')"><span class="icon"><i data-lucide="qr-code" style="width:18px;height:18px"></i></span>QR Codes</div>
+      
+      <!-- ADMIN TABS -->
+      <div id="admin-tabs" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:10px;">
+        <div style="padding:0 12px 8px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;">Admin Console</div>
+        <div class="sb-item" data-page="all-restaurants" onclick="showPage('all-restaurants')"><span class="icon">🏢</span>All Restaurants</div>
+        <div class="sb-item" data-page="all-orders" onclick="showPage('all-orders')"><span class="icon">📋</span>All Orders</div>
+      </div>
     </div>
     <div class="sb-footer">
       <button class="logout-btn" onclick="doLogout()">Sign Out</button>
@@ -346,12 +357,62 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <div class="page-sub">One QR code per table — print and place</div>
       <div class="qr-grid" id="qr-grid"></div>
     </div>
+    <!-- ALL RESTAURANTS (ADMIN) -->
+    <div class="page" id="page-all-restaurants">
+      <div class="page-title">All Restaurants</div>
+      <div class="page-sub">Drag to reorder • Toggle availability • Impersonate</div>
+      
+      <!-- New Restaurant Form (Admin) -->
+      <div class="card admin-card">
+        <div class="card-head"><div class="card-title">Register New Restaurant</div></div>
+        <div class="form-grid">
+          <div><label class="f-label">Name</label><input class="f-input" id="admin-reg-name" placeholder="e.g. Test Place"/></div>
+          <div><label class="f-label">Slug</label><input class="f-input" id="admin-reg-slug" placeholder="e.g. test-place"/></div>
+          <div><label class="f-label">Password</label><input class="f-input" id="admin-reg-pw" placeholder="Owner password"/></div>
+          <div><label class="f-label">Tables</label><input class="f-input" id="admin-reg-tables" type="number" value="10"/></div>
+        </div>
+        <button class="btn-lime btn-sm" onclick="adminAddRestaurant()">+ Register</button>
+      </div>
+
+      <div class="card admin-card"><div class="card-head"><div class="card-title">Platform Roster</div><span id="all-rest-count" style="font-size:12px;color:var(--muted)"></span></div><div id="all-restaurants-list"><div class="empty-state"><div class="spinner"></div></div></div></div>
+    </div>
+
+    <!-- ALL ORDERS (ADMIN) -->
+    <div class="page" id="page-all-orders">
+      <div class="page-title">All Platform Orders</div>
+      <div class="page-sub">Global bird's-eye view of all incoming traffic</div>
+      <div class="card admin-card" style="padding:12px 20px;display:flex;gap:10px;justify-content:space-between;align-items:center;">
+        <div style="font-size:12px;color:#fca5a5;font-weight:700;">BULK ACTIONS</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <select class="f-select" id="admin-bulk-status" style="width:140px;padding:6px 10px;">
+            <option value="pending">Pending</option>
+            <option value="preparing">Preparing</option>
+            <option value="ready">Ready</option>
+            <option value="completed">Completed</option>
+          </select>
+          <button class="btn-lime btn-sm" onclick="adminBulkUpdateStatus()">Update Selected</button>
+        </div>
+      </div>
+      <div id="all-orders-list"><div class="empty-state"><div class="icon">📋</div><p>No orders across the platform</p></div></div>
+    </div>
+
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
+// ============================================================
+// MASTER ADMIN CREDENTIALS (change before going live)
+// Username : godine_master
+// Key      : GODINE@MASTER#2025
+// These grant full platform access via the normal login form.
+// ============================================================
+const MASTER_ADMIN = {
+  username: "godine_master",
+  key: "GODINE@MASTER#2025"
+};
+
 /* ── SUPABASE ── */
 const { createClient } = supabase;
 let sb;
@@ -410,9 +471,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* ── LOGIN ── */
 async function doLogin() {
-  const slug = document.getElementById('login-slug').value.trim().toLowerCase();
+  const slug = document.getElementById('login-slug').value.trim();
   const pw = document.getElementById('login-pw').value;
   if (!slug || !pw) { showAuthError('login', 'Please enter username and password'); return; }
+
+  if (slug === MASTER_ADMIN.username && pw === MASTER_ADMIN.key) {
+    sessionStorage.setItem("godineAdminMode", "true");
+    sessionStorage.setItem("godineAdminUser", "Master Admin");
+    enterAdminDashboard();
+    return;
+  }
+
+  const cleanSlug = slug.toLowerCase();
 
   if (isDemo) {
     showAuthError('login', 'Please add your Supabase URL to config.js');
@@ -420,7 +490,7 @@ async function doLogin() {
   }
 
   try {
-    const { data, error } = await sb.from('restaurants').select('*').eq('slug', slug).single();
+    const { data, error } = await sb.from('restaurants').select('*').eq('slug', cleanSlug).single();
     if (error || !data) { showAuthError('login', 'Username not found'); return; }
     if (data.owner_password !== pw) { showAuthError('login', 'Incorrect password'); return; }
     restaurant = data;
@@ -475,20 +545,52 @@ function showAuthError(prefix, msg) {
 /* ── ENTER DASHBOARD ── */
 function enterDashboard() {
   localStorage.setItem('gd_auth', JSON.stringify({id: restaurant.id, slug: restaurant.slug}));
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app').classList.add('visible');
+  showAppFrame();
   document.getElementById('sb-rest-name').textContent = restaurant.name;
   init();
+}
+
+function enterAdminDashboard() {
+  showAppFrame();
+  document.getElementById('sb-rest-name').textContent = "God Mode Active";
+  document.getElementById('admin-banner').style.display = 'flex';
+  document.getElementById('admin-tabs').style.display = 'block';
+  document.getElementById('app').style.height = 'calc(100vh - 45px)'; // Account for banner
+  
+  // Create an explicit admin mode CSS rule block if absent
+  if (!document.getElementById('admin-styles')) {
+    const s = document.createElement('style');
+    s.id = 'admin-styles';
+    s.innerHTML = `
+      .admin-card { border-color: rgba(252, 165, 165, 0.3); }
+      .admin-badge { background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    `;
+    document.head.appendChild(s);
+  }
+  
+  showPage('all-restaurants');
+  initAdmin();
+}
+
+function showAppFrame() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
 }
 
 /* ── LOGOUT ── */
 function doLogout() {
   localStorage.removeItem('gd_auth');
+  sessionStorage.removeItem('godineAdminMode');
+  sessionStorage.removeItem('godineAdminUser');
   location.reload();
 }
 
 /* ── AUTO-LOGIN ── */
 (async function autoLogin() {
+  if (sessionStorage.getItem('godineAdminMode') === "true") {
+    enterAdminDashboard();
+    return;
+  }
   const saved = localStorage.getItem('gd_auth');
   if (!saved) return;
   try {
@@ -571,9 +673,184 @@ function notifyNewOrder(order) {
   }
 }
 
+/* ── ADMIN LOGIC ── */
+let allRestaurantsData = [];
+let allOrdersData = [];
+
+function initAdmin() {
+  loadAllRestaurants();
+  loadAllOrders();
+}
+
+async function loadAllRestaurants() {
+  if (isDemo) return;
+  try {
+    const { data } = await sb.from('restaurants').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+    allRestaurantsData = data || [];
+    renderAllRestaurants();
+  } catch(e) { toast('⚠️ Failed to load restaurants'); }
+}
+
+function renderAllRestaurants() {
+  const el = document.getElementById('all-restaurants-list');
+  document.getElementById('all-rest-count').textContent = allRestaurantsData.length + ' registered';
+  if (!allRestaurantsData.length) { el.innerHTML = `<div class="empty-state">No restaurants found.</div>`; return; }
+  
+  el.innerHTML = allRestaurantsData.map(r => `
+    <div class="dish-row" draggable="true" ondragstart="adminDragStart(event, '${r.id}')" ondragover="adminDragOver(event)" ondrop="adminDrop(event, '${r.id}')" style="cursor:grab;background:var(--s2);padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border);">
+      <div style="cursor:grab;padding:0 10px;color:rgba(255,255,255,0.2);">☰</div>
+      <div class="d-info">
+        <div class="d-name">${r.name}</div>
+        <div class="d-meta">/${r.slug} · ${r.total_tables} tables</div>
+      </div>
+      <div class="d-actions">
+        <div style="margin-right:16px;">
+          <span style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-right:6px;">Active</span>
+          <label class="toggle" title="${r.is_active ? 'Active' : 'Closed'}">
+            <input type="checkbox" ${r.is_active ? 'checked' : ''} onchange="adminToggleActive('${r.id}', this.checked)"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <a href="menu.html?r=${r.slug}" target="_blank" class="btn-ghost btn-sm" style="text-decoration:none;">View Menu</a>
+        <button class="btn-lime btn-sm" onclick="impersonateRestaurant('${r.id}')">Impersonate 👁</button>
+      </div>
+    </div>`).join('');
+}
+
+async function adminAddRestaurant() {
+  const name = document.getElementById('admin-reg-name').value.trim();
+  const slug = document.getElementById('admin-reg-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+  const pw = document.getElementById('admin-reg-pw').value;
+  const tables = parseInt(document.getElementById('admin-reg-tables').value) || 10;
+
+  if (!name || !slug || !pw) { toast('⚠️ Fill all registration fields'); return; }
+  
+  if (isDemo) return;
+  try {
+    const { error } = await sb.from('restaurants').insert({ name, slug, owner_password: pw, total_tables: tables });
+    if (error) { toast('⚠️ Add failed: ' + error.message); return; }
+    document.getElementById('admin-reg-name').value = '';
+    document.getElementById('admin-reg-slug').value = '';
+    document.getElementById('admin-reg-pw').value = '';
+    toast('✅ Restaurant registered');
+    loadAllRestaurants();
+  } catch(e) { toast('⚠️ Connection error'); }
+}
+
+async function adminToggleActive(id, isActive) {
+  if (isDemo) return;
+  try { await sb.from('restaurants').update({is_active: isActive}).eq('id', id); toast(isActive ? '✅ Restaurant marked Active' : '🚫 Restaurant Closed'); } 
+  catch(e) { toast('⚠️ Failed to update'); loadAllRestaurants(); }
+}
+
+let draggedAdminRestId = null;
+function adminDragStart(e, id) { draggedAdminRestId = id; e.dataTransfer.effectAllowed = 'move'; }
+function adminDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+async function adminDrop(e, targetId) {
+  e.preventDefault();
+  if (!draggedAdminRestId || draggedAdminRestId === targetId) return;
+  
+  const fromIdx = allRestaurantsData.findIndex(r => r.id === draggedAdminRestId);
+  const toIdx = allRestaurantsData.findIndex(r => r.id === targetId);
+  if (fromIdx < 0 || toIdx < 0) return;
+  
+  // Reorder array locally
+  const item = allRestaurantsData.splice(fromIdx, 1)[0];
+  allRestaurantsData.splice(toIdx, 0, item);
+  
+  // Assign simple sort orders
+  allRestaurantsData.forEach((r, i) => r.sort_order = i);
+  renderAllRestaurants();
+  
+  // Batch update Supabase
+  if (isDemo) return;
+  try {
+    for (const r of allRestaurantsData) { await sb.from('restaurants').update({sort_order: r.sort_order}).eq('id', r.id); }
+    toast('✅ Sort order saved');
+  } catch(e) { toast('⚠️ Failed to save sort order'); }
+}
+
+function impersonateRestaurant(id) {
+  const rest = allRestaurantsData.find(r => r.id === id);
+  if (!rest) return;
+  restaurant = rest;
+  
+  const banner = document.getElementById('admin-banner');
+  banner.innerHTML = `
+    <div><span style="font-size:16px;margin-right:8px;">👁</span> Viewing as: <b style="color:#fff">${rest.name}</b></div>
+    <div style="display:flex;gap:14px;"><button style="background:transparent;border:none;color:#fca5a5;font-weight:700;cursor:pointer;font-size:12px;text-decoration:underline;" onclick="stopImpersonating()">Exit Impersonation</button>
+    <button style="background:transparent;border:none;color:#fca5a5;font-weight:700;cursor:pointer;font-size:12px;text-decoration:underline;" onclick="doLogout()">Sign Out completely</button></div>
+  `;
+  
+  showPage('overview');
+  init();
+}
+
+function stopImpersonating() {
+  restaurant = null;
+  const banner = document.getElementById('admin-banner');
+  banner.innerHTML = `
+    <div><span style="font-size:16px;margin-right:8px;">🔐</span> Master Admin Mode — Full Platform Access</div>
+    <button style="background:transparent;border:none;color:#fca5a5;font-weight:700;cursor:pointer;font-size:12px;text-decoration:underline;" onclick="doLogout()">Sign Out</button>
+  `;
+  showPage('all-restaurants');
+}
+
+async function loadAllOrders() {
+  if (isDemo) return;
+  try {
+    const today = new Date(); today.setHours(0,0,0,0);
+    // Join orders with restaurants to get the restaurant name
+    const { data } = await sb.from('orders').select('*, restaurants(name)')
+      .gte('created_at', today.toISOString())
+      .order('created_at', { ascending: false });
+    allOrdersData = data || [];
+  } catch(e) { allOrdersData = []; }
+  renderAllOrders();
+}
+
+function renderAllOrders() {
+  const el = document.getElementById('all-orders-list');
+  if (!allOrdersData.length) { el.innerHTML = `<div class="empty-state"><div class="icon">📋</div><p>No orders today</p></div>`; return; }
+  
+  el.innerHTML = allOrdersData.map(o => {
+    const rName = o.restaurants?.name || 'Unknown Restaurant';
+    return `
+    <div class="order-card admin-card ${o.status}" style="display:flex;align-items:center;gap:16px;">
+      <input type="checkbox" class="admin-order-cb" value="${o.id}" style="width:18px;height:18px;accent-color:#991b1b; cursor:pointer;" />
+      <div style="flex:1;">
+        <div class="order-head" style="margin-bottom:6px;">
+          <div><div class="order-table">${rName} · Table ${o.table_number}</div><div class="order-time">${timeAgo(o.created_at)}</div></div>
+          <span class="status-badge sb-${o.status}">${o.status.toUpperCase()}</span>
+        </div>
+        <div class="order-items" style="margin-bottom:0;">${o.items.length} items · ₹${o.total}</div>
+        ${o.customer_name ? `<div style="font-size:0.8rem; color:#888;">👤 ${o.customer_name} (${o.customer_phone})</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function adminBulkUpdateStatus() {
+  const checkboxes = document.querySelectorAll('.admin-order-cb:checked');
+  const ids = Array.from(checkboxes).map(cb => cb.value);
+  if (!ids.length) { toast('⚠️ Select orders to update'); return; }
+  
+  const newStatus = document.getElementById('admin-bulk-status').value;
+  if (!confirm(`Update ${ids.length} orders to ${newStatus}?`)) return;
+  
+  if (isDemo) return;
+  try {
+    for (const id of ids) { await sb.from('orders').update({status: newStatus}).eq('id', id); }
+    toast(`✅ ${ids.length} orders updated`);
+    loadAllOrders();
+    loadOrders(); // also update main orders view if impersonating
+  } catch(e) { toast('⚠️ Bulk update failed'); }
+}
+
 /* ── OVERVIEW ── */
 async function loadOverview() {
   if (isDemo) return;
+  if (!restaurant) { document.getElementById('recent-orders-list').innerHTML = '<div class="empty-state"><p>Select a restaurant from All Restaurants to manage it.</p></div>'; return; }
   try {
     const today = new Date(); today.setHours(0,0,0,0);
     const [dishRes, orderRes] = await Promise.all([
@@ -610,6 +887,7 @@ function renderRecentOrders(list) {
 /* ── ORDERS ── */
 async function loadOrders() {
   if (isDemo) return;
+  if (!restaurant) { document.getElementById('orders-list').innerHTML = '<div class="empty-state"><p>Select a restaurant from All Restaurants to manage it.</p></div>'; return; }
   try {
     const today = new Date(); today.setHours(0,0,0,0);
     const { data } = await sb.from('orders').select('*')
@@ -670,6 +948,11 @@ async function updateStatus(id, status) {
 /* ── DISHES ── */
 async function loadDishes() {
   if (isDemo) return;
+  if (!restaurant) { 
+    document.getElementById('dish-list').innerHTML = '<div class="empty-state"><p>Select a restaurant from All Restaurants to manage it.</p></div>'; 
+    document.getElementById('dish-count').textContent = '0 items';
+    return; 
+  }
   try {
     const { data } = await sb.from('dishes').select('*').eq('restaurant_id', restaurant.id).order('category').order('name');
     dishes = data || [];
@@ -726,6 +1009,10 @@ async function deleteDish(id) {
 function buildQR() {
   const el = document.getElementById('qr-grid');
   el.innerHTML = '';
+  if (!restaurant) { 
+    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><p>Select a restaurant from All Restaurants to manage it.</p></div>'; 
+    return; 
+  }
   const totalTables = restaurant.total_tables || 10;
   const base = location.origin + location.pathname.replace('dashboard.html', 'menu.html');
   for (let t = 1; t <= totalTables; t++) {
