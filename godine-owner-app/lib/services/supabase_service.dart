@@ -68,6 +68,9 @@ class SupabaseService {
         .maybeSingle();
     if (res == null) return null;
     final restaurant = Restaurant.fromJson(res);
+    if (!restaurant.isActive) {
+      throw Exception('suspended');
+    }
     if (restaurant.ownerPassword != password) return null;
     await saveAuth(restaurant.id, restaurant.slug);
     return restaurant;
@@ -103,7 +106,12 @@ class SupabaseService {
         .eq('id', id)
         .maybeSingle();
     if (res == null) return null;
-    return Restaurant.fromJson(res);
+    final restaurant = Restaurant.fromJson(res);
+    if (!restaurant.isActive) {
+      await clearAuth();
+      return null;
+    }
+    return restaurant;
   }
 
   // ───── Dishes ─────

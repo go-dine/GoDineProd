@@ -64,7 +64,11 @@ class _LoginScreenState extends State<LoginScreen> {
         widget.onLogin(restaurant);
       }
     } catch (e) {
-      setState(() => _error = 'Connection error. Check internet and try again.');
+      if (e.toString().contains('suspended')) {
+        setState(() => _error = 'Account suspended by platform admin');
+      } else {
+        setState(() => _error = 'Connection error. Check internet and try again.');
+      }
     }
     if (mounted) setState(() => _loading = false);
   }
