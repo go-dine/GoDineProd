@@ -5,7 +5,13 @@ import '../services/supabase_service.dart';
 
 class LoginScreen extends StatefulWidget {
   final void Function(Restaurant restaurant) onLogin;
-  const LoginScreen({super.key, required this.onLogin});
+  final bool isInitializing;
+  
+  const LoginScreen({
+    super.key, 
+    required this.onLogin,
+    this.isInitializing = false,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -37,14 +43,14 @@ class _LoginScreenState extends State<LoginScreen> {
     final slug = _slugCtrl.text.trim().toLowerCase();
     final pw = _passwordCtrl.text.trim();
     if (slug.isEmpty || pw.isEmpty) {
-      setState(() => _error = 'Please enter slug and password');
+      setState(() => _error = 'Please enter username and password');
       return;
     }
     setState(() { _loading = true; _error = ''; });
     try {
       final restaurant = await SupabaseService.login(slug, pw);
       if (restaurant == null) {
-        setState(() => _error = 'Invalid slug or password');
+        setState(() => _error = 'Invalid username or password');
       } else {
         widget.onLogin(restaurant);
       }
@@ -62,11 +68,11 @@ class _LoginScreenState extends State<LoginScreen> {
     final pw = _passwordCtrl.text.trim();
     final tables = int.tryParse(_tablesCtrl.text) ?? 10;
     if (name.isEmpty || slug.isEmpty || pw.isEmpty) {
-      setState(() => _error = 'Name, slug and password are required');
+      setState(() => _error = 'Name, username and password are required');
       return;
     }
     if (slug.length < 3) {
-      setState(() => _error = 'Slug must be at least 3 characters');
+      setState(() => _error = 'Username must be at least 3 characters');
       return;
     }
     setState(() { _loading = true; _error = ''; });
@@ -81,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('duplicate') || msg.contains('unique')) {
-        setState(() => _error = 'This slug is already taken. Try another.');
+        setState(() => _error = 'This username is already taken. Try another.');
       } else {
         setState(() => _error = 'Failed to register: $msg');
       }
@@ -110,18 +116,8 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Logo
-                Text.rich(
-                  TextSpan(children: [
-                    const TextSpan(
-                      text: 'Go',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.white),
-                    ),
-                    TextSpan(
-                      text: 'Dine',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.lime),
-                    ),
-                  ]),
-                  textAlign: TextAlign.center,
+                Center(
+                  child: Image.asset('assets/splash-icon.png', height: 42, fit: BoxFit.contain),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -137,8 +133,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   _input(_nameCtrl, 'e.g. The Rustic Fork', capitalization: TextCapitalization.words),
                 ],
 
-                // Slug
-                _label(_isLogin ? 'Restaurant Slug' : 'URL Slug *'),
+                // Username
+                _label(_isLogin ? 'Restaurant Username' : 'Username *'),
                 _input(
                   _slugCtrl,
                   'e.g. rustic-fork',
@@ -189,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _loading ? null : (_isLogin ? _handleLogin : _handleRegister),
+                    onPressed: (_loading || widget.isInitializing) ? null : (_isLogin ? _handleLogin : _handleRegister),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.lime,
                       foregroundColor: AppColors.bg,
@@ -199,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       disabledBackgroundColor: AppColors.lime.withOpacity(0.6),
                     ),
-                    child: _loading
+                    child: (_loading || widget.isInitializing)
                         ? const SizedBox(
                             width: 20,
                             height: 20,

@@ -102,19 +102,25 @@ async function boot() {
     return;
   }
 
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) {
+  const savedGuest = localStorage.getItem('godine_guest');
+  if (!savedGuest) {
     window.location.href = `menu.html?r=${restaurantSlug}`;
     return;
   }
   
-  currentUser = session.user;
+  try {
+    currentUser = JSON.parse(savedGuest);
+  } catch(e) {
+    window.location.href = `menu.html?r=${restaurantSlug}`;
+    return;
+  }
+
   document.getElementById('auth-guard').style.display = 'none';
   document.getElementById('header').style.display = 'flex';
   document.getElementById('content').style.display = 'block';
   
   document.querySelector('.back-link').href = `menu.html?r=${restaurantSlug}`;
-  document.getElementById('rest-name').textContent = `Hello, ${currentUser.user_metadata?.full_name?.split(' ')[0] || 'there'}!`;
+  document.getElementById('rest-name').textContent = `Hello, ${currentUser.name.split(' ')[0]}!`;
 
   await fetchOrders();
   setupRealtime();
@@ -123,7 +129,7 @@ async function boot() {
 async function fetchOrders() {
   const { data } = await sb.from('orders')
     .select('*')
-    .eq('customer_uid', currentUser.id)
+    .eq('customer_phone', currentUser.phone)
     .order('created_at', { ascending: false });
   
   orders = data || [];
@@ -209,7 +215,7 @@ function createOrderCard(o) {
 
 function setupRealtime() {
   sb.channel('customer-orders')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `customer_uid=eq.${currentUser.id}` }, payload => {
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `customer_phone=eq.${currentUser.phone}` }, payload => {
       fetchOrders();
     }).subscribe();
 }

@@ -17,12 +17,11 @@ import 'models/order.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SupabaseService.init();
-  await NotificationService.init();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: AppColors.bg,
     statusBarIconBrightness: Brightness.light,
   ));
+  // Launch the UI immediately — initialization happens inside the splash screen
   runApp(const GoDineApp());
 }
 
@@ -32,7 +31,7 @@ class GoDineApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'GoDine Owner',
+      title: 'Go Dine',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       home: const AuthGate(),
@@ -49,25 +48,41 @@ class AuthGate extends StatefulWidget {
 
 class _AuthGateState extends State<AuthGate> {
   Restaurant? _restaurant;
-  bool _loading = true;
+  bool _isInitializing = true;
 
   @override
   void initState() {
     super.initState();
-    _autoLogin();
+    _initAndAutoLogin();
   }
 
-  Future<void> _autoLogin() async {
+  Future<void> _initAndAutoLogin() async {
     try {
-      final restaurant = await SupabaseService.autoLogin();
-      if (mounted) {
-        setState(() {
-          _restaurant = restaurant;
-          _loading = false;
-        });
-      }
+      // Initialize Supabase (with timeout)
+      await SupabaseService.init().timeout(const Duration(seconds: 5));
     } catch (_) {
-      if (mounted) setState(() => _loading = false);
+      // If Supabase init fails/times out, we'll just show login screen
+    }
+
+    try {
+      // Initialize notifications (with timeout, non-blocking)
+      await NotificationService.init().timeout(const Duration(seconds: 3));
+    } catch (_) {
+      // Notifications are non-critical
+    }
+
+    Restaurant? restaurant;
+    try {
+      // Try auto-login (with timeout)
+      restaurant = await SupabaseService.autoLogin()
+          .timeout(const Duration(seconds: 5));
+    } catch (_) {}
+
+    if (mounted) {
+      setState(() {
+        _isInitializing = false;
+        _restaurant = restaurant;
+      });
     }
   }
 
@@ -82,38 +97,14 @@ class _AuthGateState extends State<AuthGate> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return Scaffold(
-        backgroundColor: AppColors.bg,
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text.rich(
-                TextSpan(children: [
-                  const TextSpan(
-                    text: 'Go',
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.white),
-                  ),
-                  TextSpan(
-                    text: 'Dine',
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.lime),
-                  ),
-                ]),
-              ),
-              const SizedBox(height: 20),
-              const CircularProgressIndicator(color: AppColors.lime),
-            ],
-          ),
-        ),
-      );
+    if (_restaurant != null) {
+      return _MainScaffold(restaurant: _restaurant!, onLogout: _handleLogout);
     }
 
-    if (_restaurant == null) {
-      return LoginScreen(onLogin: _handleLogin);
-    }
-
-    return _MainScaffold(restaurant: _restaurant!, onLogout: _handleLogout);
+    return LoginScreen(
+      onLogin: _handleLogin,
+      isInitializing: _isInitializing,
+    );
   }
 }
 
@@ -182,17 +173,9 @@ class _MainScaffoldState extends State<_MainScaffold> {
         titleSpacing: 16,
         title: Row(
           children: [
-            Text.rich(
-              TextSpan(children: [
-                const TextSpan(
-                  text: 'Go',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.white),
-                ),
-                TextSpan(
-                  text: 'Dine',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.lime),
-                ),
-              ]),
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Image.asset('assets/splash-icon.png', height: 24, fit: BoxFit.contain),
             ),
             const SizedBox(width: 12),
             Expanded(

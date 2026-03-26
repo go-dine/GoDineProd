@@ -343,17 +343,20 @@ a{color:inherit;text-decoration:none}
 <!-- TOAST -->
 <div id="toast"></div>
 
-<!-- PHONE MODAL -->
-<div id="phone-modal" class="modal-overlay" onclick="if(event.target===this)closePhoneModal()">
+<!-- GUEST MODAL -->
+<div id="guest-modal" class="modal-overlay" onclick="if(event.target===this)closeGuestModal()">
   <div class="modal-box">
-    <button class="modal-close" onclick="closePhoneModal()">✕</button>
-    <div class="modal-title">Almost there!</div>
-    <div class="modal-sub">We just need your phone number for order updates.</div>
+    <button class="modal-close" onclick="closeGuestModal()">✕</button>
+    <div class="modal-title">Your Details</div>
+    <div class="modal-sub">Let us know who you are to track your order.</div>
     
+    <label class="modal-label">Your Name</label>
+    <input type="text" id="guest-name" class="modal-input" placeholder="e.g. John Doe">
+
     <label class="modal-label">Phone Number</label>
-    <input type="tel" id="profile-phone" class="modal-input" placeholder="e.g. 9876543210" onkeypress="if(event.key==='Enter')savePhoneAndOrder()">
+    <input type="tel" id="guest-phone" class="modal-input" placeholder="e.g. 9876543210" onkeypress="if(event.key==='Enter')saveGuestAndOrder()">
     
-    <button class="place-order-btn" id="save-phone-btn" onclick="savePhoneAndOrder()" style="margin-top:16px;">Save & Place Order →</button>
+    <button class="place-order-btn" id="save-guest-btn" onclick="saveGuestAndOrder()" style="margin-top:16px;">Save & Place Order →</button>
   </div>
 </div>
 
@@ -396,20 +399,9 @@ document.getElementById('search-input').addEventListener('input', e => renderMen
 
 /* ── BOOT ── */
 async function boot() {
-  let currentUser = undefined;
-  
-  const saved = localStorage.getItem('godine_cart');
-  if (saved) { try { cart = JSON.parse(saved); updateCartBar(); } catch(e){} }
-
-  if (!isDemo) {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) {
-      window.currentUser = session.user;
-      const name = window.currentUser.user_metadata?.full_name || 'Guest';
-      showToast(`👋 Welcome back, ${name}!`);
-    } else {
-      window.currentUser = null;
-    }
+  const savedGuest = localStorage.getItem('godine_guest');
+  if (savedGuest) {
+    try { window.currentUser = JSON.parse(savedGuest); } catch(e){}
   }
 
   if (isDemo) {
@@ -622,55 +614,43 @@ async function triggerCheckout() {
   if (!items.length) { showToast('⚠️ Cart is empty'); return; }
 
   if (isDemo) {
-    actualPlaceOrder('Demo User', '+910000000000', null);
+    actualPlaceOrder('Demo User', '+910000000000');
     return;
   }
 
-  if (!currentUser) {
-    showToast('Redirecting to Google Sign-In...');
-    const { error } = await sb.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.href }
-    });
-    if (error) showToast('⚠️ Auth Error');
+  if (!window.currentUser || !window.currentUser.phone || !window.currentUser.name) {
+    document.getElementById('guest-modal').classList.add('open');
     return;
   }
 
-  const phone = currentUser.user_metadata?.phone;
-  if (!phone) {
-    document.getElementById('phone-modal').classList.add('open');
-    return;
-  }
-
-  const name = currentUser.user_metadata?.full_name || 'Customer';
-  actualPlaceOrder(name, phone, currentUser.id);
+  actualPlaceOrder(window.currentUser.name, window.currentUser.phone);
 }
 
-function closePhoneModal() { document.getElementById('phone-modal').classList.remove('open'); }
+function closeGuestModal() { document.getElementById('guest-modal').classList.remove('open'); }
 
-async function savePhoneAndOrder() {
-  let phone = document.getElementById('profile-phone').value.trim();
-  if (!phone) { showToast('⚠️ Enter phone'); return; }
+async function saveGuestAndOrder() {
+  let name = document.getElementById('guest-name').value.trim();
+  let phone = document.getElementById('guest-phone').value.trim();
+  
+  if (!name) { showToast('⚠️ Enter your name'); return; }
+  if (!phone) { showToast('⚠️ Enter phone number'); return; }
+  
   phone = phone.replace(/[\s\-\(\)]/g, '');
   if (!phone.startsWith('+')) phone = '+91' + phone;
 
-  const btn = document.getElementById('save-phone-btn');
+  const btn = document.getElementById('save-guest-btn');
   btn.disabled = true; btn.textContent = 'Saving...';
 
-  const { data, error } = await sb.auth.updateUser({ data: { phone } });
-  if (error) {
-    showToast('⚠️ Failed to save phone');
-    btn.disabled = false; btn.textContent = 'Save & Place Order →';
-    return;
-  }
-
-  currentUser = data.user;
-  closePhoneModal();
-  const name = currentUser.user_metadata?.full_name || 'Customer';
-  actualPlaceOrder(name, phone, currentUser.id);
+  window.currentUser = { name, phone };
+  localStorage.setItem('godine_guest', JSON.stringify(window.currentUser));
+  
+  closeGuestModal();
+  btn.disabled = false; btn.textContent = 'Save & Place Order →';
+  
+  actualPlaceOrder(name, phone);
 }
 
-async function actualPlaceOrder(name, phone, uid) {
+async function actualPlaceOrder(name, phone) {
   const items = Object.values(cart);
   if (!items.length) return;
   const btn = document.getElementById('place-btn');
@@ -695,7 +675,7 @@ async function actualPlaceOrder(name, phone, uid) {
       table_number: tableNum,
       customer_name: name,
       customer_phone: phone,
-      customer_uid: uid,
+      customer_uid: null,
       items: orderItems,
       total,
       note: originalNote,
