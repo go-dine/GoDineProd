@@ -137,8 +137,67 @@ class _AdminRestaurantsTabState extends State<_AdminRestaurantsTab> {
       for (final r in _restaurants) {
         await SupabaseService.client.from('restaurants').update({'sort_order': r.sortOrder}).eq('id', r.id);
       }
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sort order updated'), backgroundColor: AppColors.lime, behavior: SnackBarBehavior.floating));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sort order updated'), backgroundColor: AppColors.lime, behavior: SnackBarBehavior.floating));
     } catch (_) {}
+  }
+
+  Future<void> _updateSubscription(BuildContext context, Restaurant r) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: r.subscriptionEnd ?? DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.lime,
+              onPrimary: Color(0xFF050505),
+              surface: AppColors.surface2,
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked == null) return;
+    
+    bool isTrial = r.isTrial;
+    if (!mounted) return;
+    await showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setStateSB) => AlertDialog(
+          backgroundColor: AppColors.surface1,
+          title: const Text('Subscription Type', style: TextStyle(color: Colors.white, fontSize: 16)),
+          content: CheckboxListTile(
+            title: const Text('Is this a Trial?', style: TextStyle(color: Colors.white, fontSize: 14)),
+            value: isTrial,
+            onChanged: (val) => setStateSB(() => isTrial = val ?? true),
+            activeColor: AppColors.lime,
+            checkColor: const Color(0xFF050505),
+            contentPadding: EdgeInsets.zero,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Save', style: TextStyle(color: AppColors.lime)),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      await SupabaseService.client.from('restaurants').update({
+        'subscription_end': picked.toUtc().toIso8601String(),
+        'is_trial': isTrial,
+      }).eq('id', r.id);
+      _loadAll(); // reload
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to update subscription')));
+    }
   }
 
   @override
@@ -161,7 +220,25 @@ class _AdminRestaurantsTabState extends State<_AdminRestaurantsTab> {
           child: ListTile(
             contentPadding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
             title: Text(r.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-            subtitle: Text('/${r.slug} • ${r.totalTables} tables', style: const TextStyle(color: AppColors.muted, fontSize: 12)),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('/${r.slug} • ${r.totalTables} tables', style: const TextStyle(color: AppColors.muted, fontSize: 12)),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text('Exp: ${r.subscriptionEnd != null ? r.subscriptionEnd!.toLocal().toString().split(' ')[0] : 'None'}', style: const TextStyle(color: AppColors.muted, fontSize: 11)),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () => _updateSubscription(context, r),
+                      child: const Text('Edit', style: TextStyle(color: AppColors.lime, fontSize: 11, decoration: TextDecoration.underline)),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(r.isTrial ? '(Trial)' : '(Sub)', style: const TextStyle(color: AppColors.muted, fontSize: 11)),
+                  ],
+                ),
+              ],
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

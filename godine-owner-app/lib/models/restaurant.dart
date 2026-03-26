@@ -7,6 +7,8 @@ class Restaurant {
   final bool isActive;
   final int sortOrder;
   final String createdAt;
+  final bool isTrial;
+  final DateTime? subscriptionEnd;
 
   Restaurant({
     required this.id,
@@ -17,6 +19,8 @@ class Restaurant {
     this.isActive = true,
     this.sortOrder = 0,
     required this.createdAt,
+    this.isTrial = true,
+    this.subscriptionEnd,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -29,6 +33,10 @@ class Restaurant {
       isActive: json['is_active'] as bool? ?? true,
       sortOrder: (json['sort_order'] as num?)?.toInt() ?? 0,
       createdAt: json['created_at'] as String? ?? '',
+      isTrial: json['is_trial'] as bool? ?? true,
+      subscriptionEnd: json['subscription_end'] != null 
+          ? DateTime.parse(json['subscription_end'] as String) 
+          : null,
     );
   }
 
@@ -40,5 +48,7 @@ class Restaurant {
         'total_tables': totalTables,
         'is_active': isActive,
         'sort_order': sortOrder,
+        'is_trial': isTrial,
+        'subscription_end': subscriptionEnd?.toIso8601String(),
       };
 }

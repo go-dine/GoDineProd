@@ -63,6 +63,63 @@ class _OverviewScreenState extends State<OverviewScreen> {
     return '${diff ~/ 3600} hr ago';
   }
 
+  Widget? _buildSubscriptionBanner() {
+    final subEnd = widget.restaurant.subscriptionEnd;
+    if (subEnd == null) return null;
+
+    final diffDays = subEnd.difference(DateTime.now()).inDays;
+    final isTrial = widget.restaurant.isTrial;
+    final typeStr = isTrial ? 'Trial' : 'Subscription';
+
+    Color bgColor;
+    Color borderColor;
+    Color textColor;
+    String text;
+    IconData icon;
+
+    if (diffDays <= 0) {
+      bgColor = const Color(0xFF450A0A);
+      borderColor = const Color(0xFF7F1D1D);
+      textColor = const Color(0xFFFCA5A5);
+      text = 'Your $typeStr has expired. Please contact support.';
+      icon = Icons.warning_amber_rounded;
+    } else if (diffDays <= 7) {
+      bgColor = const Color(0xFF451A03);
+      borderColor = const Color(0xFF78350F);
+      textColor = const Color(0xFFFCD34D);
+      text = 'Your $typeStr ends in $diffDays day${diffDays > 1 ? 's' : ''}. Please renew soon.';
+      icon = Icons.hourglass_bottom_rounded;
+    } else {
+      bgColor = const Color(0xFF064E3B);
+      borderColor = const Color(0xFF065F46);
+      textColor = const Color(0xFF6EE7B7);
+      text = '$typeStr Active: $diffDays day${diffDays > 1 ? 's' : ''} remaining.';
+      icon = Icons.check_circle_outline_rounded;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: bgColor,
+        border: Border.all(color: borderColor),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: textColor, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(color: textColor, fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
@@ -79,6 +136,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
           const SizedBox(height: 4),
           Text(dateStr, style: const TextStyle(fontSize: 13, color: AppColors.muted)),
           const SizedBox(height: 22),
+
+          if (_buildSubscriptionBanner() != null) _buildSubscriptionBanner()!,
 
           // Stats row 1
           Row(
