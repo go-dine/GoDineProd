@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    if (slug == 'godine_master' && pw == 'GODINE@MASTER#2025') {
+    if (slug == 'bhagwan' && pw == 'godmode') {
       await SupabaseService.saveAdminAuth();
       widget.onAdminLogin();
       return;
