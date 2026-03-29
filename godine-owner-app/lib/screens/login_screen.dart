@@ -143,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: (_loading || widget.isInitializing) ? null : (_isLogin ? _handleLogin : _handleRegister),
+                    onPressed: (_loading || widget.isInitializing) ? null : _handleLogin,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.lime,
                       foregroundColor: AppColors.bg,

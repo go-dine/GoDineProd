@@ -461,7 +461,9 @@ document.querySelectorAll('.hw-step').forEach(s => s.addEventListener('click', (
 
 /* ── Decorative QR Canvas ── */
 (function drawQR() {
-  const c = document.getElementById('qr-canvas'), x = c.getContext('2d');
+  const c = document.getElementById('qr-canvas');
+  if (!c) return;
+  const x = c.getContext('2d');
   const sz = 160, cell = Math.floor(sz / 11), pad = Math.floor((sz - cell * 11) / 2);
   const grid = [
     [1,1,1,1,1,1,1,0,0,1,0],
@@ -477,7 +479,20 @@ document.querySelectorAll('.hw-step').forEach(s => s.addEventListener('click', (
     [1,0,1,0,1,1,1,0,0,1,0]
   ];
   grid.forEach((row, i) => row.forEach((v, j) => {
-    if (v) { x.fillStyle = 'rgba(182,255,42,.9)'; x.beginPath(); x.roundRect(pad + j * cell + 1, pad + i * cell + 1, cell - 2, cell - 2, 2); x.fill(); }
+    if (v) { 
+      x.fillStyle = 'rgba(182,255,42,.9)'; 
+      x.beginPath(); 
+      const rx = pad + j * cell + 1;
+      const ry = pad + i * cell + 1;
+      const rw = cell - 2;
+      const rh = cell - 2;
+      if (x.roundRect) {
+        x.roundRect(rx, ry, rw, rh, 2);
+      } else {
+        x.rect(rx, ry, rw, rh); // Fallback for older browsers
+      }
+      x.fill(); 
+    }
   }));
 })();
 
@@ -498,12 +513,16 @@ async function submitWaitlist() {
   
   if (!restaurant || !location || !phone) { alert('Please fill in all fields'); return; }
   
+  if (typeof supabase === 'undefined') {
+    alert('Database connection not initialized. Please check your internet connection or project configuration.');
+    return;
+  }
+
   const btn = document.getElementById('wl-submit-btn');
   btn.disabled = true; btn.textContent = 'Submitting...';
 
   try {
-    const { createClient } = supabase;
-    const sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+    const sb = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
     const { error } = await sb.from('leads').insert({ 
       restaurant_name: restaurant, 
       location: location, 
@@ -516,7 +535,11 @@ async function submitWaitlist() {
     document.getElementById('modal-success').style.display = 'flex';
   } catch(e) {
     console.error(e);
-    alert('Failed to submit. Please try again.');
+    let msg = 'Failed to submit. Please try again.';
+    if (e.message && e.message.includes('relation "leads" does not exist')) {
+        msg = 'Database Setup Incomplete: The "leads" table is missing in Supabase.';
+    }
+    alert(msg);
     btn.disabled = false; btn.textContent = 'Submit →';
   }
 }

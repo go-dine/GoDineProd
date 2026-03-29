@@ -705,7 +705,12 @@ async function actualPlaceOrder(name, phone) {
   } catch(e) {
     console.error(e);
     if (btn) { btn.disabled = false; btn.textContent = 'Place Order →'; }
-    showToast('⚠️ Failed to place order. Try again.');
+    
+    let msg = '⚠️ Failed to place order. Try again.';
+    if (e.message && e.message.includes('column "token_number" of relation "orders" does not exist')) {
+        msg = 'Database Setup Incomplete: The "token_number" column is missing in the orders table.';
+    }
+    showToast(msg);
   }
 }
 
