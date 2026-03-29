@@ -87,7 +87,7 @@ class GoDineWordmark extends StatelessWidget {
           TextSpan(
             text: 'GO',
             style: TextStyle(
-              color: const Color(0xFF2D2D2D),
+              color: const Color(0xFFF0F0EC),
               fontSize: fontSize,
               fontWeight: FontWeight.w800,
             ),

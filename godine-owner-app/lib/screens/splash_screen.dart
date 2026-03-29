@@ -34,10 +34,10 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // ── Logo appears (0 → 35%) ──────────────────────────────
-    _logoScale = Tween<double>(begin: 0.4, end: 1.0).animate(
+    _logoScale = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(
         parent: _masterController,
-        curve: const Interval(0.0, 0.35, curve: Curves.elasticOut),
+        curve: const Interval(0.0, 0.40, curve: Curves.easeOutBack),
       ),
     );
 
@@ -101,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen>
         return Opacity(
           opacity: _exitOpacity.value,
           child: Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: const Color(0xFF050505),
             body: Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
