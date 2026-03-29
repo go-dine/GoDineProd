@@ -600,32 +600,48 @@ function showPage(id) {
 
 /* ── INIT & REALTIME ── */
 let realtimeChannel;
+let leadsChannel;
 const orderSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
+function setupRealtime() {
+  if (isDemo) return;
+
+  // 1. Leads Listener (Platform-wide, always active if not already)
+  if (!leadsChannel) {
+    leadsChannel = sb.channel('public:leads')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, payload => {
+        loadLeads();
+      }).subscribe();
+  }
+
+  // 2. Orders Listener
+  if (restaurant && !realtimeChannel) {
+    // Owner Mode: Filtered by restaurant
+    realtimeChannel = sb.channel('public:orders:' + restaurant.id)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `restaurant_id=eq.${restaurant.id}` }, payload => {
+        loadOrders();
+        loadOverview();
+        if (payload.eventType === 'INSERT') notifyNewOrder(payload.new);
+      }).subscribe();
+  } else if (!restaurant && !realtimeChannel && sessionStorage.getItem('godineAdminMode') === "true") {
+    // Master Admin Mode: All orders
+    realtimeChannel = sb.channel('public:all-orders')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+        loadAllOrders();
+        loadOverview();
+      }).subscribe();
+  }
+}
 
 function init() {
   requestNotificationPermission();
   loadOverview();
   loadDishes();
   lucide.createIcons();
-  setInterval(loadOrders, 30000); // slower fallback polling
+  setInterval(loadOrders, 30000); 
   setInterval(loadOverview, 60000);
   
-  if (!isDemo && !realtimeChannel) {
-    realtimeChannel = sb.channel('public:orders')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `restaurant_id=eq.${restaurant.id}` }, payload => {
-        loadOrders();
-        loadOverview();
-        if (payload.eventType === 'INSERT') {
-          notifyNewOrder(payload.new);
-        }
-      }).subscribe();
-      
-    // Add listener for leads
-    sb.channel('public:leads')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, payload => {
-        loadLeads();
-      }).subscribe();
-  }
+  setupRealtime();
 
   document.getElementById('overview-date').textContent =
     new Date().toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
@@ -687,15 +703,20 @@ function initAdmin() {
   loadAllRestaurants();
   loadAllOrders();
   loadLeads();
+  setupRealtime();
 }
 
 async function loadAllRestaurants() {
   if (isDemo) return;
   try {
-    const { data } = await sb.from('restaurants').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+    const { data, error } = await sb.from('restaurants').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+    if (error) throw error;
     allRestaurantsData = data || [];
     renderAllRestaurants();
-  } catch(e) { toast('⚠️ Failed to load restaurants'); }
+  } catch(e) { 
+    console.error(e);
+    toast('⚠️ Failed to load restaurants'); 
+  }
 }
 
 function renderAllRestaurants() {
@@ -805,6 +826,12 @@ function impersonateRestaurant(id) {
   if (!rest) return;
   restaurant = rest;
   
+  // Clear old order channel to re-subscribe with filter
+  if (realtimeChannel) {
+    sb.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+  
   const banner = document.getElementById('admin-banner');
   banner.innerHTML = `
     <div><span style="font-size:16px;margin-right:8px;">👁</span> Viewing as: <b style="color:#fff">${rest.name}</b></div>
@@ -818,20 +845,32 @@ function impersonateRestaurant(id) {
 
 function stopImpersonating() {
   restaurant = null;
+  
+  // Reset order channel to master mode
+  if (realtimeChannel) {
+    sb.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+
   const banner = document.getElementById('admin-banner');
   banner.innerHTML = `
     <div><span style="font-size:16px;margin-right:8px;">🔐</span> Master Admin Mode — Full Platform Access</div>
     <button style="background:transparent;border:none;color:#fca5a5;font-weight:700;cursor:pointer;font-size:12px;text-decoration:underline;" onclick="doLogout()">Sign Out</button>
   `;
   showPage('all-restaurants');
+  setupRealtime();
 }
 
 async function loadLeads() {
   if (isDemo) return;
   try {
-    const { data } = await sb.from('leads').select('*').order('created_at', { ascending: false });
+    const { data, error } = await sb.from('leads').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
     renderLeads(data || []);
-  } catch(e) { toast('⚠️ Failed to load leads'); }
+  } catch(e) { 
+    console.error(e);
+    toast('⚠️ Failed to load inquiries: ' + (e.message || 'Check database'));
+  }
 }
 
 function renderLeads(list) {
@@ -856,12 +895,16 @@ async function loadAllOrders() {
   if (isDemo) return;
   try {
     const today = new Date(); today.setHours(0,0,0,0);
-    // Join orders with restaurants to get the restaurant name
-    const { data } = await sb.from('orders').select('*, restaurants(name)')
+    const { data, error } = await sb.from('orders').select('*, restaurants(name)')
       .gte('created_at', today.toISOString())
       .order('created_at', { ascending: false });
+    if (error) throw error;
     allOrdersData = data || [];
-  } catch(e) { allOrdersData = []; }
+  } catch(e) { 
+    console.error(e);
+    allOrdersData = []; 
+    toast('⚠️ Failed to load orders');
+  }
   renderAllOrders();
 }
 
