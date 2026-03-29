@@ -186,7 +186,7 @@ function createOrderCard(o) {
     <div class="order-card">
       <div class="order-head">
         <div>
-          <div class="order-id">${idShort}</div>
+          <div class="order-id">${idShort} ${o.token_number ? `<span style="background:#c1ff00;color:#000;padding:2px 8px;border-radius:6px;font-size:0.75rem;margin-left:10px;font-weight:800;">TOKEN: ${o.token_number}</span>` : ''}</div>
           <div style="font-size:0.8rem;color:#666;margin-top:2px;">${date}</div>
         </div>
         <div class="order-status status-${o.status}">${statusText}</div>

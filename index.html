@@ -22,6 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="config.js"></script>
 <style>
@@ -254,7 +255,7 @@ footer p{font-size:12px;color:var(--muted)}
   </h1>
   <p class="hero-sub">Go Dine turns every table into a seamless digital experience — QR menus, real-time orders, zero waiting.</p>
   <div class="hero-ctas">
-    <a href="dashboard.html" class="btn-primary">Start for Free</a>
+    <a href="javascript:void(0)" onclick="openWaitlist()" class="btn-primary">Start for Free</a>
     <a href="menu.html?r=demo&table=demo" class="btn-outline">See Live Demo →</a>
   </div>
   <div class="hero-phone-wrap">
@@ -338,7 +339,7 @@ footer p{font-size:12px;color:var(--muted)}
       <div class="p-plan">STARTER</div>
       <div class="p-price">₹0<sub>/mo</sub></div>
       <ul class="p-list"><li>Up to 5 tables</li><li>Digital QR menu</li><li>Basic order management</li><li>Go Dine branded</li></ul>
-      <a href="dashboard.html" class="p-btn-ghost">Get Started Free</a>
+      <a href="javascript:void(0)" onclick="openWaitlist()" class="p-btn-ghost">Get Started Free</a>
     </div>
     <div class="p-card pro">
       <div class="p-plan">PRO <span class="pro-badge">POPULAR</span></div>
@@ -372,13 +373,12 @@ footer p{font-size:12px;color:var(--muted)}
 <div id="modal-bg" onclick="if(event.target===this)closeWaitlist()">
   <div class="modal">
     <div id="modal-form">
-      <h3>Join the Waitlist</h3>
-      <p>We'll reach out when Go Dine is ready for your restaurant.</p>
-      <input class="modal-input" id="wl-name" placeholder="Your name" type="text"/>
-      <input class="modal-input" id="wl-restaurant" placeholder="Restaurant name" type="text"/>
-      <input class="modal-input" id="wl-email" placeholder="Email address" type="email"/>
-      <input class="modal-input" id="wl-phone" placeholder="Phone number" type="tel"/>
-      <button class="modal-submit" onclick="submitWaitlist()">Join Waitlist →</button>
+      <h3>Start for Free</h3>
+      <p>Enter your details and we'll reach out soon to set up your restaurant.</p>
+      <input class="modal-input" id="wl-restaurant" placeholder="Restaurant Name" type="text"/>
+      <input class="modal-input" id="wl-location" placeholder="Location (City/Area)" type="text"/>
+      <input class="modal-input" id="wl-phone" placeholder="Phone Number" type="tel"/>
+      <button class="modal-submit" id="wl-submit-btn" onclick="submitWaitlist()">Submit →</button>
       <button class="modal-close" onclick="closeWaitlist()">Cancel</button>
     </div>
     <div class="modal-success" id="modal-success">
@@ -491,12 +491,34 @@ function closeWaitlist() {
   document.getElementById('modal-form').style.display = '';
   document.getElementById('modal-success').style.display = 'none';
 }
-function submitWaitlist() {
-  const name = document.getElementById('wl-name').value.trim();
-  const email = document.getElementById('wl-email').value.trim();
-  if (!name || !email) { alert('Please fill in your name and email'); return; }
-  document.getElementById('modal-form').style.display = 'none';
-  document.getElementById('modal-success').style.display = 'flex';
+async function submitWaitlist() {
+  const restaurant = document.getElementById('wl-restaurant').value.trim();
+  const location = document.getElementById('wl-location').value.trim();
+  const phone = document.getElementById('wl-phone').value.trim();
+  
+  if (!restaurant || !location || !phone) { alert('Please fill in all fields'); return; }
+  
+  const btn = document.getElementById('wl-submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+
+  try {
+    const { createClient } = supabase;
+    const sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+    const { error } = await sb.from('leads').insert({ 
+      restaurant_name: restaurant, 
+      location: location, 
+      phone: phone 
+    });
+    
+    if (error) throw error;
+    
+    document.getElementById('modal-form').style.display = 'none';
+    document.getElementById('modal-success').style.display = 'flex';
+  } catch(e) {
+    console.error(e);
+    alert('Failed to submit. Please try again.');
+    btn.disabled = false; btn.textContent = 'Submit →';
+  }
 }
 </script>
 </body>

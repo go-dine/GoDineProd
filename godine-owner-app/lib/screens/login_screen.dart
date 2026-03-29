@@ -20,7 +20,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool _isLogin = true;
+  final bool _isLogin = true;
   bool _loading = false;
   String _error = '';
 
@@ -73,40 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) setState(() => _loading = false);
   }
 
-  Future<void> _handleRegister() async {
-    final name = _nameCtrl.text.trim();
-    final slug = (_slugCtrl.text.trim().isEmpty ? _autoSlug : _slugCtrl.text.trim())
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9-]'), '');
-    final pw = _passwordCtrl.text.trim();
-    final tables = int.tryParse(_tablesCtrl.text) ?? 10;
-    if (name.isEmpty || slug.isEmpty || pw.isEmpty) {
-      setState(() => _error = 'Name, username and password are required');
-      return;
-    }
-    if (slug.length < 3) {
-      setState(() => _error = 'Username must be at least 3 characters');
-      return;
-    }
-    setState(() { _loading = true; _error = ''; });
-    try {
-      final restaurant = await SupabaseService.register(
-        name: name,
-        slug: slug,
-        password: pw,
-        totalTables: tables,
-      );
-      if (restaurant != null) widget.onLogin(restaurant);
-    } catch (e) {
-      final msg = e.toString();
-      if (msg.contains('duplicate') || msg.contains('unique')) {
-        setState(() => _error = 'This username is already taken. Try another.');
-      } else {
-        setState(() => _error = 'Failed to register: $msg');
-      }
-    }
-    if (mounted) setState(() => _loading = false);
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -134,53 +101,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  _isLogin ? 'Owner Dashboard · Sign In' : 'Register your restaurant',
+                  'Owner Dashboard · Sign In',
                   style: const TextStyle(fontSize: 13, color: AppColors.muted),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 28),
 
-                // Register: Name
-                if (!_isLogin) ...[
-                  _label('Restaurant Name *'),
-                  _input(_nameCtrl, 'e.g. The Rustic Fork', capitalization: TextCapitalization.words),
-                ],
 
-                // Username
-                _label(_isLogin ? 'Restaurant Username' : 'Username *'),
+
+                _label('Restaurant Username'),
                 _input(
                   _slugCtrl,
                   'e.g. rustic-fork',
                   capitalization: TextCapitalization.none,
                 ),
-                if (!_isLogin && currentSlug.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Text.rich(
-                      TextSpan(children: [
-                        const TextSpan(text: 'Menu URL: ', style: TextStyle(fontSize: 11, color: AppColors.muted)),
-                        TextSpan(
-                          text: 'menu.html?r=$currentSlug',
-                          style: const TextStyle(fontSize: 11, color: AppColors.lime, fontWeight: FontWeight.w600),
-                        ),
-                      ]),
-                    ),
-                  ),
 
                 // Password
-                _label('Password${!_isLogin ? ' *' : ''}'),
+                _label('Password'),
                 _input(
                   _passwordCtrl,
-                  _isLogin ? 'Enter owner password' : 'Create a password',
+                  'Enter owner password',
                   obscure: true,
-                  onSubmit: _isLogin ? _handleLogin : _handleRegister,
+                  onSubmit: _handleLogin,
                 ),
 
-                // Register: Tables
-                if (!_isLogin) ...[
-                  _label('Number of Tables'),
-                  _input(_tablesCtrl, '10', keyboardType: TextInputType.number),
-                ],
+
 
                 // Error
                 if (_error.isNotEmpty)
@@ -214,34 +159,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.bg),
                           )
-                        : Text(
-                            _isLogin ? 'Sign In →' : 'Create Restaurant →',
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                        : const Text(
+                            'Sign In →',
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                           ),
                   ),
                 ),
 
-                // Toggle
                 const SizedBox(height: 18),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      _isLogin ? 'New restaurant? ' : 'Already registered? ',
-                      style: const TextStyle(fontSize: 13, color: AppColors.muted),
-                    ),
-                    GestureDetector(
-                      onTap: () => setState(() { _isLogin = !_isLogin; _error = ''; }),
-                      child: Text(
-                        _isLogin ? 'Register here' : 'Sign in',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppColors.lime,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
+                const Center(
+                  child: Text(
+                    'Contact platform admin to join',
+                    style: TextStyle(fontSize: 13, color: AppColors.muted),
+                  ),
                 ),
               ],
             ),

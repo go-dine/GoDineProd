@@ -266,24 +266,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <input class="auth-input" type="password" id="login-pw" placeholder="Enter owner password" onkeydown="if(event.key==='Enter')doLogin()"/>
       <button class="auth-btn" onclick="doLogin()">Sign In →</button>
       <div class="auth-error" id="login-err">Invalid username or password.</div>
-      <div class="auth-toggle">New restaurant? <a onclick="showAuthMode('register')">Register here</a></div>
-    </div>
-
-    <!-- REGISTER FORM -->
-    <div id="auth-register" style="display:none">
-      <div class="auth-sub">Register your restaurant</div>
-      <label class="auth-label">Restaurant Name *</label>
-      <input class="auth-input" type="text" id="reg-name" placeholder="e.g. The Rustic Fork" oninput="updateSlugPreview()"/>
-      <label class="auth-label">Username *</label>
-      <input class="auth-input" type="text" id="reg-slug" placeholder="e.g. rustic-fork" oninput="updateSlugPreview()"/>
-      <div class="slug-preview" id="slug-preview">Menu URL: <span>menu.html?r=username</span></div>
-      <label class="auth-label">Password *</label>
-      <input class="auth-input" type="password" id="reg-pw" placeholder="Create a password"/>
-      <label class="auth-label">Number of Tables</label>
-      <input class="auth-input" type="number" id="reg-tables" placeholder="10" value="10"/>
-      <button class="auth-btn" onclick="doRegister()">Create Restaurant →</button>
-      <div class="auth-error" id="reg-err"></div>
-      <div class="auth-toggle">Already registered? <a onclick="showAuthMode('login')">Sign in</a></div>
+      <div class="auth-toggle">Interested in joining? <a onclick="window.location.href='index.html#cta_banner'">Contact us</a></div>
     </div>
   </div>
 </div>
@@ -311,6 +294,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
         <div style="padding:0 12px 8px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;">Admin Console</div>
         <div class="sb-item" data-page="all-restaurants" onclick="showPage('all-restaurants')"><span class="icon">🏢</span>All Restaurants</div>
         <div class="sb-item" data-page="all-orders" onclick="showPage('all-orders')"><span class="icon">📋</span>All Orders</div>
+        <div class="sb-item" data-page="leads" onclick="showPage('leads')"><span class="icon">📩</span>Inquiries/Leads</div>
       </div>
     </div>
     <div class="sb-footer">
@@ -401,6 +385,18 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
         </div>
       </div>
       <div id="all-orders-list"><div class="empty-state"><div class="icon">📋</div><p>No orders across the platform</p></div></div>
+    </div>
+
+    <!-- LEADS (ADMIN) -->
+    <div class="page" id="page-leads">
+      <div class="page-title">Platform Leads</div>
+      <div class="page-sub">New restaurant inquiries from the landing page</div>
+      <div class="card admin-card">
+        <div class="card-head"><div class="card-title">Recent Inquiries</div><span id="leads-count" style="font-size:12px;color:var(--muted)"></span></div>
+        <div id="leads-list">
+          <div class="empty-state"><div class="spinner"></div></div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -508,46 +504,12 @@ async function doLogin() {
   }
 }
 
-/* ── REGISTER ── */
-async function doRegister() {
-  const name = document.getElementById('reg-name').value.trim();
-  const slug = document.getElementById('reg-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
-  const pw = document.getElementById('reg-pw').value;
-  const tables = parseInt(document.getElementById('reg-tables').value) || 10;
-
-  if (!name || !slug || !pw) { showAuthError('reg', 'Name, username and password are required'); return; }
-  if (slug.length < 3) { showAuthError('reg', 'Username must be at least 3 characters'); return; }
-
-  if (isDemo) {
-    showAuthError('reg', 'Please add your Supabase URL to config.js to register');
-    return;
-  }
-
-  try {
-    const { data, error } = await sb.from('restaurants').insert({
-      name, slug, owner_password: pw, total_tables: tables
-    }).select().single();
-    if (error) {
-      if (error.message.includes('duplicate') || error.message.includes('unique')) {
-        showAuthError('reg', 'This username is already taken. Try another.');
-      } else {
-        showAuthError('reg', 'Failed to register: ' + error.message);
-      }
-      return;
-    }
-    restaurant = data;
-    enterDashboard();
-    toast('✅ ' + name + ' registered! Add your dishes.');
-    showPage('menu'); // Go to menu tab for new restaurants
-  } catch(e) {
-    showAuthError('reg', 'Connection error. Try again.');
-  }
-}
-
 function showAuthError(prefix, msg) {
   const el = document.getElementById(prefix + '-err');
-  el.textContent = msg;
-  el.style.display = 'block';
+  if (el) {
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
 }
 
 /* ── ENTER DASHBOARD ── */
@@ -629,6 +591,7 @@ function showPage(id) {
   if (id === 'orders') loadOrders();
   if (id === 'menu') loadDishes();
   if (id === 'qr') buildQR();
+  if (id === 'leads') loadLeads();
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-overlay').classList.remove('open');
@@ -655,6 +618,12 @@ function init() {
         if (payload.eventType === 'INSERT') {
           notifyNewOrder(payload.new);
         }
+      }).subscribe();
+      
+    // Add listener for leads
+    sb.channel('public:leads')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, payload => {
+        loadLeads();
       }).subscribe();
   }
 
@@ -717,6 +686,7 @@ let allOrdersData = [];
 function initAdmin() {
   loadAllRestaurants();
   loadAllOrders();
+  loadLeads();
 }
 
 async function loadAllRestaurants() {
@@ -856,6 +826,32 @@ function stopImpersonating() {
   showPage('all-restaurants');
 }
 
+async function loadLeads() {
+  if (isDemo) return;
+  try {
+    const { data } = await sb.from('leads').select('*').order('created_at', { ascending: false });
+    renderLeads(data || []);
+  } catch(e) { toast('⚠️ Failed to load leads'); }
+}
+
+function renderLeads(list) {
+  const el = document.getElementById('leads-list');
+  document.getElementById('leads-count').textContent = list.length + ' inquiries';
+  if (!list.length) { el.innerHTML = `<div class="empty-state">No inquiries found.</div>`; return; }
+  
+  el.innerHTML = list.map(l => `
+    <div class="dish-row" style="background:var(--s2);padding:16px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border);">
+      <div class="d-info">
+        <div class="d-name">🏢 ${l.restaurant_name}</div>
+        <div class="d-meta">📍 ${l.location} · 📞 ${l.phone}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px;">Inquiry Date: ${new Date(l.created_at).toLocaleString()}</div>
+      </div>
+      <div>
+        <a href="tel:${l.phone}" class="btn-lime btn-sm" style="text-decoration:none;">Call Now</a>
+      </div>
+    </div>`).join('');
+}
+
 async function loadAllOrders() {
   if (isDemo) return;
   try {
@@ -880,7 +876,7 @@ function renderAllOrders() {
       <input type="checkbox" class="admin-order-cb" value="${o.id}" style="width:18px;height:18px;accent-color:#991b1b; cursor:pointer;" />
       <div style="flex:1;">
         <div class="order-head" style="margin-bottom:6px;">
-          <div><div class="order-table">${rName} · Table ${o.table_number}</div><div class="order-time">${timeAgo(o.created_at)}</div></div>
+          <div><div class="order-table">${rName} · Table ${o.table_number} ${o.token_number ? `<span class="admin-badge">TOKEN: ${o.token_number}</span>` : ''}</div><div class="order-time">${timeAgo(o.created_at)}</div></div>
           <span class="status-badge sb-${o.status}">${o.status.toUpperCase()}</span>
         </div>
         <div class="order-items" style="margin-bottom:0;">${o.items.length} items · ₹${o.total}</div>
@@ -939,7 +935,10 @@ function renderRecentOrders(list) {
   if (!list.length) { el.innerHTML = `<div class="empty-state"><div class="icon">🕐</div><p>No orders yet</p></div>`; return; }
   el.innerHTML = list.map(o => `
     <div class="dish-row">
-      <div class="d-info"><div class="d-name">Table ${o.table_number} · ₹${o.total}</div><div class="d-meta">${timeAgo(o.created_at)} · ${o.items.length} item(s)</div></div>
+      <div class="d-info">
+        <div class="d-name">Table ${o.table_number} · ₹${o.total}</div>
+        <div class="d-meta">${timeAgo(o.created_at)} · ${o.items.length} item(s) ${o.token_number ? `· <b>Token: ${o.token_number}</b>` : ''}</div>
+      </div>
       <span class="status-badge sb-${o.status}">${o.status}</span>
     </div>`).join('');
 }
@@ -976,7 +975,13 @@ function renderOrders() {
     const nextLabel = {pending:'Mark Preparing', preparing:'Mark Ready', ready:'Complete'}[o.status] || '';
     return `
     <div class="order-card ${o.status}">
-      <div class="order-head"><div><div class="order-table">Table ${o.table_number}</div><div class="order-time">${timeAgo(o.created_at)}</div></div><span class="status-badge sb-${o.status}">${o.status.toUpperCase()}</span></div>
+      <div class="order-head">
+        <div>
+          <div class="order-table">Table ${o.table_number} ${o.token_number ? `<span style="background:var(--lime);color:#000;padding:2px 6px;border-radius:4px;font-size:12px;margin-left:8px;">TOKEN: ${o.token_number}</span>` : ''}</div>
+          <div class="order-time">${timeAgo(o.created_at)}</div>
+        </div>
+        <span class="status-badge sb-${o.status}">${o.status.toUpperCase()}</span>
+      </div>
       ${o.customer_name ? `<div style="font-size:0.8rem; color:#888; margin-bottom: 8px;">👤 ${o.customer_name} (${o.customer_phone})</div>` : ''}
       <div class="order-items">${o.items.map(i => `<div class="order-item">${i.emoji || '🍽'} <b>${i.qty}×</b> ${i.name} — ₹${i.price * i.qty}</div>`).join('')}</div>
       ${o.note ? `<div class="order-note">📝 ${o.note}</div>` : ''}

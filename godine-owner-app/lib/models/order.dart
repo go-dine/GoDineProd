@@ -32,6 +32,7 @@ class Order {
   final double total;
   final String status; // pending | preparing | ready | completed
   final String note;
+  final String? tokenNumber;
   final String? estimatedTime;
   final String createdAt;
 
@@ -46,6 +47,7 @@ class Order {
     required this.total,
     this.status = 'pending',
     this.note = '',
+    this.tokenNumber,
     this.estimatedTime,
     required this.createdAt,
   });
@@ -63,12 +65,13 @@ class Order {
       total: (json['total'] as num).toDouble(),
       status: json['status'] as String? ?? 'pending',
       note: json['note'] as String? ?? '',
+      tokenNumber: json['token_number'] as String?,
       estimatedTime: json['estimated_time'] as String?,
       createdAt: json['created_at'] as String? ?? '',
     );
   }
 
-  Order copyWith({String? status, String? estimatedTime}) {
+  Order copyWith({String? status, String? estimatedTime, String? tokenNumber}) {
     return Order(
       id: id,
       restaurantId: restaurantId,
@@ -80,6 +83,7 @@ class Order {
       total: total,
       status: status ?? this.status,
       note: note,
+      tokenNumber: tokenNumber ?? this.tokenNumber,
       estimatedTime: estimatedTime ?? this.estimatedTime,
       createdAt: createdAt,
     );

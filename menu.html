@@ -672,6 +672,7 @@ async function actualPlaceOrder(name, phone) {
   if (btn) { btn.disabled = true; btn.textContent = 'Placing order...'; }
 
   const total = items.reduce((s, i) => s + i.dish.price * i.qty, 0);
+  const token = Math.floor(Math.random() * 90 + 10).toString(); // 2-digit token (10-99)
   
   const originalNote = document.getElementById('order-note').value.trim();
   const orderItems = items.map(({dish, qty}) => ({id: dish.id, name: dish.name, emoji: dish.emoji, price: dish.price, qty}));
@@ -694,6 +695,7 @@ async function actualPlaceOrder(name, phone) {
       items: orderItems,
       total,
       note: originalNote,
+      token_number: token,
       status: 'pending'
     });
 
