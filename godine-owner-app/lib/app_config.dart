@@ -3,7 +3,7 @@
 /// Update [webBaseUrl] to match the domain where the web app is deployed.
 class AppConfig {
   /// Base URL where the GoDine web app is hosted.
-  /// Change this to your production URL (e.g. https://godine.app).
+  /// Change this to your production URL (e.g. https://godine.in).
   static const String webBaseUrl = 'https://godine.in';
 
   /// Construct the customer menu URL for a specific restaurant + table.

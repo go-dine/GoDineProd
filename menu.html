@@ -6,7 +6,21 @@
 <title>Go Dine — Menu</title>
 <link rel="icon" type="image/png" href="assets/favicon.png"/>
 <link rel="apple-touch-icon" href="assets/icon.png"/>
-<meta name="description" content="Browse the menu and place your order. Powered by Go Dine."/>
+<meta name="description" content="Browse the menu and place your order. Powered by Go Dine — the smart dining platform."/>
+<link rel="canonical" href="https://godine.in/menu.html"/>
+
+<!-- Open Graph Tags -->
+<meta property="og:title" content="Restaurant Menu — Go Dine" />
+<meta property="og:description" content="Browse the menu and place your order instantly from your phone." />
+<meta property="og:image" content="https://godine.in/assets/og-image.jpg" />
+<meta property="og:url" content="https://godine.in/menu.html" />
+<meta property="og:type" content="website" />
+
+<!-- Twitter Card Tags -->
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Restaurant Menu — Go Dine"/>
+<meta name="twitter:description" content="Browse the menu and place your order instantly from your phone."/>
+<meta name="twitter:image" content="https://godine.in/assets/og-image.jpg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
@@ -459,7 +473,8 @@ async function boot() {
 function applyRestaurant() {
   document.getElementById('rest-name').textContent = restaurant.name;
   document.getElementById('rest-meta').textContent = 'Table ' + tableNum + ' · Dine In · Scan & Order';
-  document.title = restaurant.name + ' — Menu | Go Dine';
+  // Descriptive SEO Title
+  document.title = `${restaurant.name} | View Menu & Order Online — Go Dine`;
 }
 
 function showError(title, msg) {
