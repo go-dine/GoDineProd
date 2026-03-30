@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Rate Your Experience — Go Dine</title>
+<link rel="icon" type="image/png" href="assets/favicon.png"/>
+<link rel="apple-touch-icon" href="assets/icon.png"/>
+<meta name="description" content="Share your dining experience. Rate the food and service at your restaurant."/>
+<link rel="canonical" href="https://godine.in/feedback.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050505;--s1:#0e0e0e;--s2:#151515;--s3:#1c1c1c;
+  --lime:#b6ff2a;--lime2:rgba(182,255,42,0.1);--lime3:rgba(182,255,42,0.18);
+  --white:#f0f0ec;--muted:#6b6b67;--border:rgba(255,255,255,0.07);
+  --r:12px;--r2:18px;
+}
+body{background:var(--bg);color:var(--white);font-family:'Manrope',sans-serif;min-height:100vh;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+
+/* ── HEADER ── */
+.header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(5,5,5,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px}
+.logo b{color:var(--lime)}
+.back-link{color:var(--lime);font-size:13px;font-weight:600}
+
+/* ── MAIN ── */
+.fb-container{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:40px 20px 60px;max-width:480px;margin:0 auto;width:100%;
+}
+.fb-icon{font-size:56px;margin-bottom:16px;animation:bounceIn 0.5s ease}
+@keyframes bounceIn{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.fb-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;text-align:center;margin-bottom:6px}
+.fb-sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:40px}
+
+/* ── RATING CARD ── */
+.rating-card{
+  width:100%;background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r2);padding:24px;margin-bottom:16px;
+}
+.rating-label{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.rating-label .rl-icon{font-size:18px}
+.stars{display:flex;gap:8px;justify-content:center}
+.star{
+  width:48px;height:48px;border-radius:14px;
+  background:var(--s2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;cursor:pointer;
+  transition:all 0.2s ease;user-select:none;
+}
+.star:hover{transform:scale(1.1);border-color:rgba(255,255,255,0.15)}
+.star.active{
+  background:var(--lime2);border-color:var(--lime3);
+  transform:scale(1.1);
+}
+.star.active .star-icon{filter:none}
+.star .star-icon{filter:grayscale(1) opacity(0.4);transition:filter 0.2s}
+.star.active .star-icon{filter:none}
+
+/* ── COMMENT ── */
+.comment-card{
+  width:100%;background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r2);padding:24px;margin-bottom:24px;
+}
+.comment-input{
+  width:100%;background:var(--s2);border:1px solid var(--border);
+  border-radius:12px;padding:14px;font-size:14px;
+  color:var(--white);font-family:'Manrope',sans-serif;
+  resize:none;outline:none;min-height:80px;
+}
+.comment-input::placeholder{color:var(--muted)}
+.comment-input:focus{border-color:rgba(182,255,42,0.3)}
+
+/* ── SUBMIT ── */
+.submit-btn{
+  width:100%;background:var(--lime);color:#050505;
+  border:none;border-radius:14px;padding:16px;
+  font-size:15px;font-weight:800;cursor:pointer;
+  font-family:'Manrope',sans-serif;
+  transition:box-shadow 0.2s,transform 0.15s;
+}
+.submit-btn:hover{box-shadow:0 0 24px rgba(182,255,42,0.4);transform:translateY(-1px)}
+.submit-btn:active{transform:scale(0.98)}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── SUCCESS ── */
+.success-screen{
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:60px 20px;
+}
+.success-screen.show{display:flex}
+.success-icon{font-size:64px;margin-bottom:20px;animation:bounceIn 0.5s ease}
+.success-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px}
+.success-sub{font-size:14px;color:var(--muted);margin-bottom:32px;max-width:300px}
+.back-btn{
+  background:var(--s2);border:1px solid var(--border);border-radius:12px;
+  padding:12px 28px;color:var(--white);font-size:14px;font-weight:600;
+  cursor:pointer;font-family:'Manrope',sans-serif;transition:border-color .2s;
+  text-decoration:none;display:inline-block;
+}
+.back-btn:hover{border-color:rgba(255,255,255,0.2)}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;padding:10px 18px;
+  font-size:13px;font-weight:500;
+  transition:transform 0.3s;z-index:400;white-space:nowrap;
+}
+#toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <a href="index.html" class="logo">Go <b>Dine</b></a>
+  <a href="#" class="back-link" id="back-link">← Back to Orders</a>
+</div>
+
+<!-- FEEDBACK FORM -->
+<div class="fb-container" id="fb-form">
+  <div class="fb-icon">💬</div>
+  <div class="fb-title">How was your experience?</div>
+  <div class="fb-sub">Your feedback helps the restaurant improve. It only takes 10 seconds!</div>
+
+  <!-- Q1: Food Rating -->
+  <div class="rating-card">
+    <div class="rating-label"><span class="rl-icon">🍽️</span> How was the food?</div>
+    <div class="stars" id="food-stars">
+      <div class="star" data-val="1" onclick="rate('food',1)"><span class="star-icon">⭐</span></div>
+      <div class="star" data-val="2" onclick="rate('food',2)"><span class="star-icon">⭐</span></div>
+      <div class="star" data-val="3" onclick="rate('food',3)"><span class="star-icon">⭐</span></div>
+      <div class="star" data-val="4" onclick="rate('food',4)"><span class="star-icon">⭐</span></div>
+      <div class="star" data-val="5" onclick="rate('food',5)"><span class="star-icon">⭐</span></div>
+    </div>
+  </div>
+
+  <!-- Q2: Service Rating -->
+  <div class="rating-card">
+    <div class="rating-label"><span class="rl-icon">🤝</span> How was the service?</div>
+    <div class="stars" id="service-stars">
+      <div class="star" data-val="1" onclick="rate('service',1)"><span class="star-icon">⭐</span></div>
+      <div class="star" data-val="2" onclick="rate('service',2)"><span class="star-icon">⭐</span></div>
+      <div class="star" data-val="3" onclick="rate('service',3)"><span class="star-icon">⭐</span></div>
+      <div class="star" data-val="4" onclick="rate('service',4)"><span class="star-icon">⭐</span></div>
+      <div class="star" data-val="5" onclick="rate('service',5)"><span class="star-icon">⭐</span></div>
+    </div>
+  </div>
+
+  <!-- Q3: Comment -->
+  <div class="comment-card">
+    <div class="rating-label"><span class="rl-icon">✏️</span> Anything else you'd like to share?</div>
+    <textarea class="comment-input" id="comment" rows="3" placeholder="e.g. The pasta was amazing! Maybe a bit more spice next time..."></textarea>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="submitFeedback()">Submit Feedback →</button>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">🎉</div>
+  <div class="success-title">Thanks for your feedback!</div>
+  <div class="success-sub">Your review has been shared with the restaurant. We appreciate you taking the time!</div>
+  <a href="#" class="back-btn" id="success-back-link">← Back to Menu</a>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+/* ── INIT ── */
+const { createClient } = supabase;
+let sb;
+try { sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey); } catch(e){}
+
+const params = new URLSearchParams(location.search);
+const restaurantSlug = params.get('r') || 'demo';
+const orderId = params.get('order') || '';
+const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL';
+
+let restaurantId = null;
+let ratings = { food: 0, service: 0 };
+
+// Set back links
+document.getElementById('back-link').href = `customer.html?r=${restaurantSlug}`;
+document.getElementById('success-back-link').href = `menu.html?r=${restaurantSlug}`;
+
+// Fetch restaurant ID
+async function boot() {
+  if (isDemo || !restaurantSlug) return;
+  try {
+    const { data } = await sb.from('restaurants').select('id,name').eq('slug', restaurantSlug).single();
+    if (data) {
+      restaurantId = data.id;
+      document.querySelector('.fb-sub').textContent = `Your feedback helps ${data.name} improve. It only takes 10 seconds!`;
+    }
+  } catch(e) {}
+}
+boot();
+
+/* ── STAR RATING ── */
+function rate(type, val) {
+  ratings[type] = val;
+  const container = document.getElementById(type + '-stars');
+  container.querySelectorAll('.star').forEach(s => {
+    const sv = parseInt(s.getAttribute('data-val'));
+    s.classList.toggle('active', sv <= val);
+  });
+}
+
+/* ── SUBMIT ── */
+async function submitFeedback() {
+  if (ratings.food === 0) { showToast('⚠️ Please rate the food'); return; }
+  if (ratings.service === 0) { showToast('⚠️ Please rate the service'); return; }
+
+  const comment = document.getElementById('comment').value.trim();
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+
+  // Get customer info from localStorage
+  let customerName = '', customerPhone = '';
+  try {
+    const guest = JSON.parse(localStorage.getItem('godine_guest') || '{}');
+    customerName = guest.name || '';
+    customerPhone = guest.phone || '';
+  } catch(e) {}
+
+  if (isDemo) {
+    setTimeout(() => {
+      document.getElementById('fb-form').style.display = 'none';
+      document.getElementById('success-screen').classList.add('show');
+    }, 800);
+    return;
+  }
+
+  try {
+    const payload = {
+      restaurant_id: restaurantId,
+      food_rating: ratings.food,
+      service_rating: ratings.service,
+      comment: comment,
+      customer_name: customerName,
+      customer_phone: customerPhone,
+    };
+    if (orderId) payload.order_id = orderId;
+
+    const { error } = await sb.from('feedback').insert(payload);
+    if (error) throw error;
+
+    // Mark that feedback was given for this order
+    if (orderId) {
+      try {
+        const feedbackGiven = JSON.parse(localStorage.getItem('godine_feedback') || '[]');
+        feedbackGiven.push(orderId);
+        localStorage.setItem('godine_feedback', JSON.stringify(feedbackGiven));
+      } catch(e){}
+    }
+
+    document.getElementById('fb-form').style.display = 'none';
+    document.getElementById('success-screen').classList.add('show');
+  } catch(e) {
+    console.error(e);
+    btn.disabled = false; btn.textContent = 'Submit Feedback →';
+    showToast('⚠️ Failed to submit. Please try again.');
+  }
+}
+
+/* ── TOAST ── */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>

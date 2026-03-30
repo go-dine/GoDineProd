@@ -65,6 +65,11 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
 #auth-guard{position:fixed;inset:0;background:#121212;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;}
 .spinner{width:40px;height:40px;border:4px solid rgba(193,255,0,0.2);border-top-color:#c1ff00;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+/* Feedback Button */
+.feedback-btn{display:inline-block;margin-top:12px;padding:10px 20px;border-radius:24px;background:linear-gradient(135deg,#c1ff00,#a0e000);color:#000;text-decoration:none;font-weight:700;font-family:'Space Grotesk';font-size:0.85rem;transition:box-shadow 0.2s,transform 0.15s;text-align:center}
+.feedback-btn:hover{box-shadow:0 0 20px rgba(193,255,0,0.4);transform:translateY(-1px)}
+.feedback-done{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:20px;background:rgba(74,222,128,0.12);color:#4ade80;font-size:0.8rem;font-weight:600}
 </style>
 </head>
 <body>
@@ -100,6 +105,8 @@ const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL';
 
 let currentUser = null;
 let orders = [];
+let feedbackGiven = [];
+try { feedbackGiven = JSON.parse(localStorage.getItem('godine_feedback') || '[]'); } catch(e){}
 
 async function boot() {
   if (isDemo) {
@@ -196,6 +203,8 @@ function createOrderCard(o) {
   }
 
   const hasEta = o.status === 'preparing' && o.estimated_time;
+  const hasFeedback = feedbackGiven.includes(o.id);
+  const showFeedbackBtn = o.status === 'completed' && !hasFeedback;
 
   return `
     <div class="order-card">
@@ -224,6 +233,8 @@ function createOrderCard(o) {
         <span>Total</span>
         <span>₹${o.total}</span>
       </div>
+      ${showFeedbackBtn ? `<a href="feedback.html?r=${restaurantSlug}&order=${o.id}" class="feedback-btn">⭐ Rate Your Experience</a>` : ''}
+      ${(o.status === 'completed' && hasFeedback) ? `<div class="feedback-done">✅ Feedback submitted — Thank you!</div>` : ''}
     </div>
   `;
 }

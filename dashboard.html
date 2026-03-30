@@ -176,6 +176,19 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 }
 .f-select option{background:var(--s2)}
 
+/* ── FEEDBACK CARDS ── */
+.fb-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);padding:18px;margin-bottom:10px}
+.fb-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.fb-customer{font-size:13px;font-weight:600}
+.fb-date{font-size:11px;color:var(--muted)}
+.fb-stars{display:flex;gap:2px;font-size:14px}
+.fb-ratings{display:flex;gap:20px;margin-bottom:10px}
+.fb-rating-item{font-size:12px;color:var(--muted)}
+.fb-rating-item b{color:var(--lime);font-weight:700}
+.fb-comment{font-size:12px;color:var(--muted);font-style:italic;padding:8px 12px;background:var(--s1);border-radius:8px}
+.fb-avg{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:var(--lime);letter-spacing:-1px}
+.fb-avg-label{font-size:12px;color:var(--muted);margin-top:2px}
+
 /* ── DISH LIST ── */
 .dish-row{
   display:flex;align-items:center;gap:12px;
@@ -303,6 +316,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <div class="sb-item" data-page="orders" onclick="showPage('orders')"><span class="icon"><i data-lucide="scroll-text" style="width:18px;height:18px"></i></span>Live Orders<span class="sb-badge" id="pending-badge" style="display:none">0</span></div>
       <div class="sb-item" data-page="menu" onclick="showPage('menu')"><span class="icon"><i data-lucide="utensils-crosses" style="width:18px;height:18px"></i></span>Menu</div>
       <div class="sb-item" data-page="qr" onclick="showPage('qr')"><span class="icon"><i data-lucide="qr-code" style="width:18px;height:18px"></i></span>QR Codes</div>
+      <div class="sb-item" data-page="feedback" onclick="showPage('feedback')"><span class="icon">⭐</span>Feedback</div>
       
       <!-- ADMIN TABS -->
       <div id="admin-tabs" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:10px;">
@@ -363,6 +377,19 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <div class="page-sub">One QR code per table — print and place</div>
       <div class="qr-grid" id="qr-grid"></div>
     </div>
+
+    <!-- FEEDBACK -->
+    <div class="page" id="page-feedback">
+      <div class="page-title">Customer Feedback</div>
+      <div class="page-sub">Ratings and reviews from your customers</div>
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+        <div class="stat-card"><div class="stat-label">Avg Food Rating</div><div class="fb-avg" id="fb-avg-food">—</div><div class="fb-avg-label">out of 5</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Service Rating</div><div class="fb-avg" id="fb-avg-service">—</div><div class="fb-avg-label">out of 5</div></div>
+        <div class="stat-card"><div class="stat-label">Total Reviews</div><div class="fb-avg" id="fb-total">—</div><div class="fb-avg-label">all time</div></div>
+      </div>
+      <div class="card"><div class="card-head"><div class="card-title">Recent Feedback</div></div><div id="feedback-list"><div class="empty-state"><div class="icon">⭐</div><p>No feedback yet</p></div></div></div>
+    </div>
+
     <!-- ALL RESTAURANTS (ADMIN) -->
     <div class="page" id="page-all-restaurants">
       <div class="page-title">All Restaurants</div>
@@ -607,6 +634,7 @@ function showPage(id) {
   if (id === 'menu') loadDishes();
   if (id === 'qr') buildQR();
   if (id === 'leads') loadLeads();
+  if (id === 'feedback') loadFeedback();
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-overlay').classList.remove('open');
@@ -662,6 +690,10 @@ function init() {
     new Date().toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
     
   checkSubscription();
+
+  // Auto-complete stale orders (older than 2 hours)
+  autoCompleteStaleOrders();
+  setInterval(autoCompleteStaleOrders, 60000);
 }
 
 function checkSubscription() {
@@ -1177,6 +1209,86 @@ function toast(msg) {
   el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+/* ── AUTO-COMPLETE STALE ORDERS ── */
+async function autoCompleteStaleOrders() {
+  if (isDemo || !restaurant) return;
+  try {
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await sb.from('orders')
+      .select('id')
+      .eq('restaurant_id', restaurant.id)
+      .in('status', ['pending', 'preparing', 'ready'])
+      .lt('created_at', twoHoursAgo);
+    if (error || !data || !data.length) return;
+    for (const o of data) {
+      await sb.from('orders').update({ status: 'completed' }).eq('id', o.id);
+    }
+    toast(`🕐 Auto-completed ${data.length} stale order${data.length > 1 ? 's' : ''}`);
+    loadOrders();
+    loadOverview();
+  } catch(e) { console.error('Auto-complete error:', e); }
+}
+
+/* ── FEEDBACK ── */
+let feedbackData = [];
+
+async function loadFeedback() {
+  if (isDemo) return;
+  try {
+    let query = sb.from('feedback').select('*').order('created_at', { ascending: false });
+    if (restaurant) {
+      query = query.eq('restaurant_id', restaurant.id);
+    }
+    const { data, error } = await query;
+    if (error) throw error;
+    feedbackData = data || [];
+    renderFeedback();
+  } catch(e) {
+    console.error(e);
+    toast('⚠️ Failed to load feedback');
+  }
+}
+
+function renderFeedback() {
+  const el = document.getElementById('feedback-list');
+  const avgFoodEl = document.getElementById('fb-avg-food');
+  const avgServiceEl = document.getElementById('fb-avg-service');
+  const totalEl = document.getElementById('fb-total');
+
+  totalEl.textContent = feedbackData.length;
+
+  if (!feedbackData.length) {
+    avgFoodEl.textContent = '—';
+    avgServiceEl.textContent = '—';
+    el.innerHTML = `<div class="empty-state"><div class="icon">⭐</div><p>No feedback yet</p></div>`;
+    return;
+  }
+
+  const avgFood = (feedbackData.reduce((s, f) => s + f.food_rating, 0) / feedbackData.length).toFixed(1);
+  const avgService = (feedbackData.reduce((s, f) => s + f.service_rating, 0) / feedbackData.length).toFixed(1);
+  avgFoodEl.textContent = avgFood;
+  avgServiceEl.textContent = avgService;
+
+  el.innerHTML = feedbackData.map(f => {
+    const foodStars = '⭐'.repeat(f.food_rating) + '☆'.repeat(5 - f.food_rating);
+    const serviceStars = '⭐'.repeat(f.service_rating) + '☆'.repeat(5 - f.service_rating);
+    const date = new Date(f.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    return `
+      <div class="fb-card">
+        <div class="fb-head">
+          <div class="fb-customer">👤 ${f.customer_name || 'Anonymous'}</div>
+          <div class="fb-date">${date}</div>
+        </div>
+        <div class="fb-ratings">
+          <div class="fb-rating-item">🍽 Food: <b>${f.food_rating}/5</b> ${foodStars}</div>
+          <div class="fb-rating-item">🤝 Service: <b>${f.service_rating}/5</b> ${serviceStars}</div>
+        </div>
+        ${f.comment ? `<div class="fb-comment">"${f.comment}"</div>` : ''}
+        ${f.customer_phone ? `<div style="font-size:11px;color:var(--muted);margin-top:8px">📞 ${f.customer_phone}</div>` : ''}
+      </div>`;
+  }).join('');
 }
 </script>
 </body>
