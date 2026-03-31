@@ -278,11 +278,25 @@ class _AdminOrdersTabState extends State<_AdminOrdersTab> {
   bool _loading = true;
   List<Map<String, dynamic>> _orders = []; // Keep as Map to easily read restaurants(name)
   Set<String> _selectedIds = {};
+  RealtimeChannel? _channel;
 
   @override
   void initState() {
     super.initState();
     _loadAllOrders();
+    _channel = SupabaseService.subscribeToAllOrders(
+      'admin-all-orders-screen',
+      (payload) {
+        if (!mounted) return;
+        _loadAllOrders();
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    if (_channel != null) SupabaseService.unsubscribe(_channel!);
+    super.dispose();
   }
 
   Future<void> _loadAllOrders() async {

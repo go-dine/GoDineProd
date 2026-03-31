@@ -235,6 +235,20 @@ class SupabaseService {
     return channel;
   }
 
+  static RealtimeChannel subscribeToAllOrders(String channelName, void Function(PostgresChangePayload payload) onEvent) {
+    final channel = client.channel(channelName);
+    channel.onPostgresChanges(
+      event: PostgresChangeEvent.all,
+      schema: 'public',
+      table: 'orders',
+      callback: (payload) {
+        onEvent(payload);
+      },
+    );
+    channel.subscribe();
+    return channel;
+  }
+
   static void unsubscribe(RealtimeChannel channel) {
     client.removeChannel(channel);
   }

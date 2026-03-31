@@ -105,12 +105,17 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
     try {
       await SupabaseService.updateOrderStatus(id, status, estimatedTime: eta);
       setState(() {
-        _orders = _orders.map((o) {
+        _liveOrders = _liveOrders.map((o) {
           if (o.id == id) return o.copyWith(status: status, estimatedTime: eta ?? o.estimatedTime);
           return o;
         }).toList();
+        
+        // If status is completed, we should probably move it to history
+        if (status == 'completed' || status == 'cancelled') {
+           _load(); // Simplest way to reshuffle tabs
+        }
       });
-      widget.onPendingCount?.call(_orders.where((o) => o.status == 'pending').length);
+      widget.onPendingCount?.call(_liveOrders.where((o) => o.status == 'pending').length);
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -313,7 +318,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.bg,
         appBar: AppBar(
           backgroundColor: AppColors.surface1,
           title: const Text('Orders', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -449,5 +454,4 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
       ),
     );
   }
-}
 }
