@@ -198,11 +198,7 @@ async function fetchOrders() {
   const unbilled = orders.filter(o => !o.bill_sent && o.status !== 'cancelled');
   const billed = orders.filter(o => o.bill_sent);
   
-  if (unbilled.length === 0 && billed.length > 0) {
-    renderBill(orders);
-  } else {
-    renderOrders(orders);
-  }
+  renderOrders(orders);
 }
 
 function renderOrders(list) {
@@ -225,11 +221,21 @@ function renderOrders(list) {
   }
 
   let html = '';
+  const billed = list.filter(o => o.bill_sent);
+  if (billed.length > 0) {
+    html += `
+      <div onclick="renderBill(orders)" style="background:rgba(182,255,42,0.1); border:1px solid rgba(182,255,42,0.18); border-radius:16px; padding:20px; margin-bottom:24px; text-align:center; cursor:pointer;">
+        <div style="font-size:32px;margin-bottom:8px;">🧾</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#c1ff00;margin-bottom:4px;">Your Bill is Ready</div>
+        <div style="font-size:12px;color:#aaa;">Tap here to view the final summary & rate your experience</div>
+      </div>
+    `;
+  }
   
   if (active.length) {
     html += active.map(o => createOrderCard(o)).join('');
   } else {
-    html += `<div style="color:#aaa;margin-bottom:20px;">No active orders.</div>`;
+    html += `<div style="color:#aaa;margin-bottom:20px;">No current orders.</div>`;
   }
 
   if (past.length) {
