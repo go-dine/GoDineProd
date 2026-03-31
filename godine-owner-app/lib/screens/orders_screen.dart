@@ -3,6 +3,7 @@ import '../theme.dart';
 import '../models/restaurant.dart';
 import '../models/order.dart';
 import '../services/supabase_service.dart';
+import '../services/notification_service.dart';
 import '../widgets/order_card.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,39 +16,60 @@ class OrdersScreen extends StatefulWidget {
   State<OrdersScreen> createState() => _OrdersScreenState();
 }
 
-class _OrdersScreenState extends State<OrdersScreen> {
-  List<Order> _orders = [];
+class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderStateMixin {
+  List<Order> _liveOrders = [];
+  List<Order> _historyOrders = [];
   bool _loading = true;
   RealtimeChannel? _channel;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _load();
     _channel = SupabaseService.subscribeToOrders(
       'owner-orders-screen-${widget.restaurant.id}',
       widget.restaurant.id,
       (payload) {
+        if (!mounted) return;
         _load();
+        
+        // Trigger notification on new order
+        if (payload.eventType == PostgresChangeEvent.insert) {
+          final newOrder = Order.fromJson(payload.newRecord);
+          NotificationService.showNewOrderNotification(newOrder);
+        }
       },
     );
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     if (_channel != null) SupabaseService.unsubscribe(_channel!);
     super.dispose();
   }
 
   Future<void> _load() async {
     try {
-      final orders = await SupabaseService.fetchTodayActiveOrders(widget.restaurant.id);
+      final orders = await SupabaseService.fetchTodayAllOrders(widget.restaurant.id);
       if (!mounted) return;
+      
       setState(() {
-        _orders = orders;
+        // Split orders into live (unbilled & active) and history (cancelled or billed)
+        _liveOrders = orders.where((o) => 
+          !o.billSent && o.status != 'cancelled'
+        ).toList();
+        
+        _historyOrders = orders.where((o) => 
+          o.billSent || o.status == 'cancelled'
+        ).toList();
+        
         _loading = false;
       });
-      widget.onPendingCount?.call(orders.where((o) => o.status == 'pending').length);
+      
+      widget.onPendingCount?.call(_liveOrders.where((o) => o.status == 'pending').length);
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }
@@ -288,122 +310,144 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: AppColors.surface1,
+          title: const Text('Orders', style: TextStyle(fontWeight: FontWeight.w700)),
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: AppColors.lime,
+            labelColor: AppColors.lime,
+            unselectedLabelColor: AppColors.muted,
+            tabs: const [
+              Tab(text: 'LIVE'),
+              Tab(text: 'HISTORY'),
+            ],
+          ),
+        ),
+        body: _loading
+            ? const Center(child: CircularProgressIndicator(color: AppColors.lime))
+            : TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildGroupedOrderList(_liveOrders, emptyMsg: 'No live orders right now'),
+                  _buildGroupedOrderList(_historyOrders, emptyMsg: 'No history for today yet'),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _buildGroupedOrderList(List<Order> orders, {required String emptyMsg}) {
     final Map<String, List<Order>> tableGroups = {};
-    for (final o in _orders) {
+    for (final o in orders) {
       tableGroups.putIfAbsent(o.tableNumber, () => []).add(o);
     }
     
     final tables = tableGroups.keys.toList()..sort();
 
+    if (orders.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: _load,
+        color: AppColors.lime,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.6,
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.check_circle_outline, size: 48, color: AppColors.muted),
+                const SizedBox(height: 16),
+                Text(emptyMsg, style: const TextStyle(color: AppColors.muted)),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return RefreshIndicator(
       color: AppColors.lime,
       backgroundColor: AppColors.surface1,
       onRefresh: _load,
-      child: ListView(
+      child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
-        children: [
-          const Text('Live Orders', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.white)),
-          const SizedBox(height: 4),
-          const Text('Auto-refreshes · Pull to refresh', style: TextStyle(fontSize: 13, color: AppColors.muted)),
-          const SizedBox(height: 22),
+        itemCount: tables.length,
+        itemBuilder: (ctx, idx) {
+          final table = tables[idx];
+          final groupOrders = tableGroups[table]!;
+          final groupTotal = groupOrders.fold<double>(0, (sum, o) => sum + o.total);
+          final hasActiveAction = groupOrders.any((o) => !o.billSent && o.status != 'cancelled');
+          final orderIds = groupOrders.map((o) => o.id).toList();
 
-          if (_loading)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 60),
-                child: Column(
+          return Container(
+            margin: const EdgeInsets.only(bottom: 24),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.surface1,
+              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('⏳', style: TextStyle(fontSize: 36)),
-                    SizedBox(height: 12),
-                    Text('Loading orders...', style: TextStyle(fontSize: 14, color: AppColors.muted)),
+                    Text('Table $table', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.white)),
+                    Text('Total: ₹${groupTotal.toStringAsFixed(0)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.lime)),
                   ],
                 ),
-              ),
-            )
-          else if (_orders.isEmpty)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 60),
-                child: Column(
-                  children: [
-                    Text('✅', style: TextStyle(fontSize: 36)),
-                    SizedBox(height: 12),
-                    Text('No active orders right now', style: TextStyle(fontSize: 14, color: AppColors.muted)),
-                  ],
-                ),
-              ),
-            )
-          else
-            ...tables.map((table) {
-              final groupOrders = tableGroups[table]!;
-              final groupTotal = groupOrders.fold<double>(0, (sum, o) => sum + o.total);
-              final hasCompletedOrReady = groupOrders.any((o) => o.status == 'completed' || o.status == 'ready' || o.status == 'preparing');
-              final orderIds = groupOrders.map((o) => o.id).toList();
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 24),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.surface1,
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                const SizedBox(height: 16),
+                ...groupOrders.map((o) => OrderCard(
+                      order: o,
+                      onAdvanceStatus: _advanceStatus,
+                      onComplete: _handleComplete,
+                      onCancel: _handleCancel,
+                    )),
+                if (hasActiveAction)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
                       children: [
-                        Text('Table $table', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.white)),
-                        Text('Total: ₹${groupTotal.toStringAsFixed(0)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.lime)),
+                        Expanded(
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              side: const BorderSide(color: AppColors.muted),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                            ),
+                            onPressed: () => _handleViewBill(table, groupOrders),
+                            child: Text('👁️ View Bill (₹${groupTotal.toStringAsFixed(0)})', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.muted)),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.lime,
+                              foregroundColor: const Color(0xFF050505),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                            ),
+                            onPressed: () => _handleSendBill(table, orderIds),
+                            child: const Text('📋 Send Bill', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                          ),
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    ...groupOrders.map((o) => OrderCard(
-                          order: o,
-                          onAdvanceStatus: _advanceStatus,
-                          onComplete: _handleComplete,
-                          onCancel: _handleCancel,
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                side: const BorderSide(color: AppColors.muted),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
-                              ),
-                              onPressed: () => _handleViewBill(table, groupOrders),
-                              child: Text('👁️ View Bill (₹${groupTotal.toStringAsFixed(0)})', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.muted)),
-                            ),
-                          ),
-                          if (hasCompletedOrReady) ...[
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.lime,
-                                  foregroundColor: const Color(0xFF050505),
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
-                                ),
-                                onPressed: () => _handleSendBill(table, orderIds),
-                                child: const Text('📋 Send Bill', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-        ],
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
+}
 }

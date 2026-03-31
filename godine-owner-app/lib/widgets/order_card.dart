@@ -187,8 +187,11 @@ class OrderCard extends StatelessWidget {
             ],
 
             const SizedBox(height: 14),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 12,
               children: [
                 Text(
                   'Total: ₹${order.total.toStringAsFixed(0)}',
@@ -198,21 +201,20 @@ class OrderCard extends StatelessWidget {
                     color: AppColors.lime,
                   ),
                 ),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     if (!isCompleted && !isCancelled)
                       _RedButton(
                         label: 'Cancel',
                         onTap: () => onCancel(order.id),
                       ),
-                    const SizedBox(width: 8),
-                    if (next != null) ...[
+                    if (next != null)
                       _LimeButton(
                         label: next.label,
                         onTap: () => onAdvanceStatus(order.id, next.status),
                       ),
-                      const SizedBox(width: 8),
-                    ],
                     if (!isCompleted && !isCancelled && order.status != 'ready')
                       _GhostButton(
                         label: 'Complete',

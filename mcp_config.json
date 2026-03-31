@@ -1,0 +1,35 @@
+{
+  "supabase_mcp_configs": {
+    "hosted": {
+      "full_access": "https://mcp.supabase.com/mcp?project_ref=qqnrucnsvupfywyzlofa",
+      "read_only": "https://mcp.supabase.com/mcp?project_ref=qqnrucnsvupfywyzlofa&read_only=true"
+    },
+    "claude_desktop_native": {
+      "mcpServers": {
+        "supabase": {
+          "type": "http",
+          "url": "https://mcp.supabase.com/mcp?project_ref=qqnrucnsvupfywyzlofa"
+        }
+      }
+    },
+    "local_via_npx": {
+      "mcpServers": {
+        "supabase": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server"
+          ],
+          "env": {
+            "SUPABASE_URL": "https://qqnrucnsvupfywyzlofa.supabase.co",
+            "SUPABASE_SERVICE_ROLE_KEY": "YOUR_SERVICE_ROLE_KEY"
+          }
+        }
+      }
+    }
+  },
+  "instructions": {
+    "cursor": "Go to Cursor Settings > Features > MCP > Add New MCP Server. Name: Supabase, Type: HTTP, URL: <Link from 'hosted' above>",
+    "claude_desktop": "Ensure you have Claude Desktop installed. Open `%APPDATA%\\Claude\\claude_desktop_config.json` and add the 'claude_desktop_native' content under 'mcpServers'."
+  }
+}

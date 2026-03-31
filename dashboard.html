@@ -324,6 +324,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
     <div class="sb-nav">
       <div class="sb-item active" data-page="overview" onclick="showPage('overview')"><span class="icon"><i data-lucide="layout-dashboard" style="width:18px;height:18px"></i></span>Overview</div>
       <div class="sb-item" data-page="orders" onclick="showPage('orders')"><span class="icon"><i data-lucide="scroll-text" style="width:18px;height:18px"></i></span>Live Orders<span class="sb-badge" id="pending-badge" style="display:none">0</span></div>
+      <div class="sb-item" data-page="history" onclick="showPage('history')"><span class="icon"><i data-lucide="history" style="width:18px;height:18px"></i></span>History</div>
       <div class="sb-item" data-page="menu" onclick="showPage('menu')"><span class="icon"><i data-lucide="utensils-crosses" style="width:18px;height:18px"></i></span>Menu</div>
       <div class="sb-item" data-page="qr" onclick="showPage('qr')"><span class="icon"><i data-lucide="qr-code" style="width:18px;height:18px"></i></span>QR Codes</div>
       <div class="sb-item" data-page="feedback" onclick="showPage('feedback')"><span class="icon">⭐</span>Feedback</div>
@@ -337,6 +338,9 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       </div>
     </div>
     <div class="sb-footer">
+      <div id="sound-toggle" class="sb-item" onclick="toggleSound()" style="margin-bottom:8px; border:1px solid var(--border); color:var(--lime);">
+        <div class="icon" id="sound-icon">🔔</div> <span id="sound-text">Sound: ON</span>
+      </div>
       <button class="logout-btn" onclick="doLogout()">Sign Out</button>
     </div>
   </div>
@@ -361,6 +365,13 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <div class="page-title">Live Orders</div>
       <div class="page-sub">Auto-refreshes every 15 seconds · Click status to update</div>
       <div id="orders-list"><div class="empty-state"><div class="icon"><i data-lucide="check-circle-2" style="width:32px;height:32px"></i></div><p>No active orders right now</p></div></div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="page" id="page-history">
+      <div class="page-title">Order History</div>
+      <div class="page-sub">Review past orders and track restaurant activity (Last 100).</div>
+      <div id="history-list"></div>
     </div>
 
     <!-- MENU -->
@@ -667,13 +678,19 @@ function toggleSidebar() {
 
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+  const targetPage = document.getElementById('page-' + id);
+  if (targetPage) targetPage.classList.add('active');
+  
   document.querySelectorAll('.sb-item').forEach(i => i.classList.toggle('active', i.dataset.page === id));
+  
+  if (id === 'overview') loadOverview();
   if (id === 'orders') loadOrders();
+  if (id === 'history') loadHistory();
   if (id === 'menu') loadDishes();
   if (id === 'qr') buildQR();
   if (id === 'leads') loadLeads();
   if (id === 'feedback') loadFeedback();
+  
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-overlay').classList.remove('open');
@@ -698,9 +715,15 @@ function setupRealtime() {
 
   // 2. Orders Listener
   if (restaurant && !realtimeChannel) {
-    // Owner Mode: Filtered by restaurant
+    // Owner Mode: Filtered by restaurant (UUID needs quotes in filter)
     realtimeChannel = sb.channel('public:orders:' + restaurant.id)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `restaurant_id=eq.${restaurant.id}` }, payload => {
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'orders', 
+        filter: `restaurant_id=eq.'${restaurant.id}'` 
+      }, payload => {
+        console.log('Real-time update:', payload);
         loadOrders();
         loadOverview();
         if (payload.eventType === 'INSERT') notifyNewOrder(payload.new);
@@ -765,11 +788,29 @@ async function requestNotificationPermission() {
   }
 }
 
+let soundEnabled = true;
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  // Try to play once to unlock audio context in some browsers
+  if (soundEnabled) {
+    orderSound.play().catch(() => {});
+  }
+  document.getElementById('sound-icon').textContent = soundEnabled ? '🔔' : '🔕';
+  document.getElementById('sound-text').textContent = soundEnabled ? 'Sound: ON' : 'Sound: OFF';
+  toast(soundEnabled ? '🔔 Sound notifications enabled' : '🔕 Sound notifications muted');
+}
+
 function notifyNewOrder(order) {
-  // Play sound
-  orderSound.play().catch(e => console.log('Audio play blocked by browser', e));
-  
-  // Show Toast
+  // Play sound if enabled
+  if (soundEnabled) {
+    const playPromise = orderSound.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(e => {
+        console.log('Audio play blocked. User must interact with the page first.', e);
+        toast('🔔 New Order! (Sound blocked by browser)');
+      });
+    }
+  }
   toast(`🔔 New Order! Table ${order.table_number} — ₹${order.total}`);
 
   // System Notification if tab is hidden
@@ -1192,6 +1233,54 @@ function renderOrders() {
 
   el.innerHTML = html;
   lucide.createIcons();
+}
+
+/* ── HISTORY ── */
+let historyOrders = [];
+async function loadHistory() {
+  if (isDemo || !restaurant) return;
+  const el = document.getElementById('history-list');
+  el.innerHTML = '<div class="empty-state">Loading history...</div>';
+  
+  try {
+    const { data, error } = await sb.from('orders')
+      .select('*')
+      .eq('restaurant_id', restaurant.id)
+      .order('created_at', { ascending: false })
+      .limit(100);
+    
+    if (error) throw error;
+    historyOrders = data || [];
+    renderHistory();
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state">Failed to load history</div>';
+  }
+}
+
+function renderHistory() {
+  const el = document.getElementById('history-list');
+  if (!historyOrders.length) {
+    el.innerHTML = '<div class="empty-state"><p>No order history found.</p></div>';
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-head"><h3 style="font-size:16px;">Orders (Last 100)</h3></div>
+      ${historyOrders.map(o => `
+        <div class="dish-row" style="padding:16px; border-bottom:1px solid var(--border);">
+          <div class="d-info">
+            <div class="d-name">Table ${o.table_number} · ₹${o.total}</div>
+            <div class="d-meta">${new Date(o.created_at).toLocaleString()} · ${o.items.length} items</div>
+          </div>
+          <div style="text-align:right;">
+             <span class="status-badge sb-${o.status}">${o.status.toUpperCase()}</span>
+             ${o.bill_sent ? '<div style="font-size:10px; color:var(--lime); margin-top:4px;">BILL SENT</div>' : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 async function cancelOrder(id) {
