@@ -240,6 +240,9 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 .sb-ready{background:var(--green2);color:var(--green3)}
 .sb-completed{background:var(--s3);color:var(--muted)}
 .sb-cancelled{background:var(--red2);color:var(--red)}
+.history-muted{opacity:0.5;filter:grayscale(1);pointer-events:none;}
+.dish-row.clickable { cursor: pointer; transition: background 0.2s; }
+.dish-row.clickable:hover { background: var(--s3); }
 .order-items{margin-bottom:14px;display:flex;flex-direction:column;gap:6px}
 .order-item{font-size:12px;color:var(--muted)}
 .order-item b{color:var(--white);font-weight:600}
@@ -466,7 +469,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 }
 </style>
 
-<div id="bill-preview-modal" class="preview-modal-overlay">
+<div id="bill-preview-modal" class="preview-modal-overlay" onclick="if(event.target===this)this.style.display='none'">
   <div class="preview-modal">
     <div id="bill-preview-content"></div>
   </div>
@@ -1060,13 +1063,36 @@ function renderRecentOrders(list) {
   const el = document.getElementById('recent-orders-list');
   if (!list.length) { el.innerHTML = `<div class="empty-state"><div class="icon">🕐</div><p>No orders yet</p></div>`; return; }
   el.innerHTML = list.map(o => `
-    <div class="dish-row">
+    <div class="dish-row clickable" onclick="viewRecentOrderDetails('${o.id}')">
       <div class="d-info">
         <div class="d-name">Table ${o.table_number} · ₹${o.total}</div>
         <div class="d-meta">${timeAgo(o.created_at)} · ${o.items.length} item(s) ${o.token_number ? `· <b>Token: ${o.token_number}</b>` : ''}</div>
       </div>
-      <span class="status-badge sb-${o.status}">${o.status}</span>
+      <span class="status-badge sb-${o.status}">${o.status.toUpperCase()}</span>
     </div>`).join('');
+}
+
+function viewRecentOrderDetails(id) {
+  const o = allOrdersData.find(x => x.id === id);
+  if (!o) return;
+  const html = `
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:32px;margin-bottom:8px;">📦</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;">Order Details</div>
+      <div style="font-size:12px;color:var(--muted);">${o.id}</div>
+    </div>
+    <div style="margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>Table</span><b>${o.table_number}</b></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>Status</span><b style="color:var(--lime); text-transform:uppercase;">${o.status}</b></div>
+      <div style="display:flex;justify-content:space-between;"><span>Time</span><b>${new Date(o.created_at).toLocaleTimeString()}</b></div>
+    </div>
+    <div class="order-items" style="margin-bottom:20px;">
+      ${o.items.map(i => `<div class="order-item">${i.emoji || '🍽'} <b>${i.qty}×</b> ${i.name} — ₹${i.price * i.qty}</div>`).join('')}
+    </div>
+    <button class="btn-lime" style="width:100%;padding:12px;border-radius:12px;" onclick="document.getElementById('bill-preview-modal').style.display='none'">Close</button>
+  `;
+  document.getElementById('bill-preview-content').innerHTML = html;
+  document.getElementById('bill-preview-modal').style.display = 'flex';
 }
 
 /* ── ORDERS ── */
@@ -1078,9 +1104,8 @@ async function loadOrders() {
     const { data } = await sb.from('orders').select('*')
       .eq('restaurant_id', restaurant.id)
       .gte('created_at', today.toISOString())
-      .not('status','eq','cancelled')
-      .or('bill_sent.eq.false,bill_sent.is.null')
       .order('created_at', { ascending: false });
+    allOrdersData = data || []; // use the global for history too
     orders = data || [];
   } catch(e) { orders = []; }
   renderOrders();
@@ -1097,13 +1122,23 @@ function updatePendingBadge() {
 function renderOrders() {
   const el = document.getElementById('orders-list');
   if (!orders.length) { 
-    el.innerHTML = `<div class="empty-state"><div class="icon">✅</div><p>No active orders</p></div>`; 
+    el.innerHTML = `<div class="empty-state"><div class="icon">✅</div><p>No activity today</p></div>`; 
     return; 
   }
 
+  // Sort: Active first, Completed/Cancelled at the bottom
+  const displayOrders = [...orders].sort((a,b) => {
+    const activeStates = ['pending', 'preparing', 'ready'];
+    const aIsActive = activeStates.includes(a.status);
+    const bIsActive = activeStates.includes(b.status);
+    if (aIsActive && !bIsActive) return -1;
+    if (!aIsActive && bIsActive) return 1;
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
+
   // Group by table
   const tableGroups = {};
-  orders.forEach(o => {
+  displayOrders.forEach(o => {
     const t = o.table_number || 'Takeaway';
     if (!tableGroups[t]) tableGroups[t] = [];
     tableGroups[t].push(o);
@@ -1118,8 +1153,9 @@ function renderOrders() {
     const ordersHtml = tableOrders.map(o => {
       const nextStatus = {pending:'preparing', preparing:'ready', ready:'completed'}[o.status];
       const nextLabel = {pending:'Mark Preparing', preparing:'Mark Ready', ready:'Complete'}[o.status] || '';
+      const isHistory = o.status === 'completed' || o.status === 'cancelled';
       return `
-      <div class="order-card ${o.status}">
+      <div class="order-card ${o.status} ${isHistory ? 'history-muted' : ''}">
         <div class="order-head">
           <div>
             <div class="order-table">Token ${o.token_number || '-'}</div>
