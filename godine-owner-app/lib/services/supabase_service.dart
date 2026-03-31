@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/restaurant.dart';
@@ -7,7 +8,7 @@ import '../models/order.dart';
 
 const String _supabaseUrl = 'https://qqnrucnsvupfywyzlofa.supabase.co';
 const String _supabaseKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxbnJ1Y25zdnVwZnl3eXpsb2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxNzk1MjEsImV4cCI6MjA4OTc1NTUyMX0.9zyd5GBq9WCXl0XcCXDge311LGqPKZ4IV4Pm-GA1Mu0';
+    'sb_publishable_v0HfrI2OaKkBXJhqrU9EOA_05uRuFYx';
 
 const _storage = FlutterSecureStorage();
 const _authKey = 'gd_auth';
@@ -17,10 +18,16 @@ class SupabaseService {
 
   /// Initialize Supabase — call once in main()
   static Future<void> init() async {
-    await Supabase.initialize(
-      url: _supabaseUrl,
-      anonKey: _supabaseKey,
-    );
+    try {
+      await Supabase.initialize(
+        url: _supabaseUrl,
+        anonKey: _supabaseKey,
+      );
+      debugPrint('Supabase initialized successfully');
+    } catch (e) {
+      debugPrint('Supabase initialization error: $e');
+      rethrow;
+    }
   }
 
   // ───── Auth Persistence ─────

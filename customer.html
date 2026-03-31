@@ -95,13 +95,19 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
 <script>
 const { createClient } = supabase;
 let sb;
-if (CONFIG.supabaseUrl !== 'YOUR_SUPABASE_PROJECT_URL') {
-  sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+
+// Initialization with basic error handling
+const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL' || !CONFIG.supabaseUrl;
+if (!isDemo) {
+  try {
+    sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+  } catch (err) {
+    console.error('Supabase Init Error:', err);
+  }
 }
 
 const params = new URLSearchParams(location.search);
 const restaurantSlug = params.get('r') || 'demo';
-const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL';
 
 let currentUser = null;
 let orders = [];

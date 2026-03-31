@@ -421,12 +421,20 @@ a{color:inherit;text-decoration:none}
 /* ── INIT ── */
 const { createClient } = supabase;
 let sb;
-try { sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey); } catch(e){}
+
+// Initialization with basic error handling
+const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL' || !CONFIG.supabaseUrl;
+if (!isDemo) {
+  try {
+    sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+  } catch (err) {
+    console.error('Supabase Init Error:', err);
+  }
+}
 
 const params = new URLSearchParams(location.search);
 const restaurantSlug = params.get('r') || 'demo';
 const tableNum = params.get('table') || '1';
-const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL';
 
 let restaurant = null;    // {id, name, slug, total_tables}
 let allDishes = [];

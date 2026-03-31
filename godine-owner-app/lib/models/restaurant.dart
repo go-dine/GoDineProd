@@ -25,17 +25,17 @@ class Restaurant {
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     return Restaurant(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      slug: json['slug'] as String,
-      ownerPassword: json['owner_password'] as String,
+      id: (json['id'] ?? '') as String,
+      name: (json['name'] ?? '') as String,
+      slug: (json['slug'] ?? '') as String,
+      ownerPassword: (json['owner_password'] ?? '') as String,
       totalTables: (json['total_tables'] as num?)?.toInt() ?? 10,
       isActive: json['is_active'] as bool? ?? true,
       sortOrder: (json['sort_order'] as num?)?.toInt() ?? 0,
       createdAt: json['created_at'] as String? ?? '',
       isTrial: json['is_trial'] as bool? ?? true,
       subscriptionEnd: json['subscription_end'] != null 
-          ? DateTime.parse(json['subscription_end'] as String) 
+          ? DateTime.tryParse(json['subscription_end'] as String) 
           : null,
     );
   }

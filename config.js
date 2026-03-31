@@ -7,5 +7,5 @@
 
 const CONFIG = {
   supabaseUrl: 'https://qqnrucnsvupfywyzlofa.supabase.co',
-  supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxbnJ1Y25zdnVwZnl3eXpsb2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxNzk1MjEsImV4cCI6MjA4OTc1NTUyMX0.9zyd5GBq9WCXl0XcCXDge311LGqPKZ4IV4Pm-GA1Mu0',
+  supabaseKey: 'sb_publishable_v0HfrI2OaKkBXJhqrU9EOA_05uRuFYx',
 };

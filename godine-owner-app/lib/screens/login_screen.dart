@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (e.toString().contains('suspended')) {
         setState(() => _error = 'Account suspended by platform admin');
       } else {
-        setState(() => _error = 'Connection error. Check internet and try again.');
+        setState(() => _error = 'Connection error: ${e.toString().split('\n').first}');
       }
     }
     if (mounted) setState(() => _loading = false);

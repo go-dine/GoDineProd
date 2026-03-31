@@ -37,8 +37,9 @@ class _AuthGateState extends State<AuthGate> {
     try {
       // Initialize Supabase (with timeout)
       await SupabaseService.init().timeout(const Duration(seconds: 5));
-    } catch (_) {
-      // If Supabase init fails/times out, we'll just show login screen
+    } catch (e) {
+      debugPrint('Supabase Initialization Failed: $e');
+      // If Supabase init fails, we continue to login screen but might be in a broken state
     }
 
     try {
@@ -58,7 +59,9 @@ class _AuthGateState extends State<AuthGate> {
       try {
         restaurant = await SupabaseService.autoLogin()
             .timeout(const Duration(seconds: 5));
-      } catch (_) {}
+      } catch (e) {
+        debugPrint('Auto-login error: $e');
+      }
     }
 
     if (mounted) {

@@ -5,7 +5,7 @@ class NotificationService {
   static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidInit = AndroidInitializationSettings('@mipmap/launcher_icon');
     const iosInit = DarwinInitializationSettings();
     const initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
     
@@ -24,7 +24,7 @@ class NotificationService {
       channelDescription: 'Notifications for new customer orders',
       importance: Importance.max,
       priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
+      icon: '@mipmap/launcher_icon',
     );
     const iosDetails = DarwinNotificationDetails();
     const platformDetails = NotificationDetails(android: androidDetails, iOS: iosDetails);

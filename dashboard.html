@@ -461,8 +461,16 @@ const MASTER_ADMIN = {
 /* ── SUPABASE ── */
 const { createClient } = supabase;
 let sb;
-try { sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey); } catch(e){}
-const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL';
+
+// Initialization with basic error handling
+const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL' || !CONFIG.supabaseUrl;
+if (!isDemo) {
+  try {
+    sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+  } catch (err) {
+    console.error('Supabase Init Error:', err);
+  }
+}
 
 /* ── STATE ── */
 let restaurant = null; // {id, name, slug, total_tables}
