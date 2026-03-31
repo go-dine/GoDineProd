@@ -1146,9 +1146,10 @@ function renderOrders() {
 
   const html = Object.keys(tableGroups).sort().map(table => {
     const tableOrders = tableGroups[table];
-    const tableTotal = tableOrders.reduce((sum, o) => sum + o.total, 0);
-    const hasCompletedOrReady = tableOrders.some(o => o.status === 'completed' || o.status === 'ready');
-    const allCompleted = tableOrders.every(o => o.status === 'completed');
+    const unbilledOrders = tableOrders.filter(o => !o.bill_sent);
+    const tableTotal = unbilledOrders.reduce((sum, o) => sum + o.total, 0);
+    const hasCompletedOrReady = unbilledOrders.some(o => o.status === 'completed' || o.status === 'ready');
+    const allCompleted = unbilledOrders.length > 0 && unbilledOrders.every(o => o.status === 'completed');
 
     const ordersHtml = tableOrders.map(o => {
       const nextStatus = {pending:'preparing', preparing:'ready', ready:'completed'}[o.status];
@@ -1208,7 +1209,7 @@ async function cancelOrder(id) {
 }
 
 function previewTableBill(table) {
-  const tableOrders = orders.filter(o => o.table_number == table && o.status !== 'cancelled');
+  const tableOrders = orders.filter(o => o.table_number == table && o.status !== 'cancelled' && !o.bill_sent);
   let allItems = [];
   let grandTotal = 0;
   tableOrders.forEach(o => {
@@ -1249,7 +1250,7 @@ function previewTableBill(table) {
 async function sendTableBill(table) {
   if (isDemo || !confirm(`Send final bill to Table ${table}? This will clear these orders from your active view.`)) return;
   try {
-    const tableOrders = orders.filter(o => o.table_number == table);
+    const tableOrders = orders.filter(o => o.table_number == table && !o.bill_sent);
     const ids = tableOrders.map(o => o.id);
     
     // Batch update all current table orders to completed & bill_sent
