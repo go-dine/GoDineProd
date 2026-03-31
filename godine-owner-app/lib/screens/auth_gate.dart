@@ -177,9 +177,16 @@ class _MainScaffoldState extends State<MainScaffold> {
       QrCodesScreen(restaurant: widget.restaurant),
     ];
 
-    return Scaffold(
-      backgroundColor: AppColors.bg,
-      appBar: AppBar(
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          setState(() => _currentIndex = 0);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.bg,
+        appBar: AppBar(
         backgroundColor: AppColors.surface1,
         elevation: 0,
         titleSpacing: 16,
@@ -265,6 +272,6 @@ class _MainScaffoldState extends State<MainScaffold> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

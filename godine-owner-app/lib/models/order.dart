@@ -35,6 +35,7 @@ class Order {
   final String? tokenNumber;
   final String? estimatedTime;
   final String createdAt;
+  final bool billSent;
 
   Order({
     required this.id,
@@ -50,6 +51,7 @@ class Order {
     this.tokenNumber,
     this.estimatedTime,
     required this.createdAt,
+    this.billSent = false,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -68,10 +70,11 @@ class Order {
       tokenNumber: json['token_number'] as String?,
       estimatedTime: json['estimated_time'] as String?,
       createdAt: json['created_at'] as String? ?? '',
+      billSent: json['bill_sent'] == true,
     );
   }
 
-  Order copyWith({String? status, String? estimatedTime, String? tokenNumber}) {
+  Order copyWith({String? status, String? estimatedTime, String? tokenNumber, bool? billSent}) {
     return Order(
       id: id,
       restaurantId: restaurantId,
@@ -86,6 +89,7 @@ class Order {
       tokenNumber: tokenNumber ?? this.tokenNumber,
       estimatedTime: estimatedTime ?? this.estimatedTime,
       createdAt: createdAt,
+      billSent: billSent ?? this.billSent,
     );
   }
 }
