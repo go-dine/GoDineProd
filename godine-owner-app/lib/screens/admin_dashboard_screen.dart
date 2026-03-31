@@ -3,6 +3,8 @@ import '../theme.dart';
 import '../models/restaurant.dart';
 import '../models/order.dart' as app_order;
 import '../services/supabase_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'feedback_screen.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -44,6 +46,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         children: [
           _AdminRestaurantsTab(onImpersonate: widget.onImpersonate),
           const _AdminOrdersTab(),
+          const FeedbackScreen(), // Global mode
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -58,6 +61,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         items: const [
           BottomNavigationBarItem(icon: Text('🏢', style: TextStyle(fontSize: 20)), label: 'Restaurants'),
           BottomNavigationBarItem(icon: Text('📋', style: TextStyle(fontSize: 20)), label: 'All Orders'),
+          BottomNavigationBarItem(icon: Text('💬', style: TextStyle(fontSize: 20)), label: 'Feedback'),
         ],
       ),
     );

@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/restaurant.dart';
 import '../models/dish.dart';
 import '../models/order.dart';
+import '../models/feedback.dart';
 
 const String _supabaseUrl = 'https://qqnrucnsvupfywyzlofa.supabase.co';
 const String _supabaseKey =
@@ -255,5 +256,24 @@ class SupabaseService {
 
   static void unsubscribe(RealtimeChannel channel) {
     client.removeChannel(channel);
+  }
+
+  // ───── Feedback ─────
+
+  static Future<List<FeedbackModel>> fetchFeedback(String restaurantId) async {
+    final res = await client
+        .from('feedback')
+        .select()
+        .eq('restaurant_id', restaurantId)
+        .order('created_at', ascending: false);
+    return (res as List).map((e) => FeedbackModel.fromJson(e)).toList();
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchAllFeedback() async {
+    final res = await client
+        .from('feedback')
+        .select('*, restaurants(name)')
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(res as List);
   }
 }

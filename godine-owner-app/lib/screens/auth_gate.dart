@@ -13,6 +13,7 @@ import 'orders_screen.dart';
 import 'revenue_screen.dart';
 import 'menu_screen.dart';
 import 'qr_codes_screen.dart';
+import 'feedback_screen.dart';
 import 'admin_dashboard_screen.dart';
 
 class AuthGate extends StatefulWidget {
@@ -188,6 +189,7 @@ class _MainScaffoldState extends State<MainScaffold> {
       OverviewScreen(restaurant: widget.restaurant),
       OrdersScreen(restaurant: widget.restaurant, onPendingCount: _onPendingCount),
       RevenueScreen(restaurant: widget.restaurant),
+      FeedbackScreen(restaurant: widget.restaurant),
       MenuScreen(restaurant: widget.restaurant),
       QrCodesScreen(restaurant: widget.restaurant),
     ];
@@ -282,6 +284,7 @@ class _MainScaffoldState extends State<MainScaffold> {
               label: 'Orders',
             ),
             const BottomNavigationBarItem(icon: Text('💰', style: TextStyle(fontSize: 20)), label: 'Revenue'),
+            const BottomNavigationBarItem(icon: Text('💬', style: TextStyle(fontSize: 20)), label: 'Feedback'),
             const BottomNavigationBarItem(icon: Text('🍽', style: TextStyle(fontSize: 20)), label: 'Menu'),
             const BottomNavigationBarItem(icon: Text('📱', style: TextStyle(fontSize: 20)), label: 'QR Codes'),
           ],
