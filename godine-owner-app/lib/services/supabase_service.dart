@@ -123,6 +123,10 @@ class SupabaseService {
 
   // ───── Dishes ─────
 
+  static Future<void> updateFcmToken(String restaurantId, String? token) async {
+    await client.from('restaurants').update({'fcm_token': token}).eq('id', restaurantId);
+  }
+
   static Future<List<Dish>> fetchDishes(String restaurantId) async {
     final res = await client
         .from('dishes')

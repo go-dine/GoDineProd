@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../models/order.dart';
 
 class NotificationService {
@@ -11,10 +12,28 @@ class NotificationService {
     
     await _notifications.initialize(settings: initSettings);
     
-    // Request permission on Android 13+
+    // Request local notification permission on Android 13+
     await _notifications
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
+
+    // Request Firebase Messaging permission
+    await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  static Future<String?> getDeviceToken() async {
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      debugPrint('FCM Token: $token');
+      return token;
+    } catch (e) {
+      debugPrint('Error getting FCM token: $e');
+      return null;
+    }
   }
 
   static Future<void> showNewOrderNotification(Order order) async {

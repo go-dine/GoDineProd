@@ -41,3 +41,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase / Android Secrets
+android/app/google-services.json
+.firebase/
+firebase-debug.log

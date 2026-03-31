@@ -64,17 +64,32 @@ class _AuthGateState extends State<AuthGate> {
       }
     }
 
-    if (mounted) {
-      setState(() {
-        _isInitializing = false;
-        _isAdmin = isAdmin;
-        _restaurant = restaurant;
-      });
+      if (mounted) {
+        setState(() {
+          _isInitializing = false;
+          _isAdmin = isAdmin;
+          _restaurant = restaurant;
+        });
+        if (restaurant != null) {
+          _registerFcmToken(restaurant.id);
+        }
+      }
     }
-  }
+
+    Future<void> _registerFcmToken(String restaurantId) async {
+      try {
+        final token = await NotificationService.getDeviceToken();
+        if (token != null) {
+          await SupabaseService.updateFcmToken(restaurantId, token);
+        }
+      } catch (e) {
+        debugPrint('Failed to register FCM token: $e');
+      }
+    }
 
   void _handleLogin(Restaurant restaurant) {
     setState(() => _restaurant = restaurant);
+    _registerFcmToken(restaurant.id);
   }
 
   void _handleAdminLogin() {

@@ -485,7 +485,7 @@ let cart = {};             // id -> {dish, qty}
 let activeCategory = 'All';
 
 /* ── 12 DEMO DISHES ── */
-const DEMO_RESTAURANT = { id: 'demo', name: 'The Rustic Fork', slug: 'demo', total_tables: 10 };
+const DEMO_RESTAURANT = { id: '00000000-0000-0000-0000-000000000001', name: 'The Rustic Fork', slug: 'demo', total_tables: 10 };
 const DEMO_DISHES = [
   {id:'d1', name:'Pasta Arrabbiata',    description:'Spicy tomato penne, parmesan',       price:280, category:'Main Course', emoji:'🍝', available:true},
   {id:'d2', name:'Smash Burger',        description:'Double patty, secret sauce, fries',  price:320, category:'Main Course', emoji:'🍔', available:true},
@@ -877,10 +877,10 @@ async function actualPlaceOrder(name, phone) {
     localStorage.removeItem('godine_cart');
     window.location.href = `customer.html?r=${restaurantSlug}&table=${tableNum}`;
   } catch(e) {
-    console.error(e);
+    console.error('Order Placement Error:', e);
     if (btn) { btn.disabled = false; btn.textContent = 'Place Order →'; }
     
-    let msg = '⚠️ Failed to place order. Try again.';
+    let msg = '⚠️ Failed to place order. ' + (e.message || 'Try again.');
     if (e.message && e.message.includes('column "token_number" of relation "orders" does not exist')) {
         msg = 'Database Setup Incomplete: The "token_number" column is missing in the orders table.';
     }
