@@ -178,8 +178,10 @@ async function fetchOrders() {
   
   orders = data || [];
   
-  const hasBill = orders.some(o => o.bill_sent === true);
-  if (hasBill) {
+  const unbilled = orders.filter(o => !o.bill_sent && o.status !== 'cancelled');
+  const billed = orders.filter(o => o.bill_sent);
+  
+  if (unbilled.length === 0 && billed.length > 0) {
     renderBill(orders);
   } else {
     renderOrders(orders);

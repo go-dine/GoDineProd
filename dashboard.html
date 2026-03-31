@@ -1145,11 +1145,12 @@ async function sendTableBill(table) {
     const tableOrders = orders.filter(o => o.table_number == table);
     const ids = tableOrders.map(o => o.id);
     
-    // Attempt auto-complete for any lingering items
-    // First update statuses if not completed
-    for (const id of ids) {
-      await sb.from('orders').update({ status: 'completed', bill_sent: true }).eq('id', id);
-    }
+    // Batch update all current table orders to completed & bill_sent
+    const { error } = await sb.from('orders')
+      .update({ status: 'completed', bill_sent: true })
+      .in('id', ids);
+      
+    if (error) throw error;
     
     toast(`📋 Bill sent to Table ${table}`);
     loadOrders();
