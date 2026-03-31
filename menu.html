@@ -901,10 +901,17 @@ function resetOrder() {
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+  t.textContent = msg;
+  t.classList.remove('show');
+  
+  // Force reflow
+  void t.offsetWidth;
+  
+  t.classList.add('show');
+  toastTimer = setTimeout(() => {
+    t.classList.remove('show');
+  }, 2500);
 }
 
 /* ── SMART GREETINGS & FAVORITES ── */
@@ -969,8 +976,8 @@ function addOne(dishId) {
 </script>
 
 <!-- ZOMATO MENU FAB -->
-<div class="menu-fab" id="menu-fab" onclick="openCatDrawer()">
-  <i data-lucide="utensils-crosses" style="width:16px;height:16px"></i>
+<div class="menu-fab" id="menu-fab" onclick="openCatDrawer()" style="color:white !important;">
+  <i data-lucide="utensils" style="width:16px;height:16px;margin-right:8px;color:white !important;"></i>
   <span>MENU</span>
 </div>
 
