@@ -73,21 +73,6 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
 .feedback-done{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:20px;background:rgba(74,222,128,0.12);color:#4ade80;font-size:0.8rem;font-weight:600}
 .cancel-btn{display:inline-block;margin-top:12px;padding:8px 16px;border:none;border-radius:20px;background:rgba(255,68,68,0.15);color:#ff4444;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;transition:background 0.2s}
 .cancel-btn:hover{background:rgba(255,68,68,0.25)}
-
-/* Bill Screen */
-#bill-screen{
-  display:none;padding:40px 20px;min-height:100vh;
-  background:linear-gradient(180deg,#1a1a1a 0%,#121212 100%);
-  text-align:center;
-}
-.bill-icon{font-size:64px;margin-bottom:16px}
-.bill-title{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:800;color:#c1ff00;margin-bottom:8px}
-.bill-sub{font-size:14px;color:#888;margin-bottom:32px}
-.bill-card{background:#1e1e1e;border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,0.05);box-shadow:0 8px 32px rgba(0,0,0,0.2);margin-bottom:32px;text-align:left}
-.bill-items{margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:16px}
-.b-item{display:flex;justify-content:space-between;font-size:14px;color:#bbb;margin-bottom:8px}
-.b-qty{color:#fff;font-weight:700}
-.bill-total{display:flex;justify-content:space-between;font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:#fff}
 </style>
 </head>
 <body>
@@ -110,7 +95,7 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
   <div id="orders-container"></div>
 </main>
 
-<div id="bill-screen"></div>
+</main>
 
 <script>
 const { createClient } = supabase;
@@ -176,12 +161,7 @@ async function boot() {
   
   // Re-render every second to evaluate the 10-second cancellation window
   setInterval(() => {
-    if (orders.some(o => o.status === 'pending')) {
-      const unbilled = orders.filter(o => !o.bill_sent && o.status !== 'cancelled');
-      const billed = orders.filter(o => o.bill_sent);
-      if (unbilled.length === 0 && billed.length > 0) renderBill(orders);
-      else renderOrders(orders);
-    }
+    renderOrders(orders);
   }, 1000);
 }
 
@@ -221,16 +201,6 @@ function renderOrders(list) {
   }
 
   let html = '';
-  const billed = list.filter(o => o.bill_sent);
-  if (billed.length > 0) {
-    html += `
-      <div onclick="renderBill(orders)" style="background:rgba(182,255,42,0.1); border:1px solid rgba(182,255,42,0.18); border-radius:16px; padding:20px; margin-bottom:24px; text-align:center; cursor:pointer;">
-        <div style="font-size:32px;margin-bottom:8px;">🧾</div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#c1ff00;margin-bottom:4px;">Your Bill is Ready</div>
-        <div style="font-size:12px;color:#aaa;">Tap here to view the final summary & rate your experience</div>
-      </div>
-    `;
-  }
   
   if (active.length) {
     html += active.map(o => createOrderCard(o)).join('');
@@ -315,46 +285,6 @@ async function cancelCustomerOrder(id) {
     const { error } = await sb.from('orders').update({ status: 'cancelled' }).eq('id', id);
     if (!error) fetchOrders();
   } catch(e) {}
-}
-
-function renderBill(list) {
-  document.getElementById('header').style.display = 'none';
-  document.getElementById('content').style.display = 'none';
-  
-  const validOrders = list.filter(o => o.status !== 'cancelled');
-  let allItems = [];
-  let grandTotal = 0;
-  
-  validOrders.forEach(o => {
-    grandTotal += o.total;
-    if (o.items) allItems.push(...o.items);
-  });
-
-  document.getElementById('bill-screen').innerHTML = `
-    <div class="bill-icon">🎉</div>
-    <div class="bill-title">Your Bill is Ready</div>
-    <div class="bill-sub">Thank you for dining with us!</div>
-    
-    <div class="bill-card">
-      <div class="bill-items">
-        ${allItems.map(i => `
-          <div class="b-item">
-            <span><span class="b-qty">${i.qty}×</span> ${i.name}</span>
-            <span>₹${i.price * i.qty}</span>
-          </div>
-        `).join('')}
-      </div>
-      <div class="bill-total">
-        <span>Total</span>
-        <span style="color:#c1ff00;">₹${grandTotal}</span>
-      </div>
-    </div>
-    
-    <a href="feedback.html?r=${restaurantSlug}" class="feedback-btn" style="width:100%;font-size:16px;padding:16px;">⭐ Rate Your Experience</a>
-    <button onclick="renderOrders(orders)" style="width:100%;margin-top:12px;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:24px;color:#888;font-size:14px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;">📜 View Order History</button>
-    <a href="menu.html?r=${restaurantSlug}&table=${tableNum}" style="display:block;margin-top:24px;color:#888;font-size:14px;text-decoration:none;">← Back to Menu</a>
-  `;
-  document.getElementById('bill-screen').style.display = 'block';
 }
 
 function setupRealtime() {
