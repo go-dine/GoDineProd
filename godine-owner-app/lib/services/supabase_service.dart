@@ -162,7 +162,8 @@ class SupabaseService {
         .select()
         .eq('restaurant_id', restaurantId)
         .gte('created_at', startOfDay.toUtc().toIso8601String())
-        .neq('status', 'completed')
+        .neq('status', 'cancelled')
+        .or('bill_sent.eq.false,bill_sent.is.null')
         .order('created_at', ascending: false);
     return (res as List).map((e) => Order.fromJson(e)).toList();
   }
@@ -196,6 +197,14 @@ class SupabaseService {
     final payload = <String, dynamic>{'status': status};
     if (estimatedTime != null) payload['estimated_time'] = estimatedTime;
     await client.from('orders').update(payload).eq('id', orderId);
+  }
+
+  static Future<void> sendTableBill(List<String> orderIds) async {
+    if (orderIds.isEmpty) return;
+    await client.from('orders').update({
+      'status': 'completed',
+      'bill_sent': true,
+    }).inFilter('id', orderIds);
   }
 
   // ───── Realtime ─────

@@ -123,8 +123,74 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 
+  void _handleCancel(String id) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+        title: const Text('Cancel Order', style: TextStyle(color: AppColors.white)),
+        content: const Text('Are you sure you want to cancel this order?', style: TextStyle(color: AppColors.muted)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('No', style: TextStyle(color: AppColors.muted)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _performUpdate(id, 'cancelled');
+            },
+            child: const Text('Cancel Order', style: TextStyle(color: Color(0xFFFF4444))),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleSendBill(String tableNumber, List<String> ids) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+        title: const Text('Send Bill', style: TextStyle(color: AppColors.white)),
+        content: Text('Send final bill to Table $tableNumber? This will clear these orders from your active view.', style: const TextStyle(color: AppColors.muted)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.muted)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                await SupabaseService.sendTableBill(ids);
+                _load();
+              } catch (_) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Failed to send bill')),
+                  );
+                }
+              }
+            },
+            child: const Text('Send Bill', style: TextStyle(color: AppColors.lime)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Map<String, List<Order>> tableGroups = {};
+    for (final o in _orders) {
+      tableGroups.putIfAbsent(o.tableNumber, () => []).add(o);
+    }
+    
+    final tables = tableGroups.keys.toList()..sort();
+
     return RefreshIndicator(
       color: AppColors.lime,
       backgroundColor: AppColors.surface1,
@@ -164,11 +230,58 @@ class _OrdersScreenState extends State<OrdersScreen> {
               ),
             )
           else
-            ..._orders.map((o) => OrderCard(
-                  order: o,
-                  onAdvanceStatus: _advanceStatus,
-                  onComplete: _handleComplete,
-                )),
+            ...tables.map((table) {
+              final groupOrders = tableGroups[table]!;
+              final groupTotal = groupOrders.fold<double>(0, (sum, o) => sum + o.total);
+              final hasCompletedOrReady = groupOrders.any((o) => o.status == 'completed' || o.status == 'ready' || o.status == 'preparing');
+              final orderIds = groupOrders.map((o) => o.id).toList();
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 24),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.surface1,
+                  border: Border.all(color: AppColors.border),
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Table $table', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.white)),
+                        Text('Total: ₹${groupTotal.toStringAsFixed(0)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.lime)),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    ...groupOrders.map((o) => OrderCard(
+                          order: o,
+                          onAdvanceStatus: _advanceStatus,
+                          onComplete: _handleComplete,
+                          onCancel: _handleCancel,
+                        )),
+                    if (hasCompletedOrReady)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.lime,
+                              foregroundColor: const Color(0xFF050505),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                            ),
+                            onPressed: () => _handleSendBill(table, orderIds),
+                            child: Text('📋 Send Bill to Table (₹${groupTotal.toStringAsFixed(0)})', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            }),
         ],
       ),
     );

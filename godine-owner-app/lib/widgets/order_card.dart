@@ -7,12 +7,14 @@ class OrderCard extends StatelessWidget {
   final Order order;
   final void Function(String id, String newStatus) onAdvanceStatus;
   final void Function(String id) onComplete;
+  final void Function(String id) onCancel;
 
   const OrderCard({
     super.key,
     required this.order,
     required this.onAdvanceStatus,
     required this.onComplete,
+    required this.onCancel,
   });
 
   static const _nextStatus = {
@@ -36,6 +38,8 @@ class OrderCard extends StatelessWidget {
         return const Color(0x33B6FF2A);
       case 'ready':
         return const Color(0x404ADE80);
+      case 'cancelled':
+        return const Color(0x33FF4444);
       default:
         return AppColors.border;
     }
@@ -45,9 +49,10 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final next = _nextStatus[order.status];
     final isCompleted = order.status == 'completed';
+    final isCancelled = order.status == 'cancelled';
 
     return Opacity(
-      opacity: isCompleted ? 0.5 : 1.0,
+      opacity: (isCompleted || isCancelled) ? 0.5 : 1.0,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(18),
@@ -181,7 +186,6 @@ class OrderCard extends StatelessWidget {
               ),
             ],
 
-            // Footer
             const SizedBox(height: 14),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -196,18 +200,24 @@ class OrderCard extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    if (next != null)
+                    if (!isCompleted && !isCancelled)
+                      _RedButton(
+                        label: 'Cancel',
+                        onTap: () => onCancel(order.id),
+                      ),
+                    const SizedBox(width: 8),
+                    if (next != null) ...[
                       _LimeButton(
                         label: next.label,
                         onTap: () => onAdvanceStatus(order.id, next.status),
                       ),
-                    if (!isCompleted && order.status != 'ready') ...[
                       const SizedBox(width: 8),
+                    ],
+                    if (!isCompleted && !isCancelled && order.status != 'ready')
                       _GhostButton(
                         label: 'Complete',
                         onTap: () => onComplete(order.id),
                       ),
-                    ],
                   ],
                 ),
               ],
@@ -274,6 +284,35 @@ class _GhostButton extends StatelessWidget {
             color: AppColors.muted,
             fontSize: 12,
             fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RedButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+  const _RedButton({required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+        decoration: BoxDecoration(
+          color: const Color(0x20FF4444),
+          border: Border.all(color: const Color(0x40FF4444)),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Color(0xFFFF4444),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
