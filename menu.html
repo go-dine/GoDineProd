@@ -321,8 +321,9 @@ a{color:inherit;text-decoration:none}
   background:#1a1a1a;color:var(--white);border:1px solid var(--border);
   border-radius:100px;padding:12px 24px;box-shadow:0 8px 32px rgba(0,0,0,0.5);
   display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;
-  cursor:pointer;transition:all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor:pointer;transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+.menu-fab.with-cart{bottom:100px}
 .menu-fab:hover{transform:translateX(-50%) translateY(-2px);background:var(--s3);border-color:rgba(255,255,255,0.2)}
 .menu-fab:active{transform:translateX(-50%) scale(0.95)}
 .category-drawer{
@@ -344,8 +345,8 @@ a{color:inherit;text-decoration:none}
 .cat-list-name{font-weight:700;font-size:16px}
 .cat-list-count{font-size:12px;color:var(--muted)}
 .section-head{
-  position:sticky;top:56px;z-index:40;
-  background:rgba(5,5,5,0.95);padding:14px 0;
+  position:sticky;top:60px;z-index:40;
+  background:rgba(5,5,5,0.98);padding:14px 0;
   font-size:12px;letter-spacing:2px;text-transform:uppercase;
   color:var(--lime);font-weight:700;
 }
@@ -740,7 +741,9 @@ function updateCartBar() {
   const count = items.reduce((s, i) => s + i.qty, 0);
   document.getElementById('cart-count').textContent = count;
   document.getElementById('cart-bar-total').textContent = '₹' + total;
-  document.getElementById('cart-bar').classList.toggle('visible', count > 0);
+  const hasItems = count > 0;
+  document.getElementById('cart-bar').classList.toggle('visible', hasItems);
+  document.getElementById('menu-fab')?.classList.toggle('with-cart', hasItems);
   localStorage.setItem('godine_cart', JSON.stringify(cart));
 }
 
@@ -1021,6 +1024,7 @@ window.addEventListener('scroll', () => {
 
 /* ── INIT ── */
 boot();
+if (typeof lucide !== 'undefined') lucide.createIcons();
 </script>
 </body>
 </html>

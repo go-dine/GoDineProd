@@ -345,6 +345,7 @@ function renderBill(list) {
     </div>
     
     <a href="feedback.html?r=${restaurantSlug}" class="feedback-btn" style="width:100%;font-size:16px;padding:16px;">⭐ Rate Your Experience</a>
+    <button onclick="renderOrders(orders)" style="width:100%;margin-top:12px;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:24px;color:#888;font-size:14px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;">📜 View Order History</button>
     <a href="menu.html?r=${restaurantSlug}&table=${tableNum}" style="display:block;margin-top:24px;color:#888;font-size:14px;text-decoration:none;">← Back to Menu</a>
   `;
   document.getElementById('bill-screen').style.display = 'block';
