@@ -128,6 +128,7 @@ if (!isDemo) {
 
 const params = new URLSearchParams(location.search);
 const restaurantSlug = params.get('r') || 'demo';
+const tableNum = params.get('table') || localStorage.getItem('godine_table') || '1';
 
 let currentUser = null;
 let orders = [];
@@ -167,7 +168,7 @@ async function boot() {
   document.getElementById('header').style.display = 'flex';
   document.getElementById('content').style.display = 'block';
   
-  document.querySelector('.back-link').href = `menu.html?r=${restaurantSlug}`;
+  document.querySelector('.back-link').href = `menu.html?r=${restaurantSlug}&table=${tableNum}`;
   document.getElementById('rest-name').textContent = `Hello, ${currentUser.name.split(' ')[0]}!`;
 
   await fetchOrders();
@@ -217,7 +218,7 @@ function renderOrders(list) {
         <div class="empty-icon">🍽️</div>
         <h3>No orders found</h3>
         <p>Looks like you haven't ordered anything yet.</p>
-        <a href="menu.html?r=${restaurantSlug}" class="back-btn">Go to Menu</a>
+        <a href="menu.html?r=${restaurantSlug}&table=${tableNum}" class="back-btn">Go to Menu</a>
       </div>
     `;
     return;
@@ -344,7 +345,7 @@ function renderBill(list) {
     </div>
     
     <a href="feedback.html?r=${restaurantSlug}" class="feedback-btn" style="width:100%;font-size:16px;padding:16px;">⭐ Rate Your Experience</a>
-    <a href="menu.html?r=${restaurantSlug}" style="display:block;margin-top:24px;color:#888;font-size:14px;text-decoration:none;">← Back to Menu</a>
+    <a href="menu.html?r=${restaurantSlug}&table=${tableNum}" style="display:block;margin-top:24px;color:#888;font-size:14px;text-decoration:none;">← Back to Menu</a>
   `;
   document.getElementById('bill-screen').style.display = 'block';
 }

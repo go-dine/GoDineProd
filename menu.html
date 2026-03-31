@@ -314,6 +314,41 @@ a{color:inherit;text-decoration:none}
   margin-top:8px;background:var(--lime);color:#050505;border:none;border-radius:6px;
   padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;
 }
+
+/* ── ZOMATO UI ── */
+.menu-fab{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:150;
+  background:#1a1a1a;color:var(--white);border:1px solid var(--border);
+  border-radius:100px;padding:12px 24px;box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.menu-fab:hover{transform:translateX(-50%) translateY(-2px);background:var(--s3);border-color:rgba(255,255,255,0.2)}
+.menu-fab:active{transform:translateX(-50%) scale(0.95)}
+.category-drawer{
+  position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);
+  z-index:1000;display:none;align-items:center;justify-content:center;padding:24px;
+}
+.category-drawer.open{display:flex}
+.cat-list-card{
+  background:var(--s1);border:1px solid var(--border);border-radius:24px;
+  width:100%;max-width:320px;padding:24px;max-height:80vh;overflow-y:auto;
+}
+.cat-list-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer;
+  transition:color 0.2s;
+}
+.cat-list-item:hover{color:var(--lime)}
+.cat-list-item:last-child{border-bottom:none}
+.cat-list-name{font-weight:700;font-size:16px}
+.cat-list-count{font-size:12px;color:var(--muted)}
+.section-head{
+  position:sticky;top:56px;z-index:40;
+  background:rgba(5,5,5,0.95);padding:14px 0;
+  font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--lime);font-weight:700;
+}
 </style>
 </head>
 <body>
@@ -322,7 +357,12 @@ a{color:inherit;text-decoration:none}
 <div class="header" id="header">
   <div class="header-top">
     <a href="index.html" class="logo">Go <b>Dine</b></a>
-    <div class="table-badge" id="table-display">TABLE —</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="customer.html" id="view-orders-link" class="table-badge" style="background:var(--s2);color:var(--white);border-color:var(--border);display:none;">
+        <i data-lucide="clipboard-list" style="width:14px;height:14px;margin-right:4px;vertical-align:middle;"></i>My Orders
+      </a>
+      <div class="table-badge" id="table-display">TABLE —</div>
+    </div>
   </div>
   <div class="rest-info">
     <div class="rest-name" id="rest-name">Loading...</div>
@@ -434,7 +474,8 @@ if (!isDemo) {
 
 const params = new URLSearchParams(location.search);
 const restaurantSlug = params.get('r') || 'demo';
-const tableNum = params.get('table') || '1';
+const tableNum = params.get('table') || localStorage.getItem('godine_table') || '1';
+if (params.get('table')) localStorage.setItem('godine_table', tableNum);
 
 let restaurant = null;    // {id, name, slug, total_tables}
 let allDishes = [];
@@ -464,6 +505,13 @@ document.getElementById('search-input').addEventListener('input', e => renderMen
 
 /* ── BOOT ── */
 async function boot() {
+  const ordersLink = document.getElementById('view-orders-link');
+  if (ordersLink) {
+    ordersLink.href = `customer.html?r=${restaurantSlug}&table=${tableNum}`;
+    const savedGuest = localStorage.getItem('godine_guest');
+    if (savedGuest) ordersLink.style.display = 'flex';
+  }
+  
   const savedGuest = localStorage.getItem('godine_guest');
   if (savedGuest) {
     try { window.currentUser = JSON.parse(savedGuest); } catch(e){}
@@ -564,9 +612,41 @@ function renderCategories() {
 }
 
 function filterCat(cat) {
+  if (cat === 'All') {
+    activeCategory = 'All';
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.textContent === 'All'));
+    renderMenu();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  
+  // If we are in "All" view, just scroll to the section
+  if (activeCategory === 'All' && !document.getElementById('search-input').value) {
+    scrollToCat(cat);
+    return;
+  }
+
   activeCategory = cat;
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.textContent === cat));
   renderMenu();
+}
+
+function scrollToCat(cat) {
+  const id = `cat-${cat.replace(/\s+/g,'-')}`;
+  const el = document.getElementById(id);
+  if (el) {
+    const offset = 120; // Header + Categories height
+    const bodyRect = document.body.getBoundingClientRect().top;
+    const elementRect = el.getBoundingClientRect().top;
+    const elementPosition = elementRect - bodyRect;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  }
+  closeCatDrawer();
 }
 
 /* ── RENDER MENU ── */
@@ -588,7 +668,7 @@ function renderMenu(search = '') {
     const groups = {};
     filtered.forEach(d => { (groups[d.category] = groups[d.category] || []).push(d); });
     el.innerHTML = Object.entries(groups).map(([cat, dishes]) =>
-      `<div class="section-head">${cat}</div>` + dishes.map(dishCard).join('')
+      `<div class="section-head" id="cat-${cat.replace(/\s+/g,'-')}">${cat}</div>` + dishes.map(dishCard).join('')
     ).join('');
   } else {
     el.innerHTML = filtered.map(dishCard).join('');
@@ -791,7 +871,7 @@ async function actualPlaceOrder(name, phone) {
 
     if (error) throw error;
     localStorage.removeItem('godine_cart');
-    window.location.href = `customer.html?r=${restaurantSlug}`;
+    window.location.href = `customer.html?r=${restaurantSlug}&table=${tableNum}`;
   } catch(e) {
     console.error(e);
     if (btn) { btn.disabled = false; btn.textContent = 'Place Order →'; }
@@ -883,8 +963,63 @@ function addOne(dishId) {
   renderMenu();
   showToast(`Added ${dish.name} 🛒`);
 }
+</script>
 
-/* ── BOOT ── */
+<!-- ZOMATO MENU FAB -->
+<div class="menu-fab" id="menu-fab" onclick="openCatDrawer()">
+  <i data-lucide="utensils-crosses" style="width:16px;height:16px"></i>
+  <span>MENU</span>
+</div>
+
+<!-- CATEGORY DRAWER -->
+<div id="cat-drawer" class="category-drawer" onclick="if(event.target===this)closeCatDrawer()">
+  <div class="cat-list-card">
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;margin-bottom:20px;">Categories</div>
+    <div id="cat-list-items"></div>
+    <button class="place-order-btn" style="margin-top:20px;background:var(--s3);color:var(--white);padding:12px;" onclick="closeCatDrawer()">Close</button>
+  </div>
+</div>
+
+<script>
+/* ── ZOMATO DRAWER LOGIC ── */
+function openCatDrawer() {
+  const items = Object.entries(allDishes.reduce((acc, d) => {
+    acc[d.category] = (acc[d.category] || 0) + 1;
+    return acc;
+  }, {}));
+
+  document.getElementById('cat-list-items').innerHTML = items.map(([name, count]) => `
+    <div class="cat-list-item" onclick="scrollToCat('${name}')">
+      <span class="cat-list-name">${name}</span>
+      <span class="cat-list-count">${count} items</span>
+    </div>
+  `).join('');
+  
+  document.getElementById('cat-drawer').classList.add('open');
+}
+
+function closeCatDrawer() {
+  document.getElementById('cat-drawer').classList.remove('open');
+}
+
+/* ── SCROLL SPY FOR CATEGORIES ── */
+window.addEventListener('scroll', () => {
+  if (activeCategory !== 'All' || document.getElementById('search-input').value) return;
+  
+  const sections = document.querySelectorAll('.section-head');
+  let current = 'All';
+  
+  sections.forEach(s => {
+    const top = s.getBoundingClientRect().top;
+    if (top < 150) current = s.textContent;
+  });
+  
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === current);
+  });
+});
+
+/* ── INIT ── */
 boot();
 </script>
 </body>

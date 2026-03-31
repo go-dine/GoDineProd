@@ -190,9 +190,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
       if (o.status == 'cancelled') continue;
       grandTotal += o.total;
       for (final item in o.items) {
-        final name = item['name'] as String;
-        final price = (item['price'] as num).toDouble();
-        final qty = (item['qty'] as num).toInt();
+        final name = item.name;
+        final price = item.price;
+        final qty = item.qty;
         
         if (!aggregated.containsKey(name)) {
           aggregated[name] = {'price': price, 'qty': 0};
