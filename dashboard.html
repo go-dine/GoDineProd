@@ -216,30 +216,37 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 .toggle input:checked + .toggle-slider::before{transform:translateX(16px);background:var(--lime)}
 
 /* ── ORDER CARDS ── */
+.table-group{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:24px;margin-bottom:20px}
+.table-group-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.table-group-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.table-group-total{font-size:15px;font-weight:700;color:var(--lime)}
+
 .order-card{
-  background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r2);padding:20px;margin-bottom:12px;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:12px;padding:16px;margin-bottom:12px;
 }
+.order-card:last-child{margin-bottom:0}
 .order-card.pending{border-color:rgba(251,191,36,0.2)}
 .order-card.preparing{border-color:rgba(182,255,42,0.2)}
 .order-card.ready{border-color:rgba(74,222,128,0.25)}
-.order-card.completed{opacity:0.5}
+.order-card.completed{opacity:0.6}
+.order-card.cancelled{opacity:0.4;background:rgba(255,68,68,0.05)}
 .order-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.order-table{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700}
+.order-table{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700}
 .order-time{font-size:11px;color:var(--muted)}
 .status-badge{padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:0.3px}
 .sb-pending{background:var(--amber2);color:var(--amber)}
 .sb-preparing{background:var(--lime2);color:var(--lime)}
 .sb-ready{background:var(--green2);color:var(--green3)}
 .sb-completed{background:var(--s3);color:var(--muted)}
+.sb-cancelled{background:var(--red2);color:var(--red)}
 .order-items{margin-bottom:14px;display:flex;flex-direction:column;gap:6px}
 .order-item{font-size:12px;color:var(--muted)}
 .order-item b{color:var(--white);font-weight:600}
-.order-note{font-size:11px;color:var(--muted);font-style:italic;margin-bottom:14px;padding:8px 12px;background:var(--s2);border-radius:8px}
+.order-note{font-size:11px;color:var(--muted);font-style:italic;margin-bottom:14px;padding:8px 12px;background:var(--s1);border-radius:8px}
 .order-foot{display:flex;align-items:center;justify-content:space-between}
 .order-total{font-size:14px;font-weight:700;color:var(--lime)}
 .status-actions{display:flex;gap:8px}
-
 /* ── QR GRID ── */
 .qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-top:20px}
 .qr-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:20px;text-align:center}
@@ -1042,7 +1049,8 @@ async function loadOrders() {
     const { data } = await sb.from('orders').select('*')
       .eq('restaurant_id', restaurant.id)
       .gte('created_at', today.toISOString())
-      .not('status','eq','completed')
+      .not('status','eq','cancelled')
+      .or('bill_sent.eq.false,bill_sent.is.null')
       .order('created_at', { ascending: false });
     orders = data || [];
   } catch(e) { orders = []; }
@@ -1059,29 +1067,97 @@ function updatePendingBadge() {
 
 function renderOrders() {
   const el = document.getElementById('orders-list');
-  if (!orders.length) { el.innerHTML = `<div class="empty-state"><div class="icon">✅</div><p>No active orders</p></div>`; return; }
-  el.innerHTML = orders.map(o => {
-    const nextStatus = {pending:'preparing', preparing:'ready', ready:'completed'}[o.status];
-    const nextLabel = {pending:'Mark Preparing', preparing:'Mark Ready', ready:'Complete'}[o.status] || '';
-    return `
-    <div class="order-card ${o.status}">
-      <div class="order-head">
-        <div>
-          <div class="order-table">Table ${o.table_number} ${o.token_number ? `<span style="background:var(--lime);color:#000;padding:2px 6px;border-radius:4px;font-size:12px;margin-left:8px;">TOKEN: ${o.token_number}</span>` : ''}</div>
-          <div class="order-time">${timeAgo(o.created_at)}</div>
+  if (!orders.length) { 
+    el.innerHTML = `<div class="empty-state"><div class="icon">✅</div><p>No active orders</p></div>`; 
+    return; 
+  }
+
+  // Group by table
+  const tableGroups = {};
+  orders.forEach(o => {
+    const t = o.table_number || 'Takeaway';
+    if (!tableGroups[t]) tableGroups[t] = [];
+    tableGroups[t].push(o);
+  });
+
+  const html = Object.keys(tableGroups).sort().map(table => {
+    const tableOrders = tableGroups[table];
+    const tableTotal = tableOrders.reduce((sum, o) => sum + o.total, 0);
+    const hasCompletedOrReady = tableOrders.some(o => o.status === 'completed' || o.status === 'ready');
+    const allCompleted = tableOrders.every(o => o.status === 'completed');
+
+    const ordersHtml = tableOrders.map(o => {
+      const nextStatus = {pending:'preparing', preparing:'ready', ready:'completed'}[o.status];
+      const nextLabel = {pending:'Mark Preparing', preparing:'Mark Ready', ready:'Complete'}[o.status] || '';
+      return `
+      <div class="order-card ${o.status}">
+        <div class="order-head">
+          <div>
+            <div class="order-table">Token ${o.token_number || '-'}</div>
+            <div class="order-time">${timeAgo(o.created_at)}</div>
+          </div>
+          <span class="status-badge sb-${o.status}">${o.status.toUpperCase()}</span>
         </div>
-        <span class="status-badge sb-${o.status}">${o.status.toUpperCase()}</span>
+        ${o.customer_name ? `<div style="font-size:0.8rem; color:#888; margin-bottom: 8px;">👤 ${o.customer_name} (${o.customer_phone})</div>` : ''}
+        <div class="order-items">${o.items.map(i => `<div class="order-item">${i.emoji || '🍽'} <b>${i.qty}×</b> ${i.name} — ₹${i.price * i.qty}</div>`).join('')}</div>
+        ${o.note ? `<div class="order-note">📝 ${o.note}</div>` : ''}
+        <div class="order-foot"><div class="order-total">₹${o.total}</div><div class="status-actions">
+          ${o.status === 'completed' ? '' : `<button class="btn-red btn-sm" onclick="cancelOrder('${o.id}')">🗑 Cancel</button>`}
+          ${nextStatus ? `<button class="btn-lime btn-sm" onclick="updateStatus('${o.id}','${nextStatus}')">${nextLabel}</button>` : ''}
+          ${o.status === 'completed' ? '' : `<button class="btn-ghost btn-sm" onclick="updateStatus('${o.id}','completed')">Done</button>`}
+        </div></div>
+      </div>`;
+    }).join('');
+
+    return `
+      <div class="table-group">
+        <div class="table-group-head">
+          <div class="table-group-title">Table ${table}</div>
+          <div class="table-group-total">Total: ₹${tableTotal}</div>
+        </div>
+        ${ordersHtml}
+        ${hasCompletedOrReady ? `<button class="btn-lime" style="width:100%;margin-top:8px;" onclick="sendTableBill('${table}')">📋 Send Bill to Table (₹${tableTotal})</button>` : ''}
       </div>
-      ${o.customer_name ? `<div style="font-size:0.8rem; color:#888; margin-bottom: 8px;">👤 ${o.customer_name} (${o.customer_phone})</div>` : ''}
-      <div class="order-items">${o.items.map(i => `<div class="order-item">${i.emoji || '🍽'} <b>${i.qty}×</b> ${i.name} — ₹${i.price * i.qty}</div>`).join('')}</div>
-      ${o.note ? `<div class="order-note">📝 ${o.note}</div>` : ''}
-      <div class="order-foot"><div class="order-total">Total: ₹${o.total}</div><div class="status-actions">
-        ${nextStatus ? `<button class="btn-lime btn-sm" onclick="updateStatus('${o.id}','${nextStatus}')">${nextLabel}</button>` : ''}
-        ${o.status === 'completed' ? '' : `<button class="btn-ghost btn-sm" onclick="updateStatus('${o.id}','completed')">Complete</button>`}
-      </div></div>
-    </div>`;
+    `;
   }).join('');
+
+  el.innerHTML = html;
   lucide.createIcons();
+}
+
+async function cancelOrder(id) {
+  if (isDemo || !confirm("Are you sure you want to cancel this order?")) return;
+  try {
+    const { error } = await sb.from('orders').update({ status: 'cancelled' }).eq('id', id);
+    if (error) throw error;
+    toast('🚫 Order cancelled');
+    loadOrders();
+    loadOverview();
+  } catch(e) {
+    console.error(e);
+    toast('⚠️ Failed to cancel order');
+  }
+}
+
+async function sendTableBill(table) {
+  if (isDemo || !confirm(`Send final bill to Table ${table}? This will clear these orders from your active view.`)) return;
+  try {
+    const tableOrders = orders.filter(o => o.table_number == table);
+    const ids = tableOrders.map(o => o.id);
+    
+    // Attempt auto-complete for any lingering items
+    // First update statuses if not completed
+    for (const id of ids) {
+      await sb.from('orders').update({ status: 'completed', bill_sent: true }).eq('id', id);
+    }
+    
+    toast(`📋 Bill sent to Table ${table}`);
+    loadOrders();
+    loadOverview();
+  } catch(e) {
+    console.error(e);
+    toast('⚠️ Failed to send bill');
+  }
 }
 
 async function updateStatus(id, status) {
