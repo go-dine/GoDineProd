@@ -451,6 +451,27 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
   </div>
 </div>
 
+<style>
+/* ── PREVIEW MODAL ── */
+.preview-modal-overlay {
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);
+  z-index:9999;display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.preview-modal {
+  background:var(--bg); border:1px solid var(--border);
+  width:100%; max-width:400px; border-radius:16px;
+  max-height:90vh; overflow-y:auto; padding:24px;
+}
+</style>
+
+<div id="bill-preview-modal" class="preview-modal-overlay">
+  <div class="preview-modal">
+    <div id="bill-preview-content"></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1116,7 +1137,10 @@ function renderOrders() {
           <div class="table-group-total">Total: ₹${tableTotal}</div>
         </div>
         ${ordersHtml}
-        ${hasCompletedOrReady ? `<button class="btn-lime" style="width:100%;margin-top:8px;" onclick="sendTableBill('${table}')">📋 Send Bill to Table (₹${tableTotal})</button>` : ''}
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn-ghost" style="flex:1;text-align:center;" onclick="previewTableBill('${table}')">👁️ View Bill (₹${tableTotal})</button>
+          ${hasCompletedOrReady ? `<button class="btn-lime" style="flex:1;" onclick="sendTableBill('${table}')">📋 Send Bill</button>` : ''}
+        </div>
       </div>
     `;
   }).join('');
@@ -1137,6 +1161,45 @@ async function cancelOrder(id) {
     console.error(e);
     toast('⚠️ Failed to cancel order');
   }
+}
+
+function previewTableBill(table) {
+  const tableOrders = orders.filter(o => o.table_number == table && o.status !== 'cancelled');
+  let allItems = [];
+  let grandTotal = 0;
+  tableOrders.forEach(o => {
+    grandTotal += o.total;
+    if (o.items) allItems.push(...o.items);
+  });
+  
+  const aggregated = {};
+  allItems.forEach(i => {
+    if (!aggregated[i.name]) aggregated[i.name] = { ...i, qty: 0 };
+    aggregated[i.name].qty += i.qty;
+  });
+  const mergedItems = Object.values(aggregated);
+
+  const html = `
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:40px;margin-bottom:8px;">🧾</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--white);">Table ${table} Bill</div>
+    </div>
+    <div style="background:var(--s2);border-radius:12px;padding:16px;border:1px solid var(--border);">
+      ${mergedItems.map(i => `
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);color:var(--white);">
+          <span><b style="color:var(--lime);">${i.qty}×</b> ${i.name}</span>
+          <span>₹${i.price * i.qty}</span>
+        </div>
+      `).join('')}
+      <div style="display:flex;justify-content:space-between;padding-top:12px;margin-top:4px;font-size:18px;font-weight:700;color:var(--white);">
+        <span>Grand Total</span>
+        <span style="color:var(--lime);">₹${grandTotal}</span>
+      </div>
+    </div>
+    <button class="btn-lime" style="width:100%;margin-top:24px;padding:14px;border-radius:12px;font-weight:700;" onclick="document.getElementById('bill-preview-modal').style.display='none'">Close Preview</button>
+  `;
+  document.getElementById('bill-preview-content').innerHTML = html;
+  document.getElementById('bill-preview-modal').style.display = 'flex';
 }
 
 async function sendTableBill(table) {

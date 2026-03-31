@@ -182,6 +182,110 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 
+  void _handleViewBill(String tableNumber, List<Order> groupOrders) {
+    double grandTotal = 0;
+    final Map<String, Map<String, dynamic>> aggregated = {};
+    
+    for (final o in groupOrders) {
+      if (o.status == 'cancelled') continue;
+      grandTotal += o.total;
+      for (final item in o.items) {
+        final name = item['name'] as String;
+        final price = (item['price'] as num).toDouble();
+        final qty = (item['qty'] as num).toInt();
+        
+        if (!aggregated.containsKey(name)) {
+          aggregated[name] = {'price': price, 'qty': 0};
+        }
+        aggregated[name]!['qty'] = (aggregated[name]!['qty'] as int) + qty;
+      }
+    }
+    
+    final mergedItems = aggregated.entries.map((e) => {
+      'name': e.key,
+      'price': e.value['price'],
+      'qty': e.value['qty'],
+    }).toList();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+        title: Column(
+          children: [
+            const Text('🧾', style: TextStyle(fontSize: 32)),
+            const SizedBox(height: 8),
+            Text('Table $tableNumber Bill', style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  separatorBuilder: (_, __) => const Divider(color: AppColors.border),
+                  itemCount: mergedItems.length,
+                  itemBuilder: (ctx, i) {
+                    final item = mergedItems[i];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(text: '${item['qty']}× ', style: const TextStyle(color: AppColors.lime, fontWeight: FontWeight.bold)),
+                                  TextSpan(text: item['name'] as String, style: const TextStyle(color: AppColors.white)),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '₹${((item['price'] as double) * (item['qty'] as int)).toStringAsFixed(0)}',
+                            style: const TextStyle(color: AppColors.muted),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const Divider(color: AppColors.border, height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Grand Total', style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                  Text('₹${grandTotal.toStringAsFixed(0)}', style: const TextStyle(color: AppColors.lime, fontWeight: FontWeight.bold, fontSize: 18)),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.lime,
+                foregroundColor: const Color(0xFF050505),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+              ),
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Close Preview', style: TextStyle(fontWeight: FontWeight.w700)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map<String, List<Order>> tableGroups = {};
@@ -261,23 +365,39 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           onComplete: _handleComplete,
                           onCancel: _handleCancel,
                         )),
-                    if (hasCompletedOrReady)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.lime,
-                              foregroundColor: const Color(0xFF050505),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                side: const BorderSide(color: AppColors.muted),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                              ),
+                              onPressed: () => _handleViewBill(table, groupOrders),
+                              child: Text('👁️ View Bill (₹${groupTotal.toStringAsFixed(0)})', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.muted)),
                             ),
-                            onPressed: () => _handleSendBill(table, orderIds),
-                            child: Text('📋 Send Bill to Table (₹${groupTotal.toStringAsFixed(0)})', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
                           ),
-                        ),
+                          if (hasCompletedOrReady) ...[
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.lime,
+                                  foregroundColor: const Color(0xFF050505),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                                ),
+                                onPressed: () => _handleSendBill(table, orderIds),
+                                child: const Text('📋 Send Bill', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
+                    ),
                   ],
                 ),
               );

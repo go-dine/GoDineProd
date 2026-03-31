@@ -660,9 +660,11 @@ function updateCartBar() {
 function openSheet() {
   renderSheet();
   document.getElementById('order-sheet').classList.add('open');
+  history.pushState({ modal: 'sheet' }, '');
 }
-function closeSheet() {
+function closeSheet(fromPopState = false) {
   document.getElementById('order-sheet').classList.remove('open');
+  if (!fromPopState) history.back();
 }
 
 function renderSheet() {
@@ -703,13 +705,25 @@ async function triggerCheckout() {
 
   if (!window.currentUser || !window.currentUser.phone || !window.currentUser.name) {
     document.getElementById('guest-modal').classList.add('open');
+    history.pushState({ modal: 'guest' }, '');
     return;
   }
 
   actualPlaceOrder(window.currentUser.name, window.currentUser.phone);
 }
 
-function closeGuestModal() { document.getElementById('guest-modal').classList.remove('open'); }
+function closeGuestModal(fromPopState = false) { 
+  document.getElementById('guest-modal').classList.remove('open'); 
+  if (!fromPopState) history.back();
+}
+
+window.addEventListener('popstate', (e) => {
+  if (document.getElementById('order-sheet').classList.contains('open')) {
+    closeSheet(true);
+  } else if (document.getElementById('guest-modal').classList.contains('open')) {
+    closeGuestModal(true);
+  }
+});
 
 async function saveGuestAndOrder() {
   let name = document.getElementById('guest-name').value.trim();
