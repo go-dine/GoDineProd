@@ -97,7 +97,6 @@ a{color:inherit;text-decoration:none}
   transition:border-color 0.2s;
 }
 .dish-card.unavailable{opacity:0.4;pointer-events:none}
-.dish-card:hover{border-color:rgba(255,255,255,0.12)}
 .dish-emoji{
   width:64px;height:64px;flex-shrink:0;
   border-radius:12px;background:var(--s3);
@@ -679,8 +678,25 @@ a{color:inherit;text-decoration:none}
 <!-- GREETING BANNER -->
 <div class="greeting-banner" id="greeting-banner">
   <div class="greeting-text" id="greeting-text">Welcome! 👋</div>
-  <div class="greeting-sub" id="greeting-sub">Browse the menu and place your order</div>
+  <div class="greeting-sub" id="greeting-sub">Browse the menu and place your order  </div>
 </div>
+
+<!-- ANNOUNCEMENT BANNER -->
+<div id="announcement-banner" class="announcement-banner" style="display:none; overflow:hidden; margin: 16px 16px 0; background: linear-gradient(135deg, rgba(193, 255, 0, 0.1), rgba(193, 255, 0, 0.05)); border: 1px solid rgba(193, 255, 0, 0.15); border-radius: 16px; padding: 12px 20px;">
+  <div style="display:flex; align-items:center; width:100%; gap:14px;">
+    <span style="flex-shrink:0; filter: drop-shadow(0 0 5px var(--lime));">📢</span>
+    <div style="flex:1; overflow:hidden;">
+      <div class="announcement-msg" style="white-space:nowrap; display:inline-block; padding-left:100%; animation: announcement-scroll 20s linear infinite; font-size:13px; font-weight:800; color:var(--lime); text-transform: uppercase; letter-spacing: 0.5px;"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes announcement-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+</style>
 
 <!-- FEATURED SECTION -->
 <div class="feat-section" id="feat-section" style="display:none">
@@ -983,24 +999,16 @@ function renderFeatured() {
 function setupAnnouncementListener() {
   if (isDemo || !restaurant || !sb) return;
   
-  sb.channel('public:restaurants:announcement:' + restaurant.id)
+  sb.channel('menu-announcement-updates')
     .on('postgres_changes', { 
       event: 'UPDATE', 
       schema: 'public', 
       table: 'restaurants', 
       filter: `id=eq.${restaurant.id}` 
     }, payload => {
-      if (payload.new.announcement !== undefined) {
-        restaurant.announcement = payload.new.announcement;
-        const banner = document.getElementById('success-announcement');
-        const text = document.getElementById('announcement-text');
-        if (restaurant.announcement && restaurant.announcement.trim()) {
-          text.textContent = restaurant.announcement;
-          if (banner) banner.style.display = 'flex';
-        } else {
-          if (banner) banner.style.display = 'none';
-        }
-      }
+      console.log('Announcement Update Received:', payload);
+      restaurant.announcement = payload.new.announcement;
+      renderAnnouncement();
     }).subscribe();
 }
 
@@ -1593,12 +1601,18 @@ function renderAISuggestions() {
   
   // 2. Identify Target Categories for Upselling
   let targets = [];
-  if ((categoriesInCart.has('Beverages') || categoriesInCart.has('Drinks')) && !categoriesInCart.has('Starters') && !categoriesInCart.has('Snacks')) {
-    targets.push('Starters');
-    targets.push('Snacks');
+  const hasVeggies = cartItems.some(i => i.dish.name.toLowerCase().includes('veg'));
+  const hasMains = categoriesInCart.has('Main Course') || categoriesInCart.has('Pizzas') || categoriesInCart.has('Classic Pizzas');
+  const hasDrinks = categoriesInCart.has('Beverages') || categoriesInCart.has('Drinks') || categoriesInCart.has('Cold Drinks');
+
+  if (hasDrinks && !categoriesInCart.has('Starters') && !categoriesInCart.has('Snacks')) {
+    targets.push('Starters', 'Snacks');
   }
-  if (categoriesInCart.has('Main Course') && !categoriesInCart.has('Desserts')) {
+  if (hasMains && !categoriesInCart.has('Desserts')) {
     targets.push('Desserts');
+  }
+  if (categoriesInCart.has('Starters') && !hasMains) {
+    targets.push('Main Course', 'Classic Pizzas');
   }
   
   // 3. Collect Candidates
@@ -1615,6 +1629,11 @@ function renderAISuggestions() {
     if (aTarget !== bTarget) return bTarget - aTarget;
     return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
   });
+
+  // 4. Fallback if no target items found (Show Featured)
+  if (candidates.length === 0) {
+    candidates = allDishes.filter(d => d.available && !cartIds.has(d.id) && d.is_featured);
+  }
 
   // 5. Pick Top 4
   const finalSuggestions = candidates.slice(0, 4);
@@ -1652,20 +1671,27 @@ function openSheet() {
 }
 
 function setupRestaurantListener() {
-  if (!restaurant || !sb) return;
-  sb.channel('menu-restaurant-updates')
-    .on('postgres_changes', { 
-      event: 'UPDATE', 
-      schema: 'public', 
-      table: 'restaurants', 
-      filter: `id=eq.${restaurant.id}` 
-    }, payload => {
-      console.log('Realtime Update Received:', payload);
-      restaurant.announcement = payload.new.announcement;
-      renderAnnouncement();
-    }).subscribe(status => {
-      console.log('Restaurant Realtime Subscription Status:', status);
-    });
+  // Use setupAnnouncementListener instead to keep it unified
+  setupAnnouncementListener();
+}
+
+function renderAnnouncement() {
+  const banner = document.getElementById('announcement-banner');
+  const msgs = document.querySelectorAll('.announcement-msg');
+  const successAnn = document.getElementById('success-announcement');
+  const successText = document.getElementById('announcement-text');
+
+  if (restaurant && restaurant.announcement && restaurant.announcement.trim()) {
+    const text = restaurant.announcement.trim();
+    msgs.forEach(m => m.textContent = text);
+    if (successText) successText.textContent = text;
+    
+    if (banner) banner.style.display = 'block';
+    if (successAnn) successAnn.style.display = 'flex';
+  } else {
+    if (banner) banner.style.display = 'none';
+    if (successAnn) successAnn.style.display = 'none';
+  }
 }
 </script>
 
@@ -1726,6 +1752,7 @@ window.addEventListener('scroll', () => {
 /* ── INIT ── */
 async function bootWithListener() {
   await boot();
+  renderAnnouncement(); // Render initial announcement
   setupRestaurantListener();
 }
 bootWithListener();
