@@ -1458,7 +1458,7 @@ function renderHistory() {
 }
 
 async function cancelOrder(id) {
-  if (isDemo || !confirm("Are you sure you want to cancel this order?")) return;
+  if (isDemo) return;
   try {
     const { error } = await sb.from('orders').update({ status: 'cancelled' }).eq('id', id);
     if (error) throw error;

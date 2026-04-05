@@ -88,9 +88,21 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
   gap: 12px;
   border: 1px solid rgba(0,0,0,0.1);
 }
+  /* Toast */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: #1e1e1e; color: #fff; padding: 12px 24px; border-radius: 12px;
+    font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0; pointer-events: none; white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+</style>
 </style>
 </head>
-<body>
+<body id="top">
+<div id="toast"></div>
 
 <div id="auth-guard">
   <div class="spinner"></div>
@@ -169,10 +181,27 @@ async function boot() {
   setupRealtime();
   setupRestaurantListener();
   
-  // Re-render every second to evaluate the 10-second cancellation window
-  setInterval(() => {
-    renderOrders(orders);
-  }, 1000);
+  await fetchOrders();
+  setupRealtime();
+  setupRestaurantListener();
+  
+  // Update timers on buttons every second without full re-render
+  setInterval(updateTimers, 1000);
+}
+
+function updateTimers() {
+  const now = new Date().getTime();
+  document.querySelectorAll('.cancel-btn').forEach(btn => {
+    const orderTime = parseInt(btn.dataset.time);
+    const diffSecs = (now - orderTime) / 1000;
+    const remaining = Math.max(0, 10 - Math.floor(diffSecs));
+    
+    if (remaining <= 0) {
+      btn.remove();
+    } else {
+      btn.textContent = `Cancel (${remaining}s)`;
+    }
+  });
 }
 
 async function fetchRestaurant() {
@@ -279,7 +308,8 @@ function createOrderCard(o) {
   const orderTime = new Date(o.created_at).getTime();
   const diffSecs = (now - orderTime) / 1000;
   const showCancelBtn = o.status === 'pending' && diffSecs <= 10;
-  const timeRemaining = Math.max(0, 10 - Math.floor(diffSecs));
+  const remaining = Math.max(0, 10 - Math.floor(diffSecs));
+  const timerText = `${remaining}s`;
 
   return `
     <div class="order-card">
@@ -317,7 +347,7 @@ function createOrderCard(o) {
         <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
           ${showFeedbackBtn ? `<a href="feedback.html?r=${restaurantSlug}&order=${o.id}" class="feedback-btn">⭐ Rate Your Experience</a>` : '<div></div>'}
           ${(o.status === 'completed' && hasFeedback) ? `<div class="feedback-done">✅ Feedback submitted</div>` : ''}
-          ${showCancelBtn ? `<button class="cancel-btn" onclick="cancelCustomerOrder('${o.id}')">Cancel (${timeRemaining}s)</button>` : ''}
+          ${showCancelBtn ? `<button class="cancel-btn" data-time="${orderTime}" onclick="cancelCustomerOrder('${o.id}')">Cancel (${timerText})</button>` : ''}
         </div>
       </div>
     </div>
@@ -325,11 +355,18 @@ function createOrderCard(o) {
 }
 
 async function cancelCustomerOrder(id) {
-  if (!confirm("Are you sure you want to cancel this order?")) return;
+  // Confirmation dialog removed per user request for faster cancellation within the 10s window
   try {
     const { error } = await sb.from('orders').update({ status: 'cancelled' }).eq('id', id);
-    if (!error) fetchOrders();
-  } catch(e) {}
+    if (!error) {
+      showToast('✅ Order cancelled successfully');
+      fetchOrders();
+    } else {
+      showToast('⚠️ Could not cancel order');
+    }
+  } catch(e) {
+    showToast('⚠️ Cancellation error');
+  }
 }
 
 function setupRealtime() {
@@ -337,6 +374,13 @@ function setupRealtime() {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `customer_phone=eq.${currentUser.phone}` }, payload => {
       fetchOrders();
     }).subscribe();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 boot();
