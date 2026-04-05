@@ -1593,8 +1593,13 @@ function renderAISuggestions() {
   
   // 2. Identify Target Categories for Upselling
   let targets = [];
-  if (categoriesInCart.has('Drinks') && !categoriesInCart.has('Starters')) targets.push('Starters');
-  if (categoriesInCart.has('Main Course') && !categoriesInCart.has('Desserts')) targets.push('Desserts');
+  if ((categoriesInCart.has('Beverages') || categoriesInCart.has('Drinks')) && !categoriesInCart.has('Starters') && !categoriesInCart.has('Snacks')) {
+    targets.push('Starters');
+    targets.push('Snacks');
+  }
+  if (categoriesInCart.has('Main Course') && !categoriesInCart.has('Desserts')) {
+    targets.push('Desserts');
+  }
   
   // 3. Collect Candidates
   let candidates = allDishes.filter(d => 
@@ -1639,12 +1644,28 @@ function renderAISuggestions() {
   }
 }
 
-// Update openSheet to fetch suggestions
 function openSheet() {
   document.getElementById('order-sheet').classList.add('open');
   document.body.style.overflow = 'hidden';
   renderOrderSheet();
   renderAISuggestions();
+}
+
+function setupRestaurantListener() {
+  if (!restaurant || !sb) return;
+  sb.channel('menu-restaurant-updates')
+    .on('postgres_changes', { 
+      event: 'UPDATE', 
+      schema: 'public', 
+      table: 'restaurants', 
+      filter: `id=eq.${restaurant.id}` 
+    }, payload => {
+      console.log('Realtime Update Received:', payload);
+      restaurant.announcement = payload.new.announcement;
+      renderAnnouncement();
+    }).subscribe(status => {
+      console.log('Restaurant Realtime Subscription Status:', status);
+    });
 }
 </script>
 
@@ -1703,7 +1724,11 @@ window.addEventListener('scroll', () => {
 });
 
 /* ── INIT ── */
-boot();
+async function bootWithListener() {
+  await boot();
+  setupRestaurantListener();
+}
+bootWithListener();
 if (typeof lucide !== 'undefined') lucide.createIcons();
 </script>
 </body>

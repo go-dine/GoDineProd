@@ -236,11 +236,19 @@ function renderAnnouncement() {
 
 function setupRestaurantListener() {
   if (!restaurant || !sb) return;
-  sb.channel('restaurant-updates')
-    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'restaurants', filter: `id=eq.${restaurant.id}` }, payload => {
+  sb.channel('customer-restaurant-updates')
+    .on('postgres_changes', { 
+      event: 'UPDATE', 
+      schema: 'public', 
+      table: 'restaurants', 
+      filter: `id=eq.${restaurant.id}` 
+    }, payload => {
+      console.log('Announcement Update Received:', payload);
       restaurant.announcement = payload.new.announcement;
       renderAnnouncement();
-    }).subscribe();
+    }).subscribe(status => {
+      console.log('Customer Restaurant Realtime Status:', status);
+    });
 }
 
 async function fetchOrders() {
