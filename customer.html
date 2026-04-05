@@ -112,8 +112,12 @@ if (!isDemo) {
 }
 
 const params = new URLSearchParams(location.search);
-const restaurantSlug = params.get('r') || 'demo';
+const restaurantSlug = params.get('r');
 const tableNum = params.get('table') || localStorage.getItem('godine_table') || '1';
+
+if (!restaurantSlug) {
+  window.location.href = 'index.html';
+}
 
 let currentUser = null;
 let orders = [];
@@ -121,21 +125,6 @@ let feedbackGiven = [];
 try { feedbackGiven = JSON.parse(localStorage.getItem('godine_feedback') || '[]'); } catch(e){}
 
 async function boot() {
-  if (isDemo) {
-    document.getElementById('auth-guard').style.display = 'none';
-    document.getElementById('header').style.display = 'flex';
-    document.getElementById('content').style.display = 'block';
-    renderOrders([{
-      id: 'demo-1234',
-      status: 'preparing',
-      estimated_time: '15 mins',
-      created_at: new Date().toISOString(),
-      total: 650,
-      items: [{qty: 2, name: 'Smash Burger'}, {qty: 1, name: 'Cold Coffee'}]
-    }]);
-    return;
-  }
-
   const savedGuest = localStorage.getItem('godine_guest');
   if (!savedGuest) {
     window.location.href = `menu.html?r=${restaurantSlug}`;

@@ -122,10 +122,52 @@ class SupabaseService {
     return restaurant;
   }
 
-  // ───── Dishes ─────
+  // ───── Restaurant Management ─────
 
-  static Future<void> updateFcmToken(String restaurantId, String? token) async {
-    await client.from('restaurants').update({'fcm_token': token}).eq('id', restaurantId);
+  static Future<void> registerFcmToken(String restaurantId, String token, String platform) async {
+    await client.from('owner_fcm_tokens').upsert({
+      'restaurant_id': restaurantId,
+      'token': token,
+      'platform': platform,
+    });
+  }
+
+  static Future<void> updateRestaurantAnnouncement(String restaurantId, String? announcement) async {
+    await client.from('restaurants').update({'announcement': announcement}).eq('id', restaurantId);
+  }
+
+  static Future<void> updateBranchHours(String restaurantId, List<Map<String, dynamic>> hours) async {
+    for (var h in hours) {
+      await client.from('active_hours').upsert({
+        'restaurant_id': restaurantId,
+        'day_of_week': h['day_of_week'],
+        'open_time': h['open_time'],
+        'close_time': h['close_time'],
+        'is_open': h['is_open'],
+      });
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchStats(String restaurantId) async {
+    // Current simple implementation: count orders and sum total
+    final orders = await client.from('orders').select('total').eq('restaurant_id', restaurantId).eq('status', 'completed');
+    final List<dynamic> data = orders as List<dynamic>;
+    
+    double totalRevenue = 0;
+    for (var o in data) {
+      totalRevenue += (o['total'] ?? 0).toDouble();
+    }
+    
+    return {
+      'total_orders': data.length,
+      'total_revenue': totalRevenue,
+      'avg_order_value': data.isEmpty ? 0 : totalRevenue / data.length,
+    };
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchActiveHours(String restaurantId) async {
+    final res = await client.from('active_hours').select().eq('restaurant_id', restaurantId).order('day_of_week');
+    return List<Map<String, dynamic>>.from(res as List);
   }
 
   static Future<List<Dish>> fetchDishes(String restaurantId) async {

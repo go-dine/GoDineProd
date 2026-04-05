@@ -7,6 +7,10 @@ import '../services/supabase_service.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/status_badge.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'active_hours_screen.dart';
+import 'analytics_screen.dart';
+import 'announcement_screen.dart';
+import 'suggestions_screen.dart';
 
 class OverviewScreen extends StatefulWidget {
   final Restaurant restaurant;
@@ -155,7 +159,45 @@ class _OverviewScreenState extends State<OverviewScreen> {
               StatCard(label: 'Menu Items', value: '$_activeDishes', sub: 'Active dishes'),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 32),
+
+          const Text('Store Management', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.white)),
+          const SizedBox(height: 12),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 1.5,
+            children: [
+              _ManagementCard(
+                title: 'Timings',
+                icon: Icons.access_time_filled_rounded,
+                color: Colors.orangeAccent,
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ActiveHoursScreen(restaurant: widget.restaurant))),
+              ),
+              _ManagementCard(
+                title: 'Announce',
+                icon: Icons.campaign_rounded,
+                color: Colors.pinkAccent,
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnnouncementScreen(restaurant: widget.restaurant))),
+              ),
+              _ManagementCard(
+                title: 'Analytics',
+                icon: Icons.analytics_rounded,
+                color: Colors.blueAccent,
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnalyticsScreen(restaurant: widget.restaurant))),
+              ),
+              _ManagementCard(
+                title: 'AI Insights',
+                icon: Icons.auto_awesome_rounded,
+                color: AppColors.lime,
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SuggestionsScreen(restaurant: widget.restaurant))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
 
           // Recent orders
           Container(
@@ -218,6 +260,42 @@ class _OverviewScreenState extends State<OverviewScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ManagementCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ManagementCard({required this.title, required this.icon, required this.color, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface1,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(icon, color: color, size: 28),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }

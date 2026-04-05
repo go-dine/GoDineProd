@@ -188,9 +188,12 @@ let sb;
 try { sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey); } catch(e){}
 
 const params = new URLSearchParams(location.search);
-const restaurantSlug = params.get('r') || 'demo';
+const restaurantSlug = params.get('r');
 const orderId = params.get('order') || '';
-const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL';
+
+if (!restaurantSlug) {
+  window.location.href = 'index.html';
+}
 
 let restaurantId = null;
 let ratings = { food: 0, service: 0 };

@@ -286,6 +286,73 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
   .order-foot{flex-direction:column;gap:10px;align-items:flex-start}
   .status-actions{flex-wrap:wrap}
 }
+
+/* ── ANALYTICS ── */
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.chart-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:24px}
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.bar-label{font-size:12px;width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:8px;background:var(--s2);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;background:var(--lime);border-radius:4px;transition:width 0.6s ease-out}
+.bar-val{font-size:12px;font-weight:700;width:40px;text-align:right}
+
+/* ── STORE SETTINGS ── */
+.hours-row{display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+.hours-day{width:100px;font-size:13px;font-weight:600}
+.hours-input{background:var(--s2);border:1px solid var(--border);color:var(--white);padding:4px 8px;border-radius:6px;font-size:12px}
+
+/* ── CALLS ── */
+.call-card{
+  background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;border-left:4px solid var(--lime);
+}
+.call-info{display:flex;align-items:center;gap:12px}
+.call-table{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.call-time{font-size:11px;color:var(--muted)}
+
+/* ── COMPARISON TABLE ── */
+.compare-card { 
+  background: var(--s1); 
+  border: 1px solid var(--border); 
+  border-radius: var(--r-md); 
+  padding: 32px; 
+  margin-top: 40px; 
+  position: relative;
+  overflow: hidden;
+}
+.compare-card::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--lime), transparent);
+  opacity: 0.4;
+}
+.compare-title { 
+  font-family: 'Space Grotesk', sans-serif; 
+  font-size: 20px; 
+  font-weight: 700; 
+  margin-bottom: 24px; 
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+}
+.comp-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.comp-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.comp-table th, .comp-table td { padding: 16px; text-align: center; border-bottom: 1px solid var(--border); font-size: 14px; }
+.comp-table th { font-family: 'Space Grotesk', sans-serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.comp-table td:first-child, .comp-table th:first-child { text-align: left; padding-left: 0; min-width: 180px; color: var(--white); font-weight: 600; }
+
+.comp-table .gd-col { position: relative; z-index: 1; }
+.comp-table .gd-col::after { 
+  content: ''; position: absolute; inset: 0; 
+  background: rgba(182, 255, 42, 0.03); z-index: -1; 
+  border-left: 1px solid rgba(182, 255, 42, 0.1); 
+  border-right: 1px solid rgba(182, 255, 42, 0.1); 
+}
+.comp-table th.gd-col { background: var(--lime) !important; color: #000 !important; font-weight: 800; border: none; border-radius: 8px 8px 0 0; }
+.comp-table tr:last-child .gd-col::after { border-radius: 0 0 8px 8px; }
+.comp-check { color: var(--lime); font-size: 18px; font-weight: 800; }
+.comp-cross { color: var(--red); font-size: 18px; opacity: 0.4; }
+.comp-dash { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -327,7 +394,10 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <div class="sb-item" data-page="history" onclick="showPage('history')"><span class="icon"><i data-lucide="history" style="width:18px;height:18px"></i></span>History</div>
       <div class="sb-item" data-page="menu" onclick="showPage('menu')"><span class="icon"><i data-lucide="utensils-crosses" style="width:18px;height:18px"></i></span>Menu</div>
       <div class="sb-item" data-page="qr" onclick="showPage('qr')"><span class="icon"><i data-lucide="qr-code" style="width:18px;height:18px"></i></span>QR Codes</div>
+      <div class="sb-item" data-page="calls" onclick="showPage('calls')"><span class="icon">🔔</span>Waiter Calls<span class="sb-badge" id="calls-badge" style="display:none">0</span></div>
+      <div class="sb-item" data-page="analytics" onclick="showPage('analytics')"><span class="icon">📈</span>Analytics</div>
       <div class="sb-item" data-page="feedback" onclick="showPage('feedback')"><span class="icon">⭐</span>Feedback</div>
+      <div class="sb-item" data-page="store" onclick="showPage('store')"><span class="icon">⚙️</span>Store Settings</div>
       
       <!-- ADMIN TABS -->
       <div id="admin-tabs" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:10px;">
@@ -364,6 +434,23 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
     <div class="page" id="page-orders">
       <div class="page-title">Live Orders</div>
       <div class="page-sub">Auto-refreshes every 15 seconds · Click status to update</div>
+      
+      <!-- WAIT TIME WIDGET -->
+      <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:var(--s2);border:1px solid var(--lime2);margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="font-size:24px">⏱️</div>
+          <div>
+            <div style="font-size:14px;font-weight:700;">Current Wait Time</div>
+            <div style="font-size:12px;color:var(--muted);">Displayed to customers after ordering</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="number" id="wait-time-input" value="15" style="width:70px;background:var(--s1);border:1px solid var(--border);color:var(--white);padding:8px;border-radius:8px;text-align:center;font-weight:700;">
+          <span style="font-size:12px;color:var(--muted)">min</span>
+          <button class="btn-lime btn-sm" onclick="updateWaitTime()" style="padding:8px 16px;">Update</button>
+        </div>
+      </div>
+
       <div id="orders-list"><div class="empty-state"><div class="icon"><i data-lucide="check-circle-2" style="width:32px;height:32px"></i></div><p>No active orders right now</p></div></div>
     </div>
 
@@ -399,16 +486,137 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <div class="qr-grid" id="qr-grid"></div>
     </div>
 
-    <!-- FEEDBACK -->
+    <!-- ANALYTICS -->
+    <div class="page" id="page-analytics">
+      <div class="page-title">Analytics</div>
+      <div class="page-sub">Data-driven insights for your restaurant performance</div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-val lime" id="ana-revenue">₹0</div><div class="stat-sub">Lifetime earnings</div></div>
+        <div class="stat-card"><div class="stat-label">Total Orders</div><div class="stat-val" id="ana-orders">0</div><div class="stat-sub">All processed orders</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Order Value</div><div class="stat-val" id="ana-avg">₹0</div><div class="stat-sub">Revenue / Orders</div></div>
+        <div class="stat-card"><div class="stat-label">Repeat Rate</div><div class="stat-val" id="ana-repeat">0%</div><div class="stat-sub">Returning customers</div></div>
+      </div>
+      <div class="analytics-grid">
+        <div class="chart-card">
+          <div class="card-title" style="margin-bottom:20px">🔥 Top Selling Dishes</div>
+          <div id="ana-top-dishes"></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-title" style="margin-bottom:20px">📊 Category Breakdown</div>
+          <div id="ana-cats"></div>
+        </div>
+      </div>
+
+      <!-- COMPARISON SECTION -->
+      <div class="compare-card">
+        <div class="compare-title">⚔️ Market Comparison</div>
+        <div class="comp-table-wrap">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Capabilities</th>
+                <th class="gd-col">GoDine ✓</th>
+                <th>Paper Menu</th>
+                <th>PetPooja</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Zero setup cost</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td></tr>
+              <tr><td>No hardware needed</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td></tr>
+              <tr><td>Real-time updates</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td><td><span class="comp-check">✓</span></td></tr>
+              <tr><td>Customer ordering</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td><td><span class="comp-check">✓</span></td></tr>
+              <tr><td>Works on any phone</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td><td><span class="check">✓</span></td></tr>
+              <tr><td>Free trial</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-dash">—</span></td><td><span class="comp-cross">✗</span></td></tr>
+              <tr><td>Starts at ₹100/month</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-dash">—</span></td><td><span class="comp-cross">✗</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- WAITER CALLS -->
+    <div class="page" id="page-calls">
+      <div class="page-title">Waiter Calls</div>
+      <div class="page-sub">Real-time table assistance requests</div>
+      <div id="calls-list">
+        <div class="empty-state"><div class="icon">🔔</div><p>No active calls</p></div>
+      </div>
+    </div>
+
+    <!-- STORE FEEDBACK -->
     <div class="page" id="page-feedback">
       <div class="page-title">Customer Feedback</div>
-      <div class="page-sub">Ratings and reviews from your customers</div>
-      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
-        <div class="stat-card"><div class="stat-label">Avg Food Rating</div><div class="fb-avg" id="fb-avg-food">—</div><div class="fb-avg-label">out of 5</div></div>
-        <div class="stat-card"><div class="stat-label">Avg Service Rating</div><div class="fb-avg" id="fb-avg-service">—</div><div class="fb-avg-label">out of 5</div></div>
-        <div class="stat-card"><div class="stat-label">Total Reviews</div><div class="fb-avg" id="fb-total">—</div><div class="fb-avg-label">all time</div></div>
+      <div class="page-sub">Direct reviews from your diners</div>
+      
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Reviews</div>
+          <div class="stat-val lime" id="fb-total">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Food Rating</div>
+          <div class="stat-val" id="fb-avg-food">0.0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Service Rating</div>
+          <div class="stat-val" id="fb-avg-service">0.0</div>
+        </div>
       </div>
-      <div class="card"><div class="card-head"><div class="card-title">Recent Feedback</div></div><div id="feedback-list"><div class="empty-state"><div class="icon">⭐</div><p>No feedback yet</p></div></div></div>
+
+      <div class="card">
+        <div id="feedback-list">
+          <div class="empty-state">No feedback yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORE SETTINGS -->
+    <div class="page" id="page-store">
+      <div class="page-title">Store Settings</div>
+      <div class="page-sub">Configure your restaurant identity and operations</div>
+      
+      <div class="card">
+        <div class="card-title" style="margin-bottom:20px">Shop Status</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--s2);padding:16px;border-radius:12px;">
+          <div>
+            <div style="font-size:14px;font-weight:700;">Manual Override</div>
+            <div style="font-size:12px;color:var(--muted);">Force close the shop immediately</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="store-manual-toggle" onchange="updateStoreManualStatus()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:20px">Today's Announcement</div>
+        <div style="background:var(--s2);padding:16px;border-radius:12px;border:1px solid var(--border);">
+          <label class="f-label">Banner Text (Max 100 characters)</label>
+          <input class="f-input" id="store-announcement" placeholder="e.g. 10% off on starters today! 🎉" maxlength="100" oninput="updateAnnouncementCount()">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+            <div id="announcement-count" style="font-size:10px;color:var(--muted)">0 / 100</div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn-ghost btn-sm" onclick="clearAnnouncement()">Clear</button>
+              <button class="btn-lime btn-sm" onclick="saveAnnouncement()">Save Announcement</button>
+            </div>
+          </div>
+          
+          <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+            <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Live Preview</div>
+            <div id="announcement-preview" style="background:var(--lime);color:#050505;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;display:none;"></div>
+            <div id="announcement-preview-empty" style="font-size:12px;color:var(--dimmed);font-style:italic;">No active announcement</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:20px">Active Hours</div>
+        <div id="hours-list"></div>
+        <button class="btn-lime" style="margin-top:20px" onclick="saveHours()">Save Operating Hours</button>
+      </div>
+
+
     </div>
 
     <!-- ALL RESTAURANTS (ADMIN) -->
@@ -519,27 +727,6 @@ let restaurant = null; // {id, name, slug, total_tables}
 let dishes = [];
 let orders = [];
 
-/* ── DEMO DATA ── */
-const DEMO_RESTAURANT = {id:'demo', name:'The Rustic Fork', slug:'demo', total_tables:10};
-const DEMO_DISHES = [
-  {id:'d1', name:'Pasta Arrabbiata',    description:'Spicy tomato penne, parmesan',      price:280, category:'Main Course', emoji:'🍝', available:true},
-  {id:'d2', name:'Smash Burger',        description:'Double patty, secret sauce, fries', price:320, category:'Main Course', emoji:'🍔', available:true},
-  {id:'d3', name:'Margherita Pizza',    description:'Classic with fresh basil',          price:350, category:'Main Course', emoji:'🍕', available:true},
-  {id:'d4', name:'Grilled Chicken',     description:'Herb-marinated, side salad',        price:380, category:'Main Course', emoji:'🍗', available:true},
-  {id:'d5', name:'Caesar Salad',        description:'Romaine, croutons, parmesan',       price:220, category:'Starters',    emoji:'🥗', available:true},
-  {id:'d6', name:'Garlic Bread',        description:'Toasted with herb butter',          price:120, category:'Starters',    emoji:'🥖', available:true},
-  {id:'d7', name:'Veg Spring Rolls',    description:'Crispy, sweet chilli dip',          price:160, category:'Starters',    emoji:'🥟', available:true},
-  {id:'d8', name:'Cold Coffee',         description:'Chilled espresso, milk, ice',       price:150, category:'Beverages',   emoji:'☕', available:true},
-  {id:'d9', name:'Mango Lassi',         description:'Fresh mango, yogurt, chilled',      price:120, category:'Beverages',   emoji:'🥤', available:true},
-  {id:'d10',name:'Fresh Lime Soda',     description:'Sweet or salt, chilled',             price:80, category:'Beverages',   emoji:'🍋', available:true},
-  {id:'d11',name:'Chocolate Lava Cake', description:'Warm, vanilla ice cream',           price:220, category:'Desserts',    emoji:'🍫', available:true},
-  {id:'d12',name:'Gulab Jamun',         description:'Classic, sugar syrup, warm',        price:140, category:'Desserts',    emoji:'🍮', available:true},
-];
-const DEMO_ORDERS = [
-  {id:'abc12345', table_number:'3', items:[{name:'Smash Burger',qty:2,price:320,emoji:'🍔'},{name:'Cold Coffee',qty:2,price:150,emoji:'☕'}], total:987, status:'pending', note:'Extra sauce please', created_at:new Date().toISOString()},
-  {id:'def67890', table_number:'7', items:[{name:'Pasta Arrabbiata',qty:1,price:280,emoji:'🍝'},{name:'Caesar Salad',qty:1,price:220,emoji:'🥗'}], total:525, status:'preparing', note:'', created_at:new Date(Date.now()-600000).toISOString()},
-];
-
 /* ── AUTH UI ── */
 function showAuthMode(mode) {
   document.getElementById('auth-login').style.display = mode === 'login' ? 'block' : 'none';
@@ -585,14 +772,34 @@ async function doLogin() {
   }
 
   try {
-    const { data, error } = await sb.from('restaurants').select('*').eq('slug', cleanSlug).single();
-    if (error || !data) { showAuthError('login', 'Username not found'); return; }
-    if (data.is_active === false) { showAuthError('login', 'Your account has been suspended by the platform.'); return; }
-    if (data.owner_password !== pw) { showAuthError('login', 'Incorrect password'); return; }
+    // Attempt to find restaurant by slug OR email
+    // We use quotes around the values in the .or filter to handle special characters like '@'
+    const { data, error } = await sb.from('restaurants')
+      .select('*')
+      .or(`slug.eq."${cleanSlug}",owner_email.eq."${cleanSlug}"`)
+      .single();
+
+    if (error || !data) { 
+      console.warn("Login failed for identifier:", cleanSlug, error);
+      showAuthError('login', 'User or Restaurant not found. Please check your credentials.'); 
+      return; 
+    }
+    
+    if (data.is_active === false) { 
+      showAuthError('login', 'Your account has been suspended by the platform.'); 
+      return; 
+    }
+
+    if (String(data.owner_password) !== String(pw)) { 
+      showAuthError('login', 'Incorrect password'); 
+      return; 
+    }
+
     restaurant = data;
     enterDashboard();
   } catch(e) {
-    showAuthError('login', 'Connection error. Try again.');
+    console.error('Login Exception:', e);
+    showAuthError('login', 'Connection error. Please try again.');
   }
 }
 
@@ -690,6 +897,9 @@ function showPage(id) {
   if (id === 'qr') buildQR();
   if (id === 'leads') loadLeads();
   if (id === 'feedback') loadFeedback();
+  if (id === 'analytics') loadAnalytics();
+  if (id === 'calls') loadCalls();
+  if (id === 'store') loadStoreSettings();
   
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
@@ -702,44 +912,47 @@ let realtimeChannel;
 let leadsChannel;
 const orderSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
-function setupRealtime() {
-  if (isDemo) return;
-
-  // 1. Leads Listener (Platform-wide, always active if not already)
-  if (!leadsChannel) {
-    leadsChannel = sb.channel('public:leads')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, payload => {
-        loadLeads();
-      }).subscribe();
+async function init() {
+  // Request browser notification permission
+  if ("Notification" in window && Notification.permission !== "denied") {
+    Notification.requestPermission();
   }
 
-  // 2. Orders Listener
-  if (restaurant && !realtimeChannel) {
-    // Owner Mode: Filtered by restaurant (UUID needs quotes in filter)
-    realtimeChannel = sb.channel('public:orders:' + restaurant.id)
-      .on('postgres_changes', { 
-        event: '*', 
-        schema: 'public', 
-        table: 'orders', 
-        filter: `restaurant_id=eq.'${restaurant.id}'` 
-      }, payload => {
-        console.log('Real-time update:', payload);
-        loadOrders();
-        loadOverview();
-        if (payload.eventType === 'INSERT') notifyNewOrder(payload.new);
-      }).subscribe();
-  } else if (!restaurant && !realtimeChannel && sessionStorage.getItem('godineAdminMode') === "true") {
-    // Master Admin Mode: All orders
-    realtimeChannel = sb.channel('public:all-orders')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
-        loadAllOrders();
-        loadOverview();
-      }).subscribe();
+  // If we already have a restaurant object from autoLogin/Login, use it.
+  if (restaurant) {
+    finalizeInit();
+    return;
+  }
+
+  try {
+    const { data: { user }, error } = await sb.auth.getUser();
+    if (error || !user) { doLogout(); return; }
+    
+    const isMaster = user.email === 'godineofficial@gmail.com';
+    document.body.classList.toggle('is-admin', isMaster);
+
+    const { data, error: rErr } = await sb.from('restaurants').select('*').eq('owner_id', user.id).single();
+    if (rErr || !data) {
+      if (isMaster) {
+        showPage('all-restaurants');
+        setupRealtime();
+        loadAll();
+        return;
+      } else {
+        toast('⚠️ No restaurant found');
+        doLogout();
+        return;
+      }
+    }
+    restaurant = data;
+    finalizeInit();
+  } catch(e) {
+    console.error(e);
+    toast('⚠️ Error initializing dashboard');
   }
 }
 
-function init() {
-  requestNotificationPermission();
+function finalizeInit() {
   loadOverview();
   loadDishes();
   lucide.createIcons();
@@ -747,6 +960,7 @@ function init() {
   setInterval(loadOverview, 60000);
   
   setupRealtime();
+  setupCallsRealtime();
 
   document.getElementById('overview-date').textContent =
     new Date().toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
@@ -756,6 +970,66 @@ function init() {
   // Auto-complete stale orders (older than 2 hours)
   autoCompleteStaleOrders();
   setInterval(autoCompleteStaleOrders, 60000);
+}
+
+function notifyOwner(title, body) {
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification(title, {
+      body: body,
+      icon: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png'
+    });
+  }
+  orderSound.play().catch(() => {});
+  toast(`🔔 ${title}: ${body}`);
+}
+
+function setupRealtime() {
+  if (isDemo) return;
+
+  // 1. Leads Listener (Platform-wide)
+  if (!leadsChannel) {
+    leadsChannel = sb.channel('public:leads')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, payload => {
+        loadLeads();
+      }).subscribe();
+  }
+
+  // 2. Orders Listener
+  if (restaurant && !realtimeChannel) {
+    realtimeChannel = sb.channel('public:orders:' + restaurant.id)
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'orders', 
+        filter: `restaurant_id=eq.'${restaurant.id}'` 
+      }, payload => {
+        if (payload.eventType === 'INSERT') {
+          notifyOwner('New Order! 🔔', `Table ${payload.new.table_number} ordered ₹${payload.new.total}`);
+        }
+        loadOrders();
+        loadOverview();
+      }).subscribe();
+  } else if (!restaurant && !realtimeChannel && sessionStorage.getItem('godineAdminMode') === "true") {
+    realtimeChannel = sb.channel('public:all-orders')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+        loadAllOrders();
+        loadOverview();
+      }).subscribe();
+  }
+}
+
+function setupCallsRealtime() {
+  if (isDemo || !restaurant) return;
+  sb.channel('public:waiter_calls:' + restaurant.id)
+    .on('postgres_changes', { 
+      event: 'INSERT', 
+      schema: 'public', 
+      table: 'waiter_calls', 
+      filter: `restaurant_id=eq.'${restaurant.id}'` 
+    }, payload => {
+      notifyOwner('Waiter Requested! 🛎️', `Table ${payload.new.table_number} needs assistance`);
+      loadCalls();
+    }).subscribe();
 }
 
 function checkSubscription() {
@@ -778,47 +1052,6 @@ function checkSubscription() {
   } else {
     banner.className = 'sub-banner active';
     banner.innerHTML = `✅ ${typeStr} Active: ${diffDays} day${diffDays > 1 ? 's' : ''} remaining (Until ${endDate.toLocaleDateString()}).`;
-  }
-}
-
-async function requestNotificationPermission() {
-  if (!("Notification" in window)) return;
-  if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-    await Notification.requestPermission();
-  }
-}
-
-let soundEnabled = true;
-function toggleSound() {
-  soundEnabled = !soundEnabled;
-  // Try to play once to unlock audio context in some browsers
-  if (soundEnabled) {
-    orderSound.play().catch(() => {});
-  }
-  document.getElementById('sound-icon').textContent = soundEnabled ? '🔔' : '🔕';
-  document.getElementById('sound-text').textContent = soundEnabled ? 'Sound: ON' : 'Sound: OFF';
-  toast(soundEnabled ? '🔔 Sound notifications enabled' : '🔕 Sound notifications muted');
-}
-
-function notifyNewOrder(order) {
-  // Play sound if enabled
-  if (soundEnabled) {
-    const playPromise = orderSound.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(e => {
-        console.log('Audio play blocked. User must interact with the page first.', e);
-        toast('🔔 New Order! (Sound blocked by browser)');
-      });
-    }
-  }
-  toast(`🔔 New Order! Table ${order.table_number} — ₹${order.total}`);
-
-  // System Notification if tab is hidden
-  if (document.hidden && Notification.permission === "granted") {
-    new Notification("🍔 New Order Received!", {
-      body: `Table ${order.table_number} ordered ${order.items.length} items. Total: ₹${order.total}`,
-      icon: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png'
-    });
   }
 }
 
@@ -1531,21 +1764,21 @@ function renderFeedback() {
   const avgServiceEl = document.getElementById('fb-avg-service');
   const totalEl = document.getElementById('fb-total');
 
-  totalEl.textContent = feedbackData.length;
+  if (totalEl) totalEl.textContent = feedbackData.length;
 
   if (!feedbackData.length) {
-    avgFoodEl.textContent = '—';
-    avgServiceEl.textContent = '—';
-    el.innerHTML = `<div class="empty-state"><div class="icon">⭐</div><p>No feedback yet</p></div>`;
+    if (avgFoodEl) avgFoodEl.textContent = '—';
+    if (avgServiceEl) avgServiceEl.textContent = '—';
+    if (el) el.innerHTML = `<div class="empty-state"><div class="icon">⭐</div><p>No feedback yet</p></div>`;
     return;
   }
 
   const avgFood = (feedbackData.reduce((s, f) => s + f.food_rating, 0) / feedbackData.length).toFixed(1);
   const avgService = (feedbackData.reduce((s, f) => s + f.service_rating, 0) / feedbackData.length).toFixed(1);
-  avgFoodEl.textContent = avgFood;
-  avgServiceEl.textContent = avgService;
+  if (avgFoodEl) avgFoodEl.textContent = avgFood;
+  if (avgServiceEl) avgServiceEl.textContent = avgService;
 
-  el.innerHTML = feedbackData.map(f => {
+  if (el) el.innerHTML = feedbackData.map(f => {
     const foodStars = '⭐'.repeat(f.food_rating) + '☆'.repeat(5 - f.food_rating);
     const serviceStars = '⭐'.repeat(f.service_rating) + '☆'.repeat(5 - f.service_rating);
     const date = new Date(f.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
@@ -1563,6 +1796,229 @@ function renderFeedback() {
         ${f.customer_phone ? `<div style="font-size:11px;color:var(--muted);margin-top:8px">📞 ${f.customer_phone}</div>` : ''}
       </div>`;
   }).join('');
+}
+
+/* ── ANALYTICS ── */
+async function loadAnalytics() {
+  if (isDemo || !restaurant) return;
+  try {
+    const { data: allOrders } = await sb.from('orders')
+      .select('*')
+      .eq('restaurant_id', restaurant.id);
+    
+    if (!allOrders || !allOrders.length) return;
+
+    const totalRevenue = allOrders.reduce((s, o) => s + (o.status !== 'cancelled' ? o.total : 0), 0);
+    
+    document.getElementById('ana-revenue').textContent = `₹${totalRevenue.toLocaleString()}`;
+    document.getElementById('ana-orders').textContent = allOrders.length;
+    document.getElementById('ana-avg').textContent = `₹${Math.floor(totalRevenue / (allOrders.length || 1))}`;
+    
+    // Dish Analytics
+    const dishStats = {};
+    allOrders.forEach(o => {
+      if (o.status === 'cancelled') return;
+      o.items.forEach(i => {
+        dishStats[i.name] = (dishStats[i.name] || 0) + i.qty;
+      });
+    });
+
+    const topDishes = Object.entries(dishStats).sort((a,b) => b[1]-a[1]).slice(0, 5);
+    const maxVal = topDishes[0] ? topDishes[0][1] : 1;
+
+    document.getElementById('ana-top-dishes').innerHTML = topDishes.map(([name, val]) => `
+      <div class="bar-row">
+        <div class="bar-label">${name}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(val/maxVal)*100}%"></div></div>
+        <div class="bar-val">${val}</div>
+      </div>
+    `).join('') || '<p style="font-size:12px;color:var(--muted)">No data yet</p>';
+
+  } catch(e) { console.error("Analytics failed", e); }
+}
+
+/* ── WAITER CALLS ── */
+let calls = [];
+let callsChannel;
+async function loadCalls() {
+  if (isDemo || !restaurant) return;
+  try {
+    const { data } = await sb.from('waiter_calls')
+      .select('*')
+      .eq('restaurant_id', restaurant.id)
+      .eq('is_completed', false)
+      .order('created_at', { ascending: false });
+    calls = data || [];
+    renderCalls();
+  } catch(e) {}
+}
+
+function renderCalls() {
+  const el = document.getElementById('calls-list');
+  const badge = document.getElementById('calls-badge');
+  badge.textContent = calls.length;
+  badge.style.display = calls.length > 0 ? 'inline' : 'none';
+
+  if (!calls.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">🔔</div><p>No active calls</p></div>`;
+    return;
+  }
+
+  el.innerHTML = calls.map(c => `
+    <div class="call-card">
+      <div class="call-info">
+        <div class="call-table">Table ${c.table_number}</div>
+        <div class="call-time">${timeAgo(c.created_at)}</div>
+      </div>
+      <button class="btn-lime btn-sm" onclick="completeCall('${c.id}')">Dismiss</button>
+    </div>
+  `).join('');
+}
+
+async function completeCall(id) {
+  if (isDemo) return;
+  try {
+    await sb.from('waiter_calls').update({ is_completed: true }).eq('id', id);
+    loadCalls();
+    toast('🔔 Request cleared');
+  } catch(e) {}
+}
+
+function setupCallsRealtime() {
+  if (isDemo || !restaurant || callsChannel) return;
+  callsChannel = sb.channel('public:waiter_calls:' + restaurant.id)
+    .on('postgres_changes', { 
+      event: '*', 
+      schema: 'public', 
+      table: 'waiter_calls', 
+      filter: `restaurant_id=eq.'${restaurant.id}'` 
+    }, payload => {
+      if (payload.eventType === 'INSERT' && !payload.new.is_completed) {
+        orderSound.play().catch(() => {});
+        toast('🔔 New Waiter Call: Table ' + payload.new.table_number);
+      }
+      loadCalls();
+    }).subscribe();
+}
+
+/* ── STORE SETTINGS ── */
+async function loadStoreSettings() {
+  if (isDemo || !restaurant) return;
+  document.getElementById('store-manual-toggle').checked = !restaurant.is_open;
+  
+  // Announcement
+  const annInp = document.getElementById('store-announcement');
+  annInp.value = restaurant.announcement || '';
+  updateAnnouncementCount();
+
+  // Wait Time
+  const waitInp = document.getElementById('wait-time-input');
+  if (waitInp) waitInp.value = restaurant.avg_wait_time || 15;
+  
+  // Load Hours
+  try {
+    const { data: hours } = await sb.from('active_hours')
+      .select('*')
+      .eq('restaurant_id', restaurant.id)
+      .order('day_of_week');
+    
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const html = days.map((day, i) => {
+      const h = hours?.find(x => x.day_of_week === i) || { open_time: '09:00', close_time: '23:00', is_open: true };
+      return `
+        <div class="hours-row">
+          <div class="hours-day">${day}</div>
+          <input type="time" class="hours-input open" data-day="${i}" value="${h.open_time ? h.open_time.slice(0,5) : '09:00'}">
+          <span style="color:var(--muted)">to</span>
+          <input type="time" class="hours-input close" data-day="${i}" value="${h.close_time ? h.close_time.slice(0,5) : '23:00'}">
+          <label class="toggle" style="margin-left:auto"><input type="checkbox" class="hours-toggle" data-day="${i}" ${h.is_open ? 'checked' : ''}><span class="toggle-slider"></span></label>
+        </div>
+      `;
+    }).join('');
+    document.getElementById('hours-list').innerHTML = html;
+  } catch(e) {}
+}
+
+async function saveStoreSettings() {
+  // Obsolete - keeping for compatibility or future use
+  toast('✅ Settings updated');
+}
+
+async function updateStoreManualStatus() {
+  if (isDemo) return;
+  const closed = document.getElementById('store-manual-toggle').checked;
+  try {
+    const { error } = await sb.from('restaurants').update({ is_open: !closed }).eq('id', restaurant.id);
+    if (error) throw error;
+    restaurant.is_open = !closed;
+    toast(closed ? '🚫 Shop Closed Manually' : '✅ Shop Opened');
+  } catch(e) {}
+}
+
+async function updateWaitTime() {
+  if (isDemo || !restaurant) return;
+  const waitMinutes = parseInt(document.getElementById('wait-time-input').value) || 0;
+  try {
+    const { error } = await sb.from('restaurants').update({ avg_wait_time: waitMinutes }).eq('id', restaurant.id);
+    if (error) throw error;
+    restaurant.avg_wait_time = waitMinutes;
+    toast(`⏱️ Wait time updated: ${waitMinutes} mins`);
+  } catch(e) { toast('⚠️ Failed to update wait time'); }
+}
+
+function updateAnnouncementCount() {
+  const el = document.getElementById('store-announcement');
+  const count = el.value.length;
+  document.getElementById('announcement-count').textContent = `${count} / 100`;
+  
+  const preview = document.getElementById('announcement-preview');
+  const empty = document.getElementById('announcement-preview-empty');
+  
+  if (count > 0) {
+    preview.textContent = el.value;
+    preview.style.display = 'block';
+    empty.style.display = 'none';
+  } else {
+    preview.style.display = 'none';
+    empty.style.display = 'block';
+  }
+}
+
+async function saveAnnouncement() {
+  if (isDemo || !restaurant) return;
+  const msg = document.getElementById('store-announcement').value.trim();
+  try {
+    const { error } = await sb.from('restaurants').update({ announcement: msg }).eq('id', restaurant.id);
+    if (error) throw error;
+    restaurant.announcement = msg;
+    toast('📢 Announcement updated');
+  } catch(e) { toast('⚠️ Save failed'); }
+}
+
+async function clearAnnouncement() {
+  document.getElementById('store-announcement').value = '';
+  updateAnnouncementCount();
+  saveAnnouncement();
+}
+
+async function saveHours() {
+  if (isDemo) return;
+  const rows = document.querySelectorAll('.hours-row');
+  if (!rows.length) return;
+  const data = Array.from(rows).map(row => ({
+    restaurant_id: restaurant.id,
+    day_of_week: parseInt(row.querySelector('.hours-input.open').dataset.day),
+    open_time: row.querySelector('.hours-input.open').value + ':00',
+    close_time: row.querySelector('.hours-input.close').value + ':00',
+    is_open: row.querySelector('.hours-toggle').checked
+  }));
+
+  try {
+    for (const h of data) {
+      await sb.from('active_hours').upsert(h, { onConflict: 'restaurant_id,day_of_week' });
+    }
+    toast('✅ Operating hours saved');
+  } catch(e) { toast('⚠️ Failed to save hours'); }
 }
 </script>
 </body>

@@ -37,27 +37,31 @@ class NotificationService {
     }
   }
 
-  static Future<void> showNewOrderNotification(Order order) async {
+  static Future<void> showLocalNotification({
+    required int id,
+    required String title,
+    required String body,
+    Map<String, dynamic>? data,
+  }) async {
     const androidDetails = AndroidNotificationDetails(
-      'godine_new_orders',
-      'New Orders',
-      channelDescription: 'Notifications for new customer orders',
+      'godine_general',
+      'General Notifications',
+      channelDescription: 'Notifications for waiter calls and updates',
       importance: Importance.max,
       priority: Priority.high,
       icon: '@mipmap/launcher_icon',
     );
-    const iosDetails = DarwinNotificationDetails();
-    const platformDetails = NotificationDetails(android: androidDetails, iOS: iosDetails);
-
-    final title = 'New Order (Table ${order.tableNumber})';
-    final nameStr = order.customerName != null ? '${order.customerName} ordered' : 'Order:';
-    final body = '$nameStr ₹${order.total}';
+    const platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: DarwinNotificationDetails(),
+    );
 
     await _notifications.show(
-      id: order.id.hashCode, // Unique ID per order
-      title: title,
-      body: body,
-      notificationDetails: platformDetails,
+      id,
+      title,
+      body,
+      platformDetails,
+      payload: data != null ? data.toString() : null,
     );
   }
 }

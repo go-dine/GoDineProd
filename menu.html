@@ -256,6 +256,28 @@ a{color:inherit;text-decoration:none}
 }
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;}
 
+/* ── PAYMENT METHODS ── */
+.pay-methods{margin-top:20px;display:flex;gap:10px}
+.pay-btn{
+  flex:1;background:var(--s2);border:1px solid var(--border);
+  border-radius:12px;padding:12px;text-align:center;
+  cursor:pointer;transition:all 0.2s;
+}
+.pay-btn.selected{border-color:var(--lime);background:var(--lime2)}
+.pay-icon{font-size:18px;margin-bottom:4px}
+.pay-label{font-size:12px;font-weight:600}
+
+/* ── QR CODE ── */
+.qr-wrap{
+  background:#fff;padding:10px;border-radius:14px;
+  margin:20px auto;width:180px;height:180px;
+  display:none;align-items:center;justify-content:center;
+}
+.qr-wrap.show{display:flex}
+.qr-wrap img{width:100%;height:100%}
+.qr-copy{font-size:11px;color:var(--muted);margin-top:8px;cursor:pointer}
+.qr-copy:active{color:var(--lime)}
+
 /* ── OTP MODAL ── */
 .modal-overlay{
   position:fixed;inset:0;z-index:900;
@@ -292,6 +314,16 @@ a{color:inherit;text-decoration:none}
   border-bottom:1px solid var(--border);
 }
 .greeting-banner.show{display:block}
+
+/* ── CLOSED BANNER ── */
+.closed-banner{
+  display:none;padding:16px;background:rgba(255,59,48,0.1);
+  border-bottom:1px solid rgba(255,59,48,0.2);text-align:center;
+}
+.closed-banner.show{display:block}
+.closed-text{color:#ff3b30;font-weight:700;font-size:14px}
+.closed-sub{font-size:11px;color:rgba(255,59,48,0.7);margin-top:2px}
+
 .greeting-text{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700}
 .greeting-text span{color:var(--lime)}
 .greeting-sub{font-size:12px;color:var(--muted);margin-top:2px}
@@ -315,6 +347,25 @@ a{color:inherit;text-decoration:none}
   margin-top:8px;background:var(--lime);color:#050505;border:none;border-radius:6px;
   padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;
 }
+
+/* ── FEATURED SECTION ── */
+.feat-section{display:none;padding:16px 16px 0}
+.feat-section.show{display:block}
+.feat-card{
+  width:100%;background:linear-gradient(135deg, var(--s2) 0%, var(--s1) 100%);
+  border:1px solid var(--lime3);border-radius:var(--r2);padding:16px;
+  margin-bottom:10px;display:flex;align-items:center;gap:16px;
+  position:relative;overflow:hidden;
+}
+.feat-card::after{
+  content:'CHEF''S SPECIAL';position:absolute;top:10px;right:-25px;
+  background:var(--lime);color:#000;font-size:8px;font-weight:800;
+  padding:2px 30px;transform:rotate(45deg);
+}
+.feat-emoji{font-size:40px}
+.feat-body{flex:1}
+.feat-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
+.feat-desc{font-size:12px;color:var(--muted);line-height:1.4}
 
 /* ── ZOMATO UI ── */
 .menu-fab{
@@ -351,6 +402,125 @@ a{color:inherit;text-decoration:none}
   font-size:12px;letter-spacing:2px;text-transform:uppercase;
   color:var(--lime);font-weight:700;
 }
+
+/* ── FEATURED ROW ── */
+.featured-row {
+  margin: 16px -20px 24px;
+  padding: 0 20px 8px;
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.featured-row::-webkit-scrollbar { display: none; }
+.feat-card {
+  flex: 0 0 240px;
+  height: 140px;
+  background: var(--s2);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  scroll-snap-align: start;
+  border: 1px solid var(--border);
+}
+.feat-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+.feat-info {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.9));
+}
+.feat-name { font-size: 14px; font-weight: 700; color: white; margin-bottom: 2px; }
+.feat-price { font-size: 12px; color: var(--lime); font-weight: 700; }
+
+/* ── STATUS TRACKER ── */
+.status-tracker {
+  display: flex;
+  justify-content: space-between;
+  margin: 32px 0;
+  position: relative;
+}
+.status-tracker::after {
+  content: '';
+  position: absolute;
+  top: 10px; left: 10%; right: 10%;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 30%;
+}
+.step-dot {
+  width: 20px; height: 20px;
+  background: var(--s2);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+.step.active .step-dot { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 10px var(--lime); }
+.step.completed .step-dot { background: var(--lime); border-color: var(--lime); }
+.step-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+.step.active .step-label { color: var(--lime); }
+
+/* ── ANNOUNCEMENT BANNER ── */
+.announcement-banner {
+  background: var(--lime);
+  color: #050505;
+  padding: 12px 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideDown 0.5s ease-out;
+}
+@keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ── FEEDBACK ── */
+.feedback-box {
+  background: var(--s2);
+  padding: 20px;
+  border-radius: 16px;
+  margin-top: 24px;
+  border: 1px solid var(--border);
+}
+.stars { display: flex; gap: 8px; justify-content: center; margin: 12px 0; }
+.star-btn { font-size: 24px; cursor: pointer; filter: grayscale(1); transition: 0.2s; }
+.star-btn.active { filter: grayscale(0); transform: scale(1.2); }
+
+/* ── CHECKMARK ANIMATION ── */
+.checkmark-circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--lime); fill: none; animation: stroke-anim 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+.checkmark { width: 56px; height: 56px; border-radius: 50%; display: block; stroke-width: 2; stroke: #fff; stroke-miterlimit: 10; margin: 10% auto; box-shadow: inset 0px 0px 0px var(--lime); animation: fill-anim .4s ease-in-out .4s forwards, scale-anim .3s ease-in-out .9s both; }
+.checkmark-check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke-anim 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
+@keyframes stroke-anim { 100% { stroke-dashoffset: 0; } }
+@keyframes scale-anim { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+@keyframes fill-anim { 100% { box-shadow: inset 0px 0px 0px 30px var(--lime); } }
+
+    /* Recommendations */
+    .rec-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .rec-title { font-size: 14px; font-weight: 700; color: var(--lime); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .rec-list { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+    .rec-list::-webkit-scrollbar { display: none; }
+    .rec-card { flex: 0 0 140px; background: var(--s3); border-radius: 12px; padding: 8px; border: 1px solid var(--border); position: relative; }
+    .rec-img { width: 100%; height: 80px; border-radius: 8px; object-fit: cover; margin-bottom: 8px; background: var(--s2); }
+    .rec-name { font-size: 12px; font-weight: 600; line-height: 1.3; height: 32px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-clamp: 2; }
+    .rec-price { font-size: 12px; font-weight: 700; color: var(--lime); }
+    .rec-add { margin-top: 8px; width: 100%; padding: 6px; font-size: 11px; }
+
+@media (max-width: 600px) {
+  .nav-header { padding: 12px 20px; }
+  .menu-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -360,6 +530,9 @@ a{color:inherit;text-decoration:none}
   <div class="header-top">
     <a href="index.html" class="logo">Go <b>Dine</b></a>
     <div style="display:flex;align-items:center;gap:10px">
+      <button onclick="callWaiter()" class="table-badge" style="background:var(--s3);color:var(--white);border-color:var(--border);cursor:pointer;display:flex;align-items:center;gap:6px;">
+        <i data-lucide="bell" style="width:14px;height:14px;"></i>Call Waiter
+      </button>
       <a href="customer.html" id="view-orders-link" class="table-badge" style="background:var(--s2);color:var(--white);border-color:var(--border);display:none;">
         <i data-lucide="clipboard-list" style="width:14px;height:14px;margin-right:4px;vertical-align:middle;"></i>My Orders
       </a>
@@ -375,11 +548,23 @@ a{color:inherit;text-decoration:none}
     <input class="search-input" id="search-input" type="text" placeholder="Search dishes..."/>
   </div>
 </div>
-
+<!-- CLOSED BANNER -->
+<div class="closed-banner" id="closed-banner">
+  <div class="closed-text">Resturant is Currently Closed 🚫</div>
+  <div class="closed-sub">You can still browse the menu, but ordering is disabled.</div>
+</div>
 <!-- GREETING BANNER -->
 <div class="greeting-banner" id="greeting-banner">
   <div class="greeting-text" id="greeting-text">Welcome! 👋</div>
   <div class="greeting-sub" id="greeting-sub">Browse the menu and place your order</div>
+</div>
+
+<!-- FEATURED SECTION -->
+<div class="feat-section" id="feat-section" style="display:none">
+  <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+    <span>⭐</span> Chef's Specials
+  </div>
+  <div class="featured-row" id="feat-row"></div>
 </div>
 
 <!-- FAVORITES SECTION -->
@@ -403,6 +588,14 @@ a{color:inherit;text-decoration:none}
 <div id="cart-bar">
   <div class="cart-inner" onclick="openSheet()">
     <div class="cart-left">
+        <div class="cart-items" id="cart-items"></div>
+        
+        <div id="recommendations-container" class="rec-section" style="display:none;">
+          <div class="rec-title">✨ Recommended with your order</div>
+          <div class="rec-list" id="recommendations-list"></div>
+        </div>
+
+        <div class="cart-total-row">
       <div class="cart-count" id="cart-count">0</div>
       <div class="cart-label">View Order</div>
     </div>
@@ -420,23 +613,94 @@ a{color:inherit;text-decoration:none}
     </div>
     <div class="sheet-body">
       <div id="sheet-items"></div>
+
+      <!-- AI SUGGESTIONS SECTION -->
+      <div id="checkout-suggestions" style="display:none; margin: 20px 0; padding: 15px; background: rgba(181, 255, 34, 0.05); border-radius: 16px; border: 1px dashed rgba(181, 255, 34, 0.2);">
+        <div style="font-size: 14px; font-weight: 700; color: var(--lime); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+          <span>Pairs well with...</span>
+        </div>
+        <div id="suggestion-list" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none;">
+          <!-- Suggestions will be injected here -->
+        </div>
+      </div>
+
       <div class="note-wrap">
         <div class="note-label">Any special requests?</div>
         <textarea class="note-input" id="order-note" rows="2" placeholder="e.g. No onions, extra spicy..."></textarea>
       </div>
       <div class="bill" id="bill"></div>
+      
+      <!-- Payment Method Removed (Forced Cash) -->
+      <input type="hidden" id="payment-method-val" value="cash">
+
       <button class="place-order-btn" id="place-btn" onclick="triggerCheckout()">Place Order →</button>
     </div>
   </div>
 </div>
 
 <!-- SUCCESS SCREEN -->
-<div id="success-screen">
-  <div class="success-icon">💳</div>
-  <div class="success-title">Order Registered!</div>
-  <div class="success-sub">Please proceed to the counter for payment.</div>
-  <div class="success-id">Order ID: <span id="order-id">—</span></div>
-  <button class="back-btn" onclick="resetOrder()">Order More</button>
+<div id="success-screen" class="screen" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--s1);z-index:1000;overflow-y:auto;padding:24px;">
+  <div class="success-box" style="max-width:400px;margin:0 auto;">
+    <div style="text-align:center">
+      <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+        <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+      </svg>
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-top:-10px">Order Placed! 🎉</h2>
+      <div style="font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:var(--lime);margin:16px 0;" id="success-token">#--</div>
+    </div>
+
+    <!-- ANNOUNCEMENT BANNER -->
+    <div id="success-announcement" class="announcement-banner" style="display:none">
+      <span style="font-size:18px">📢</span>
+      <span id="announcement-text"></span>
+    </div>
+
+    <div class="card" style="padding:20px;text-align:center;background:var(--s2);border:1px solid var(--border);border-radius:16px;">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px">Estimated Wait Time</div>
+      <div style="font-size:20px;font-weight:700" id="success-wait-time">~15 minutes</div>
+    </div>
+
+    <!-- STATUS TRACKER -->
+    <div class="status-tracker">
+      <div class="step" id="step-pending">
+        <div class="step-dot"></div>
+        <div class="step-label">Placed</div>
+      </div>
+      <div class="step" id="step-preparing">
+        <div class="step-dot"></div>
+        <div class="step-label">Preparing</div>
+      </div>
+      <div class="step" id="step-ready">
+        <div class="step-dot"></div>
+        <div class="step-label">Ready</div>
+      </div>
+    </div>
+
+    <!-- QR SCANNER (for tracking/payment) -->
+    <div class="qr-wrap" id="qr-wrap" style="margin-top:20px"></div>
+    <div id="upi-id-display" style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;display:none;"></div>
+
+    <!-- FEEDBACK BOX -->
+    <div id="feedback-section" class="feedback-box" style="display:none">
+      <h3 style="font-size:16px;text-align:center">How's the food? 🍽️</h3>
+      <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:4px">Your order is ready! Please rate your experience.</p>
+      <div class="stars">
+        <span class="star-btn" data-v="1" onclick="rate(1)">⭐</span>
+        <span class="star-btn" data-v="2" onclick="rate(2)">⭐</span>
+        <span class="star-btn" data-v="3" onclick="rate(3)">⭐</span>
+        <span class="star-btn" data-v="4" onclick="rate(4)">⭐</span>
+        <span class="star-btn" data-v="5" onclick="rate(5)">⭐</span>
+      </div>
+      <button class="add-btn" style="width:100%;padding:12px;font-size:14px;" id="feedback-submit-btn" onclick="submitFeedback()">Submit Rating</button>
+    </div>
+
+    <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px">
+      <button class="add-btn" style="width:100%;background:var(--s2);color:var(--white);" onclick="location.reload()">Order More Items</button>
+      <div style="font-size:11px;color:var(--dimmed);text-align:center;">Order ID: <span id="order-id-success">—</span></div>
+    </div>
+  </div>
 </div>
 
 <!-- TOAST -->
@@ -475,7 +739,10 @@ if (!isDemo) {
 }
 
 const params = new URLSearchParams(location.search);
-const restaurantSlug = params.get('r') || 'demo';
+const restaurantSlug = params.get('r');
+if (!restaurantSlug) {
+  window.location.href = 'index.html';
+}
 const tableNum = params.get('table') || localStorage.getItem('godine_table') || '1';
 if (params.get('table')) localStorage.setItem('godine_table', tableNum);
 
@@ -483,23 +750,10 @@ let restaurant = null;    // {id, name, slug, total_tables}
 let allDishes = [];
 let cart = {};             // id -> {dish, qty}
 let activeCategory = 'All';
+let restaurantOpen = true; 
+let paymentMethod = 'cash';
 
-/* ── 12 DEMO DISHES ── */
-const DEMO_RESTAURANT = { id: '00000000-0000-0000-0000-000000000001', name: 'The Rustic Fork', slug: 'demo', total_tables: 10 };
-const DEMO_DISHES = [
-  {id:'d1', name:'Pasta Arrabbiata',    description:'Spicy tomato penne, parmesan',       price:280, category:'Main Course', emoji:'🍝', available:true},
-  {id:'d2', name:'Smash Burger',        description:'Double patty, secret sauce, fries',  price:320, category:'Main Course', emoji:'🍔', available:true},
-  {id:'d3', name:'Margherita Pizza',    description:'Classic with fresh basil',           price:350, category:'Main Course', emoji:'🍕', available:true},
-  {id:'d4', name:'Grilled Chicken',     description:'Herb-marinated, side salad',         price:380, category:'Main Course', emoji:'🍗', available:true},
-  {id:'d5', name:'Caesar Salad',        description:'Romaine, croutons, parmesan',        price:220, category:'Starters',    emoji:'🥗', available:true},
-  {id:'d6', name:'Garlic Bread',        description:'Toasted with herb butter',           price:120, category:'Starters',    emoji:'🥖', available:true},
-  {id:'d7', name:'Veg Spring Rolls',    description:'Crispy, sweet chilli dip',           price:160, category:'Starters',    emoji:'🥟', available:true},
-  {id:'d8', name:'Cold Coffee',         description:'Chilled espresso, milk, ice',        price:150, category:'Beverages',   emoji:'☕', available:true},
-  {id:'d9', name:'Mango Lassi',         description:'Fresh mango, yogurt, chilled',       price:120, category:'Beverages',   emoji:'🥤', available:true},
-  {id:'d10',name:'Fresh Lime Soda',     description:'Sweet or salt, chilled',              price:80, category:'Beverages',   emoji:'🍋', available:true},
-  {id:'d11',name:'Chocolate Lava Cake', description:'Warm, vanilla ice cream',            price:220, category:'Desserts',    emoji:'🍫', available:true},
-  {id:'d12',name:'Gulab Jamun',         description:'Classic, sugar syrup, warm',         price:140, category:'Desserts',    emoji:'🍮', available:true},
-];
+
 
 /* ── SETUP HEADER ── */
 document.getElementById('table-display').textContent = 'TABLE ' + tableNum.toUpperCase();
@@ -522,15 +776,6 @@ async function boot() {
   // Show greeting for returning users
   if (window.currentUser && window.currentUser.name) {
     showGreeting(window.currentUser.name);
-  }
-
-  if (isDemo) {
-    restaurant = DEMO_RESTAURANT;
-    allDishes = DEMO_DISHES;
-    applyRestaurant();
-    renderCategories();
-    renderMenu();
-    return;
   }
 
   // Fetch restaurant by slug
@@ -565,18 +810,23 @@ async function boot() {
       .eq('restaurant_id', restaurant.id)
       .order('category').order('name');
     allDishes = dishErr ? [] : (dishData || []);
+
+    // Check Active Hours
+    await syncStoreStatus();
+
   } catch(e) {
-    restaurant = DEMO_RESTAURANT;
-    allDishes = DEMO_DISHES;
-    applyRestaurant();
+    showError('Connection Error', 'Failed to connect to the server. Please check your internet.');
   }
 
   renderCategories();
   renderMenu();
   lucide.createIcons();
 
+  renderFeatured();
+  setupAnnouncementListener();
+
   // Load favorites for returning users
-  if (window.currentUser && window.currentUser.phone && !isDemo) {
+  if (window.currentUser && window.currentUser.phone) {
     loadFavorites();
   }
 }
@@ -598,6 +848,81 @@ function showError(title, msg) {
       <p>${msg}</p>
       <a href="index.html">← Back to Go Dine</a>
     </div>`;
+}
+
+function renderFeatured() {
+  // ... existing ...
+}
+
+function setupAnnouncementListener() {
+  if (isDemo || !restaurant || !sb) return;
+  
+  sb.channel('public:restaurants:announcement:' + restaurant.id)
+    .on('postgres_changes', { 
+      event: 'UPDATE', 
+      schema: 'public', 
+      table: 'restaurants', 
+      filter: `id=eq.${restaurant.id}` 
+    }, payload => {
+      if (payload.new.announcement !== undefined) {
+        restaurant.announcement = payload.new.announcement;
+        const banner = document.getElementById('success-announcement');
+        const text = document.getElementById('announcement-text');
+        if (restaurant.announcement) {
+          text.textContent = restaurant.announcement;
+          if (banner) banner.style.display = 'flex';
+        } else {
+          if (banner) banner.style.display = 'none';
+        }
+      }
+    }).subscribe();
+}
+
+/* ── STORE STATUS & WAITER ── */
+async function syncStoreStatus() {
+  if (isDemo) return;
+  try {
+    const day = new Date().getDay(); // 0-6
+    const { data: hours } = await sb
+      .from('active_hours')
+      .select('*')
+      .eq('restaurant_id', restaurant.id)
+      .eq('day_of_week', day)
+      .single();
+
+    if (hours) {
+      const now = new Date();
+      const [h1, m1, s1] = hours.open_time.split(':');
+      const [h2, m2, s2] = hours.close_time.split(':');
+      const open = new Date(); open.setHours(h1, m1, s1 || 0);
+      const close = new Date(); close.setHours(h2, m2, s2 || 0);
+
+      restaurantOpen = hours.is_open && now >= open && now <= close;
+      
+      if (!restaurantOpen) {
+        document.getElementById('closed-banner').classList.add('show');
+        const placeBtn = document.getElementById('place-btn');
+        if (placeBtn) {
+          placeBtn.disabled = true;
+          placeBtn.textContent = 'Restaurant Closed';
+        }
+      }
+    }
+  } catch (e) { console.error("Status check failed", e); }
+}
+
+async function callWaiter() {
+  if (isDemo) { showToast('🔔 Waiter called! (Demo)'); return; }
+  try {
+    const { error } = await sb.from('waiter_calls').insert({
+      restaurant_id: restaurant.id,
+      table_number: parseInt(tableNum)
+    });
+    if (error) throw error;
+    showToast('🔔 Waiter has been notified!');
+  } catch (e) {
+    showToast('⚠️ Failed to call waiter');
+  }
 }
 
 /* ── CATEGORIES ── */
@@ -736,7 +1061,7 @@ function refreshCard(id) {
   el.querySelector('.dish-bottom').innerHTML = `<div class="dish-price">₹${d.price}</div>${ctrl}`;
 }
 
-function updateCartBar() {
+async function updateCartBar() {
   const items = Object.values(cart);
   const total = items.reduce((s, i) => s + i.dish.price * i.qty, 0);
   const count = items.reduce((s, i) => s + i.qty, 0);
@@ -746,6 +1071,27 @@ function updateCartBar() {
   document.getElementById('cart-bar').classList.toggle('visible', hasItems);
   document.getElementById('menu-fab')?.classList.toggle('with-cart', hasItems);
   localStorage.setItem('godine_cart', JSON.stringify(cart));
+
+  // Fetch recommendations
+  if (hasItems && !isDemo) {
+    try {
+      const { data, error } = await sb.functions.invoke('get-cart-suggestions', {
+        body: { cart: items.map(i => i.dish.id), restaurant_id: restaurant.id }
+      });
+      if (data && data.length > 0) {
+        document.getElementById('recommendations-container').style.display = 'block';
+        document.getElementById('recommendations-list').innerHTML = data.map(d => `
+          <div class="rec-card">
+            <div class="rec-name">${d.name}</div>
+            <div class="rec-price">₹${d.price}</div>
+            <button class="add-btn rec-add" onclick="addItem('${d.id}')">Add</button>
+          </div>
+        `).join('');
+      }
+    } catch(e) { console.error(e); }
+  } else {
+    document.getElementById('recommendations-container').style.display = 'none';
+  }
 }
 
 /* ── ORDER SHEET ── */
@@ -835,11 +1181,12 @@ async function saveGuestAndOrder() {
   
   closeGuestModal();
   btn.disabled = false; btn.textContent = 'Save & Place Order →';
-  
   actualPlaceOrder(name, phone);
 }
 
+// paymentMethod is 'cash' by default (forced)
 async function actualPlaceOrder(name, phone) {
+  paymentMethod = 'cash'; // Force cash as UPI is removed
   const items = Object.values(cart);
   if (!items.length) return;
   const btn = document.getElementById('place-btn');
@@ -853,14 +1200,14 @@ async function actualPlaceOrder(name, phone) {
 
   if (isDemo) {
     setTimeout(() => {
+      showSuccess(total, 'demo-order-123');
       localStorage.removeItem('godine_cart');
-      window.location.href = `customer.html?r=${restaurantSlug}`;
     }, 1000);
     return;
   }
 
   try {
-    const { error } = await sb.from('orders').insert({
+    const { data, error } = await sb.from('orders').insert({
       restaurant_id: restaurant.id,
       table_number: tableNum,
       customer_name: name,
@@ -870,22 +1217,128 @@ async function actualPlaceOrder(name, phone) {
       total,
       note: originalNote,
       token_number: token,
-      status: 'pending'
-    });
+      status: 'pending',
+      payment_method: paymentMethod
+    }).select().single();
 
     if (error) throw error;
+    
+    showSuccess(total, data.id, data.token_number);
     localStorage.removeItem('godine_cart');
-    window.location.href = `customer.html?r=${restaurantSlug}&table=${tableNum}`;
   } catch(e) {
     console.error('Order Placement Error:', e);
     if (btn) { btn.disabled = false; btn.textContent = 'Place Order →'; }
     
     let msg = '⚠️ Failed to place order. ' + (e.message || 'Try again.');
-    if (e.message && e.message.includes('column "token_number" of relation "orders" does not exist')) {
-        msg = 'Database Setup Incomplete: The "token_number" column is missing in the orders table.';
-    }
     showToast(msg);
   }
+}
+
+let currentOrderId = null;
+let orderSubscription = null;
+
+function showSuccess(total, orderId, token) {
+  currentOrderId = orderId;
+  document.getElementById('order-sheet').classList.remove('open');
+  document.getElementById('success-screen').style.display = 'block';
+  document.getElementById('order-id-success').textContent = orderId.substring(0,8).toUpperCase();
+  document.getElementById('success-token').textContent = `#${token || '--'}`;
+  
+  // Wait time
+  document.getElementById('success-wait-time').textContent = `~${restaurant.avg_wait_time || 15} minutes`;
+
+  // Announcement
+  if (restaurant.announcement) {
+    document.getElementById('announcement-text').textContent = restaurant.announcement;
+    document.getElementById('success-announcement').style.display = 'flex';
+  }
+
+  // Initial Status
+  updateStatusUI('pending');
+  
+  // Real-time Status Tracker
+  if (!isDemo && sb) {
+    if (orderSubscription) orderSubscription.unsubscribe();
+    orderSubscription = sb.channel('public:orders:' + orderId)
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'orders', 
+        filter: `id=eq.${orderId}` 
+      }, payload => {
+        updateStatusUI(payload.new.status);
+      }).subscribe();
+  }
+}
+
+function updateStatusUI(status) {
+  const steps = ['pending', 'preparing', 'ready'];
+  const currentIndex = steps.indexOf(status);
+  
+  steps.forEach((s, i) => {
+    const el = document.getElementById('step-' + s);
+    if (!el) return;
+    el.classList.remove('active', 'completed');
+    if (i < currentIndex) el.classList.add('completed');
+    if (i === currentIndex) el.classList.add('active');
+  });
+
+  // Show feedback if ready
+  if (status === 'ready' || status === 'completed') {
+    document.getElementById('feedback-section').style.display = 'block';
+    // Play sound if just changed to ready
+    if (status === 'ready') {
+      try { new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play(); } catch(e){}
+    }
+  }
+}
+
+let selectedRating = 0;
+function rate(n) {
+  selectedRating = n;
+  document.querySelectorAll('.star-btn').forEach((s, i) => {
+    s.classList.toggle('active', i < n);
+  });
+}
+
+async function submitFeedback() {
+  if (selectedRating === 0) { showToast('⚠️ Please select a rating'); return; }
+  const btn = document.getElementById('feedback-submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+  
+  try {
+    const { error } = await sb.from('feedback').insert({
+      restaurant_id: restaurant.id,
+      order_id: currentOrderId,
+      food_rating: selectedRating,
+      service_rating: selectedRating, // Defaulting both to same for simplicity or you can add more stars
+      customer_name: window.currentUser?.name || 'Guest'
+    });
+    if (error) throw error;
+    showToast('✅ Thank you for your feedback!');
+    document.getElementById('feedback-section').innerHTML = '<div style="text-align:center;padding:20px;color:var(--lime);font-weight:700;">Feedback Submitted! ❤️</div>';
+  } catch(e) {
+    showToast('⚠️ Failed to save feedback');
+    btn.disabled = false; btn.textContent = 'Submit Rating';
+  }
+}
+
+function renderFeatured() {
+  const featured = allDishes.filter(d => d.is_featured && d.available);
+  if (!featured.length) {
+    document.getElementById('feat-section').style.display = 'none';
+    return;
+  }
+  document.getElementById('feat-section').style.display = 'block';
+  document.getElementById('feat-row').innerHTML = featured.map(d => `
+    <div class="feat-card" onclick="addItem('${d.id}')">
+      ${d.image_url ? `<img src="${d.image_url}" alt="${d.name}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--s3)">${d.emoji || '🍽️'}</div>`}
+      <div class="feat-info">
+        <div class="feat-name">${d.name}</div>
+        <div class="feat-price">₹${d.price}</div>
+      </div>
+    </div>
+  `).join('');
 }
 
 function resetOrder() {
@@ -969,7 +1422,7 @@ async function loadFavorites() {
   }
 }
 
-function addOne(dishId) {
+async function addOne(dishId) {
   const dish = allDishes.find(d => d.id === dishId);
   if (!dish) return;
   if (!cart[dishId]) cart[dishId] = { dish, qty: 0 };
@@ -977,6 +1430,63 @@ function addOne(dishId) {
   updateCartBar();
   renderMenu();
   showToast(`Added ${dish.name} 🛒`);
+  
+  // If order sheet is open, refresh suggestions
+  if (document.getElementById('order-sheet').classList.contains('open')) {
+    renderOrderSheet();
+    fetchCheckoutSuggestions();
+  }
+}
+
+async function fetchCheckoutSuggestions() {
+  const container = document.getElementById('checkout-suggestions');
+  const list = document.getElementById('suggestion-list');
+  const cartItems = Object.values(cart).map(item => ({
+    id: item.dish.id,
+    category: item.dish.category
+  }));
+
+  if (cartItems.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  try {
+    const { data, error } = await sb.functions.invoke('get-cart-suggestions', {
+      body: { 
+        restaurant_id: restaurant.id,
+        cart_items: cartItems
+      }
+    });
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      container.style.display = 'block';
+      list.innerHTML = data.map(item => `
+        <div onclick="addOne('${item.id}')" style="flex: 0 0 140px; background: var(--s2); border: 1px solid var(--border); border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;">
+          <div style="font-size: 24px; margin-bottom: 6px;">${item.emoji || '🍽️'}</div>
+          <div style="font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--white);">${item.name}</div>
+          <div style="font-size: 11px; color: var(--lime); font-weight: 700; margin-top: 4px;">+ ₹${item.price}</div>
+          <div style="position: absolute; top: 8px; right: 8px; background: var(--lime); color: #000; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items:center; justify-content: center; font-size: 12px; font-weight: 900;">+</div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    } else {
+      container.style.display = 'none';
+    }
+  } catch (e) {
+    console.error('Failed to fetch suggestions:', e);
+    container.style.display = 'none';
+  }
+}
+
+// Update openSheet to fetch suggestions
+function openSheet() {
+  document.getElementById('order-sheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderOrderSheet();
+  fetchCheckoutSuggestions();
 }
 </script>
 

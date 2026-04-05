@@ -81,7 +81,8 @@ class _AuthGateState extends State<AuthGate> {
       try {
         final token = await NotificationService.getDeviceToken();
         if (token != null) {
-          await SupabaseService.updateFcmToken(restaurantId, token);
+          final platform = Theme.of(context).platform == TargetPlatform.iOS ? 'ios' : 'android';
+          await SupabaseService.registerFcmToken(restaurantId, token, platform);
         }
       } catch (e) {
         debugPrint('Failed to register FCM token: $e');
@@ -169,6 +170,31 @@ class _MainScaffoldState extends State<MainScaffold> {
         }
       },
     );
+
+    // Subscribe to waiter calls
+    SupabaseService.client
+        .channel('waiter-calls-${widget.restaurant.id}')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'waiter_calls',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'restaurant_id',
+            value: widget.restaurant.id,
+          ),
+          callback: (payload) {
+            final nr = payload.newRecord;
+            if (nr != null) {
+              NotificationService.showLocalNotification(
+                id: nr['id'].hashCode,
+                title: '🔔 Waiter Call (Table ${nr['table_number']})',
+                body: 'A customer is requesting assistance.',
+              );
+            }
+          },
+        )
+        .subscribe();
   }
 
   @override
