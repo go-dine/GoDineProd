@@ -73,6 +73,21 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
 .feedback-done{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:20px;background:rgba(74,222,128,0.12);color:#4ade80;font-size:0.8rem;font-weight:600}
 .cancel-btn{display:inline-block;margin-top:12px;padding:8px 16px;border:none;border-radius:20px;background:rgba(255,68,68,0.15);color:#ff4444;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;transition:background 0.2s}
 .cancel-btn:hover{background:rgba(255,68,68,0.25)}
+
+/* Announcement Banner */
+.announcement-banner {
+  background: #c1ff00;
+  color: #000;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
 </style>
 </head>
 <body>
@@ -91,10 +106,14 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
 </header>
 
 <main class="content" id="content" style="display:none;">
+  <!-- ANNOUNCEMENT BANNER -->
+  <div id="announcement-banner" class="announcement-banner" style="display:none">
+    <span style="font-size:1.2rem">📢</span>
+    <span id="announcement-text"></span>
+  </div>
+
   <div class="section-title">Active Orders</div>
   <div id="orders-container"></div>
-</main>
-
 </main>
 
 <script>
@@ -145,13 +164,43 @@ async function boot() {
   document.querySelector('.back-link').href = `menu.html?r=${restaurantSlug}&table=${tableNum}`;
   document.getElementById('rest-name').textContent = `Hello, ${currentUser.name.split(' ')[0]}!`;
 
+  await fetchRestaurant();
   await fetchOrders();
   setupRealtime();
+  setupRestaurantListener();
   
   // Re-render every second to evaluate the 10-second cancellation window
   setInterval(() => {
     renderOrders(orders);
   }, 1000);
+}
+
+async function fetchRestaurant() {
+  const { data } = await sb.from('restaurants').select('*').eq('slug', restaurantSlug).single();
+  if (data) {
+    restaurant = data;
+    renderAnnouncement();
+  }
+}
+
+function renderAnnouncement() {
+  const banner = document.getElementById('announcement-banner');
+  const text = document.getElementById('announcement-text');
+  if (restaurant && restaurant.announcement && restaurant.announcement.trim()) {
+    text.textContent = restaurant.announcement;
+    banner.style.display = 'flex';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function setupRestaurantListener() {
+  if (!restaurant || !sb) return;
+  sb.channel('restaurant-updates')
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'restaurants', filter: `id=eq.${restaurant.id}` }, payload => {
+      restaurant.announcement = payload.new.announcement;
+      renderAnnouncement();
+    }).subscribe();
 }
 
 async function fetchOrders() {
@@ -221,7 +270,8 @@ function createOrderCard(o) {
     case 'cancelled': statusText = 'Cancelled'; break;
   }
 
-  const hasEta = o.status === 'preparing' && o.estimated_time;
+  const hasEta = o.status === 'pending' || o.status === 'preparing';
+  const etaValue = o.estimated_time || '~15 minutes';
   const hasFeedback = feedbackGiven.includes(o.id);
   const showFeedbackBtn = o.status === 'completed' && !hasFeedback;
   
@@ -235,15 +285,21 @@ function createOrderCard(o) {
     <div class="order-card">
       <div class="order-head">
         <div>
-          <div class="order-id">${idShort} ${o.token_number ? `<span style="background:#c1ff00;color:#000;padding:2px 8px;border-radius:6px;font-size:0.75rem;margin-left:10px;font-weight:800;">TOKEN: ${o.token_number}</span>` : ''}</div>
+          <div class="order-id">${idShort}</div>
           <div style="font-size:0.8rem;color:#666;margin-top:2px;">${date}</div>
         </div>
         <div class="order-status status-${o.status}">${statusText}</div>
       </div>
       
+      ${o.token_number ? `
+      <div style="margin-top:8px;margin-bottom:12px;padding:12px;border-radius:12px;background:rgba(193,255,0,0.08);border:1px solid rgba(193,255,0,0.15);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:0.85rem;font-weight:700;color:#c1ff00;letter-spacing:1px;text-transform:uppercase;">Token Number</span>
+        <span style="font-size:1.4rem;font-weight:800;color:#c1ff00;font-family:'Space Grotesk',sans-serif;">#${o.token_number}</span>
+      </div>` : ''}
+
       <div class="eta-box ${hasEta ? 'show' : ''}">
         <div class="eta-icon">⏱️</div>
-        <div class="eta-text">Estimated wait: <span class="eta-highlight">${o.estimated_time || ''}</span></div>
+        <div class="eta-text">Estimated wait: <span class="eta-highlight">${etaValue}</span></div>
       </div>
 
       <div class="order-items">

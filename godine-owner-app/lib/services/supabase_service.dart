@@ -125,11 +125,17 @@ class SupabaseService {
   // ───── Restaurant Management ─────
 
   static Future<void> registerFcmToken(String restaurantId, String token, String platform) async {
-    await client.from('owner_fcm_tokens').upsert({
-      'restaurant_id': restaurantId,
-      'token': token,
-      'platform': platform,
-    });
+    // Store in owner_fcm_tokens for multi-device support
+    await client.from('owner_fcm_tokens').upsert(
+      {
+        'restaurant_id': restaurantId,
+        'token': token,
+        'platform': platform,
+      },
+      onConflict: 'restaurant_id,token',
+    );
+    // Also update restaurants.fcm_token for backward compatibility with edge function
+    await client.from('restaurants').update({'fcm_token': token}).eq('id', restaurantId);
   }
 
   static Future<void> updateRestaurantAnnouncement(String restaurantId, String? announcement) async {

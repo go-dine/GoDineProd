@@ -73,6 +73,7 @@
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--white);font-family:'Manrope',sans-serif;overflow-x:hidden;cursor:none}
+@media(hover:none),(pointer:coarse){body{cursor:auto}#cursor,#cursor-ring{display:none!important}}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 
@@ -615,7 +616,7 @@ section{position:relative;z-index:1;padding:120px 5%}
     </div>
   </div>
   <div style="width:100%; padding-top:32px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-    <p style="font-size:12px; color:var(--muted);">© 2025 Go Dine. All rights reserved.</p>
+    <p style="font-size:12px; color:var(--muted);">© 2026 Go Dine. All rights reserved.</p>
     <div style="display:flex; gap:16px; align-items:center;">
        <span style="width:8px; height:8px; background:#10b981; border-radius:50%;"></span>
        <span style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#10b981;">Systems Operational</span>
@@ -908,9 +909,11 @@ async function handleComplete() {
   const nameVal = document.getElementById('ob-name').value;
   const locationVal = document.getElementById('ob-location').value;
   const currencyVal = document.getElementById('ob-currency').value;
-  const slugVal = document.getElementById('ob-slug').value || nameVal.toLowerCase().replace(/\s+/g, '-');
+  const slugVal = (document.getElementById('ob-slug').value || nameVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')).trim();
   const emailVal = document.getElementById('ob-email').value;
   const passwordVal = document.getElementById('ob-password').value;
+
+  if (!slugVal) { alert('Please enter a unique slug/URL.'); return; }
 
   const btn = document.getElementById('ob-next');
   if(btn) {
@@ -926,11 +929,12 @@ async function handleComplete() {
       name: nameVal,
       slug: slugVal,
       owner_email: emailVal,
-      settings: { currency: currencyVal, plan: selectedPlanId, location: locationVal }
+      owner_password: passwordVal,
+      total_tables: 10
     }).select().single();
 
     if (restErr) throw restErr;
-    localStorage.setItem('gd_auth', JSON.stringify({ restaurant_id: rest.id, slug: rest.slug, name: rest.name }));
+    localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
     alert("Registration successful! Redirecting to your dashboard...");
     window.location.href = "dashboard.html";
   } catch(e) {
@@ -944,14 +948,16 @@ async function handleComplete() {
 }
 
 async function completeLogin() {
-   const ident = document.getElementById('login-ident').value.trim();
+   const ident = document.getElementById('login-ident').value.trim().toLowerCase();
    const pass = document.getElementById('login-pass').value;
    if (!ident || !pass) { alert("Please enter credentials."); return; }
    try {
      const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
-     const { data: rest, error } = await sbClient.from('restaurants').select('*').or(`slug.eq."${ident}",owner_email.eq."${ident}"`).single();
+     const { data: rest, error } = await sbClient.from('restaurants').select('*').or(`slug.eq.${ident},owner_email.eq.${ident}`).single();
      if (error || !rest) { alert("Restaurant not found."); return; }
-     localStorage.setItem('gd_auth', JSON.stringify({ restaurant_id: rest.id, slug: rest.slug, name: rest.name }));
+     if (String(rest.owner_password) !== String(pass)) { alert("Incorrect password."); return; }
+     if (rest.is_active === false) { alert("Your account has been suspended."); return; }
+     localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
      window.location.href = "dashboard.html";
    } catch(e) { alert("Login failed: " + e.message); }
 }

@@ -13,6 +13,9 @@ class NotificationService {
     
     await _notifications.initialize(settings: initSettings);
     
+    // Create dedicated notification channels
+    await _createNotificationChannels();
+
     // Request local notification permission on Android 13+
     await _notifications
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
@@ -23,6 +26,40 @@ class NotificationService {
       alert: true,
       badge: true,
       sound: true,
+    );
+
+    // Setup foreground message handler
+    setupForegroundHandler();
+  }
+
+  /// Create Android notification channels for different notification types
+  static Future<void> _createNotificationChannels() async {
+    final androidPlugin = _notifications
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return;
+
+    // High-priority channel for new orders (matches edge function's channel_id)
+    await androidPlugin.createNotificationChannel(
+      const AndroidNotificationChannel(
+        'godine_new_orders',
+        'New Orders',
+        description: 'High-priority alerts for incoming customer orders',
+        importance: Importance.max,
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
+    );
+
+    // General notifications channel
+    await androidPlugin.createNotificationChannel(
+      const AndroidNotificationChannel(
+        'godine_general',
+        'General Notifications',
+        description: 'Notifications for waiter calls and updates',
+        importance: Importance.high,
+        playSound: true,
+      ),
     );
   }
 
@@ -37,23 +74,85 @@ class NotificationService {
     }
   }
 
+  /// Listen for FCM messages while the app is in the foreground
+  static void setupForegroundHandler() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint('Foreground FCM: ${message.notification?.title}');
+      final notification = message.notification;
+      if (notification != null) {
+        showLocalNotification(
+          id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+          title: notification.title ?? 'GoDine',
+          body: notification.body ?? 'New notification',
+          data: message.data,
+          isOrder: message.data['type'] == 'new_order',
+        );
+      }
+    });
+  }
+
+  /// Show a new order notification with high-priority channel
+  static Future<void> showNewOrderNotification(Order order) async {
+    const androidDetails = AndroidNotificationDetails(
+      'godine_new_orders',
+      'New Orders',
+      channelDescription: 'High-priority alerts for incoming customer orders',
+      importance: Importance.max,
+      priority: Priority.high,
+      icon: '@mipmap/launcher_icon',
+      playSound: true,
+      enableVibration: true,
+      enableLights: true,
+      fullScreenIntent: true,
+    );
+    const platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
+    );
+
+    await _notifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      'New Order! 🔔 Table ${order.tableNumber}',
+      '${order.customerName ?? "Customer"} — ₹${order.total} (${order.items.length} items)',
+      platformDetails,
+      payload: order.id,
+    );
+  }
+
+  /// Show a generic local notification
   static Future<void> showLocalNotification({
     required int id,
     required String title,
     required String body,
     Map<String, dynamic>? data,
+    bool isOrder = false,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
-      'godine_general',
-      'General Notifications',
-      channelDescription: 'Notifications for waiter calls and updates',
+    final channelId = isOrder ? 'godine_new_orders' : 'godine_general';
+    final channelName = isOrder ? 'New Orders' : 'General Notifications';
+
+    final androidDetails = AndroidNotificationDetails(
+      channelId,
+      channelName,
+      channelDescription: isOrder
+          ? 'High-priority alerts for incoming customer orders'
+          : 'Notifications for waiter calls and updates',
       importance: Importance.max,
       priority: Priority.high,
       icon: '@mipmap/launcher_icon',
+      fullScreenIntent: isOrder,
     );
-    const platformDetails = NotificationDetails(
+    const iosDets = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+    final platformDetails = NotificationDetails(
       android: androidDetails,
-      iOS: DarwinNotificationDetails(),
+      iOS: iosDets,
     );
 
     await _notifications.show(

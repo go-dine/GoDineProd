@@ -185,6 +185,7 @@ a{color:inherit;text-decoration:none}
 /* ── INIT ── */
 const { createClient } = supabase;
 let sb;
+const isDemo = CONFIG.supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL' || !CONFIG.supabaseUrl;
 try { sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey); } catch(e){}
 
 const params = new URLSearchParams(location.search);

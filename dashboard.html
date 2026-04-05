@@ -311,48 +311,6 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 .call-table{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
 .call-time{font-size:11px;color:var(--muted)}
 
-/* ── COMPARISON TABLE ── */
-.compare-card { 
-  background: var(--s1); 
-  border: 1px solid var(--border); 
-  border-radius: var(--r-md); 
-  padding: 32px; 
-  margin-top: 40px; 
-  position: relative;
-  overflow: hidden;
-}
-.compare-card::after {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--lime), transparent);
-  opacity: 0.4;
-}
-.compare-title { 
-  font-family: 'Space Grotesk', sans-serif; 
-  font-size: 20px; 
-  font-weight: 700; 
-  margin-bottom: 24px; 
-  display: flex; 
-  align-items: center; 
-  gap: 10px;
-}
-.comp-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.comp-table { width: 100%; border-collapse: collapse; min-width: 500px; }
-.comp-table th, .comp-table td { padding: 16px; text-align: center; border-bottom: 1px solid var(--border); font-size: 14px; }
-.comp-table th { font-family: 'Space Grotesk', sans-serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
-.comp-table td:first-child, .comp-table th:first-child { text-align: left; padding-left: 0; min-width: 180px; color: var(--white); font-weight: 600; }
-
-.comp-table .gd-col { position: relative; z-index: 1; }
-.comp-table .gd-col::after { 
-  content: ''; position: absolute; inset: 0; 
-  background: rgba(182, 255, 42, 0.03); z-index: -1; 
-  border-left: 1px solid rgba(182, 255, 42, 0.1); 
-  border-right: 1px solid rgba(182, 255, 42, 0.1); 
-}
-.comp-table th.gd-col { background: var(--lime) !important; color: #000 !important; font-weight: 800; border: none; border-radius: 8px 8px 0 0; }
-.comp-table tr:last-child .gd-col::after { border-radius: 0 0 8px 8px; }
-.comp-check { color: var(--lime); font-size: 18px; font-weight: 800; }
-.comp-cross { color: var(--red); font-size: 18px; opacity: 0.4; }
-.comp-dash { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -504,32 +462,6 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
         <div class="chart-card">
           <div class="card-title" style="margin-bottom:20px">📊 Category Breakdown</div>
           <div id="ana-cats"></div>
-        </div>
-      </div>
-
-      <!-- COMPARISON SECTION -->
-      <div class="compare-card">
-        <div class="compare-title">⚔️ Market Comparison</div>
-        <div class="comp-table-wrap">
-          <table class="comp-table">
-            <thead>
-              <tr>
-                <th>Capabilities</th>
-                <th class="gd-col">GoDine ✓</th>
-                <th>Paper Menu</th>
-                <th>PetPooja</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>Zero setup cost</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td></tr>
-              <tr><td>No hardware needed</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td></tr>
-              <tr><td>Real-time updates</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td><td><span class="comp-check">✓</span></td></tr>
-              <tr><td>Customer ordering</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td><td><span class="comp-check">✓</span></td></tr>
-              <tr><td>Works on any phone</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-cross">✗</span></td><td><span class="check">✓</span></td></tr>
-              <tr><td>Free trial</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-dash">—</span></td><td><span class="comp-cross">✗</span></td></tr>
-              <tr><td>Starts at ₹100/month</td><td class="gd-col"><span class="comp-check">✓</span></td><td><span class="comp-dash">—</span></td><td><span class="comp-cross">✗</span></td></tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
@@ -722,34 +654,32 @@ if (!isDemo) {
   }
 }
 
-/* ── STATE ── */
+// Register Service Worker for background notifications
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(e => console.log('SW registration skipped:', e.message));
+}
+// Request notification permission
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
 let restaurant = null; // {id, name, slug, total_tables}
 let dishes = [];
 let orders = [];
+let soundEnabled = true;
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  toast(soundEnabled ? '🔊 Sound enabled' : '🔇 Sound muted');
+}
 
 /* ── AUTH UI ── */
 function showAuthMode(mode) {
-  document.getElementById('auth-login').style.display = mode === 'login' ? 'block' : 'none';
-  document.getElementById('auth-register').style.display = mode === 'register' ? 'block' : 'none';
-  document.getElementById('login-err').style.display = 'none';
-  document.getElementById('reg-err').style.display = 'none';
+  const loginEl = document.getElementById('auth-login');
+  if (loginEl) loginEl.style.display = mode === 'login' ? 'block' : 'none';
+  const errEl = document.getElementById('login-err');
+  if (errEl) errEl.style.display = 'none';
 }
-
-function updateSlugPreview() {
-  const name = document.getElementById('reg-name').value;
-  const slugInput = document.getElementById('reg-slug');
-  // Auto-generate slug from name if slug is empty or was auto-generated
-  if (!slugInput.dataset.manual) {
-    slugInput.value = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  }
-  const slug = slugInput.value || 'username';
-  document.getElementById('slug-preview').innerHTML = 'Menu URL: <span>menu.html?r=' + slug + '</span>';
-}
-// Allow manual slug editing
-document.addEventListener('DOMContentLoaded', () => {
-  const slugInput = document.getElementById('reg-slug');
-  if (slugInput) slugInput.addEventListener('input', () => { slugInput.dataset.manual = '1'; });
-});
 
 /* ── LOGIN ── */
 async function doLogin() {
@@ -772,11 +702,9 @@ async function doLogin() {
   }
 
   try {
-    // Attempt to find restaurant by slug OR email
-    // We use quotes around the values in the .or filter to handle special characters like '@'
     const { data, error } = await sb.from('restaurants')
       .select('*')
-      .or(`slug.eq."${cleanSlug}",owner_email.eq."${cleanSlug}"`)
+      .or(`slug.eq.${cleanSlug},owner_email.eq.${cleanSlug}`)
       .single();
 
     if (error || !data) { 
@@ -973,14 +901,27 @@ function finalizeInit() {
 }
 
 function notifyOwner(title, body) {
-  if ("Notification" in window && Notification.permission === "granted") {
+  if (soundEnabled) orderSound.play().catch(() => {});
+  toast(`🔔 ${title}: ${body}`);
+
+  // Service Worker notification (works in background tabs)
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.showNotification(title, {
+        body: body,
+        icon: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png',
+        badge: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png',
+        vibrate: [200, 100, 200],
+        tag: 'godine-order-' + Date.now(),
+        renotify: true
+      });
+    });
+  } else if ('Notification' in window && Notification.permission === 'granted') {
     new Notification(title, {
       body: body,
       icon: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png'
     });
   }
-  orderSound.play().catch(() => {});
-  toast(`🔔 ${title}: ${body}`);
 }
 
 function setupRealtime() {
@@ -1001,7 +942,7 @@ function setupRealtime() {
         event: '*', 
         schema: 'public', 
         table: 'orders', 
-        filter: `restaurant_id=eq.'${restaurant.id}'` 
+        filter: `restaurant_id=eq.${restaurant.id}` 
       }, payload => {
         if (payload.eventType === 'INSERT') {
           notifyOwner('New Order! 🔔', `Table ${payload.new.table_number} ordered ₹${payload.new.total}`);
@@ -1025,7 +966,7 @@ function setupCallsRealtime() {
       event: 'INSERT', 
       schema: 'public', 
       table: 'waiter_calls', 
-      filter: `restaurant_id=eq.'${restaurant.id}'` 
+      filter: `restaurant_id=eq.${restaurant.id}` 
     }, payload => {
       notifyOwner('Waiter Requested! 🛎️', `Table ${payload.new.table_number} needs assistance`);
       loadCalls();
@@ -1806,20 +1747,41 @@ async function loadAnalytics() {
       .select('*')
       .eq('restaurant_id', restaurant.id);
     
-    if (!allOrders || !allOrders.length) return;
+    if (!allOrders || !allOrders.length) {
+      document.getElementById('ana-revenue').textContent = '₹0';
+      document.getElementById('ana-orders').textContent = '0';
+      document.getElementById('ana-avg').textContent = '₹0';
+      const repeatEl = document.getElementById('ana-repeat');
+      if (repeatEl) repeatEl.textContent = '0%';
+      return;
+    }
 
-    const totalRevenue = allOrders.reduce((s, o) => s + (o.status !== 'cancelled' ? o.total : 0), 0);
+    const validOrders = allOrders.filter(o => o.status !== 'cancelled');
+    const totalRevenue = validOrders.reduce((s, o) => s + Number(o.total), 0);
     
     document.getElementById('ana-revenue').textContent = `₹${totalRevenue.toLocaleString()}`;
     document.getElementById('ana-orders').textContent = allOrders.length;
-    document.getElementById('ana-avg').textContent = `₹${Math.floor(totalRevenue / (allOrders.length || 1))}`;
+    document.getElementById('ana-avg').textContent = `₹${Math.floor(totalRevenue / (validOrders.length || 1))}`;
     
-    // Dish Analytics
+    // Repeat customer rate
+    const phoneCounts = {};
+    validOrders.forEach(o => {
+      if (o.customer_phone) phoneCounts[o.customer_phone] = (phoneCounts[o.customer_phone] || 0) + 1;
+    });
+    const phoneKeys = Object.keys(phoneCounts);
+    const repeatCount = phoneKeys.filter(p => phoneCounts[p] > 1).length;
+    const repeatRate = phoneKeys.length ? Math.round((repeatCount / phoneKeys.length) * 100) : 0;
+    const repeatEl = document.getElementById('ana-repeat');
+    if (repeatEl) repeatEl.textContent = repeatRate + '%';
+    
+    // Dish Analytics — Top Selling
     const dishStats = {};
-    allOrders.forEach(o => {
-      if (o.status === 'cancelled') return;
+    const catStats = {};
+    validOrders.forEach(o => {
       o.items.forEach(i => {
         dishStats[i.name] = (dishStats[i.name] || 0) + i.qty;
+        const cat = i.category || 'Other';
+        catStats[cat] = (catStats[cat] || 0) + i.qty;
       });
     });
 
@@ -1833,6 +1795,20 @@ async function loadAnalytics() {
         <div class="bar-val">${val}</div>
       </div>
     `).join('') || '<p style="font-size:12px;color:var(--muted)">No data yet</p>';
+
+    // Category Breakdown
+    const topCats = Object.entries(catStats).sort((a,b) => b[1]-a[1]).slice(0, 5);
+    const maxCat = topCats[0] ? topCats[0][1] : 1;
+    const catsEl = document.getElementById('ana-cats');
+    if (catsEl) {
+      catsEl.innerHTML = topCats.map(([name, val]) => `
+        <div class="bar-row">
+          <div class="bar-label">${name}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(val/maxCat)*100}%;background:var(--lime)"></div></div>
+          <div class="bar-val">${val}</div>
+        </div>
+      `).join('') || '<p style="font-size:12px;color:var(--muted)">No data yet</p>';
+    }
 
   } catch(e) { console.error("Analytics failed", e); }
 }
