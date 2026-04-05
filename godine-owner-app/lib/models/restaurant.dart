@@ -9,6 +9,7 @@ class Restaurant {
   final String createdAt;
   final bool isTrial;
   final DateTime? subscriptionEnd;
+  final String? announcement;
 
   Restaurant({
     required this.id,
@@ -21,6 +22,7 @@ class Restaurant {
     required this.createdAt,
     this.isTrial = true,
     this.subscriptionEnd,
+    this.announcement,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,7 @@ class Restaurant {
       subscriptionEnd: json['subscription_end'] != null 
           ? DateTime.tryParse(json['subscription_end'] as String) 
           : null,
+      announcement: json['announcement'] as String?,
     );
   }
 
@@ -50,5 +53,6 @@ class Restaurant {
         'sort_order': sortOrder,
         'is_trial': isTrial,
         'subscription_end': subscriptionEnd?.toIso8601String(),
+        'announcement': announcement,
       };
 }

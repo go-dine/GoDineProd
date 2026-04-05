@@ -115,10 +115,10 @@ class NotificationService {
     );
 
     await _notifications.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      'New Order! 🔔 Table ${order.tableNumber}',
-      '${order.customerName ?? "Customer"} — ₹${order.total} (${order.items.length} items)',
-      platformDetails,
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: 'New Order! 🔔 Table ${order.tableNumber}',
+      body: '${order.customerName ?? "Customer"} — ₹${order.total} (${order.items.length} items)',
+      notificationDetails: platformDetails,
       payload: order.id,
     );
   }
@@ -156,10 +156,10 @@ class NotificationService {
     );
 
     await _notifications.show(
-      id,
-      title,
-      body,
-      platformDetails,
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: platformDetails,
       payload: data != null ? data.toString() : null,
     );
   }
