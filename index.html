@@ -435,7 +435,7 @@ section{position:relative;z-index:1;padding:120px 5%}
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
     </div>
-    <span class="nav-signin" onclick="openLogin()">Sign in</span>
+    <a href="login.html" class="nav-signin">Sign in</a>
     <a href="javascript:void(0)" onclick="openOnboarding()" class="nav-btn">Get started free</a>
   </div>
 </nav>
@@ -595,6 +595,94 @@ section{position:relative;z-index:1;padding:120px 5%}
   </div>
 </section>
 
+<!-- REGISTER YOUR RESTAURANT — INLINE CARD -->
+<section id="register" style="margin: 0 5% 120px; position: relative; z-index: 1;" class="reveal">
+  <div style="text-align: center; margin-bottom: 48px;">
+    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--lime); font-weight: 700; margin-bottom: 12px;">Quick Registration</div>
+    <h2 style="font-family:'Space Grotesk',sans-serif; font-size: clamp(28px,4vw,48px); font-weight: 700;">Register Your <span class="accent">Restaurant</span></h2>
+    <p style="color: var(--muted); font-size: 15px; margin-top: 12px;">Get set up in under 60 seconds. No credit card required.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto;">
+    <!-- Registration Card -->
+    <div id="reg-card" style="background: var(--s1); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 40px 32px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(182,255,42,0.06) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="font-size: 32px; margin-bottom: 16px;">🏪</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 6px;">Start Your Journey</h3>
+      <p style="color: var(--muted); font-size: 13px; margin-bottom: 28px;">Fill in the basics and we'll have your digital menu ready in minutes.</p>
+
+      <div id="reg-form">
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; display: block; margin-bottom: 6px;">Restaurant Name</label>
+          <input type="text" id="reg-name" placeholder="e.g. The Grand Bistro" oninput="document.getElementById('reg-slug-preview').textContent = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'your-slug'" style="width: 100%; background: var(--s2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 16px; font-size: 14px; color: var(--white); font-family: inherit; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='rgba(182,255,42,0.3)'" onblur="this.style.borderColor='var(--border)'">
+          <small style="display: block; margin-top: 6px; color: var(--dimmed); font-size: 11px;">URL: godine.in/m/<span id="reg-slug-preview" style="color: var(--lime);">your-slug</span></small>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; display: block; margin-bottom: 6px;">Owner Email</label>
+          <input type="email" id="reg-email" placeholder="owner@example.com" style="width: 100%; background: var(--s2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 16px; font-size: 14px; color: var(--white); font-family: inherit; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='rgba(182,255,42,0.3)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div style="margin-bottom: 24px;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; display: block; margin-bottom: 6px;">Password</label>
+          <input type="password" id="reg-password" placeholder="At least 6 characters" style="width: 100%; background: var(--s2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 16px; font-size: 14px; color: var(--white); font-family: inherit; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='rgba(182,255,42,0.3)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <button id="reg-submit-btn" onclick="handleQuickRegister()" style="width: 100%; background: var(--lime); color: #050505; border: none; border-radius: var(--r-sm); padding: 14px 24px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseenter="this.style.transform='translateY(-1px)';this.style.boxShadow='0 0 20px rgba(182,255,42,.35)'" onmouseleave="this.style.transform='none';this.style.boxShadow='none'">
+          Create My Restaurant →
+        </button>
+        <div style="text-align: center; margin: 16px 0 8px; color: var(--dimmed); font-size: 12px;">— or —</div>
+        <button onclick="handleGoogleSignIn('register')" style="width: 100%; background: var(--s2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 24px; font-size: 13px; font-weight: 600; color: var(--white); font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: border-color 0.2s, background 0.2s;" onmouseenter="this.style.borderColor='rgba(182,255,42,0.3)';this.style.background='var(--s3)'" onmouseleave="this.style.borderColor='var(--border)';this.style.background='var(--s2)'">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Sign up with Google
+        </button>
+      </div>
+
+      <!-- Success State -->
+      <div id="reg-success" style="display: none; text-align: center; padding: 20px 0;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
+        <h3 style="font-family:'Space Grotesk',sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px;">You're All Set!</h3>
+        <p style="color: var(--muted); font-size: 13px; margin-bottom: 24px;">Your restaurant has been registered. Redirecting to dashboard...</p>
+        <div style="width: 40px; height: 40px; border: 3px solid var(--lime); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto;"></div>
+      </div>
+    </div>
+
+    <!-- Benefits Card -->
+    <div style="background: var(--s1); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 40px 32px; position: relative; overflow: hidden;">
+      <div style="position: absolute; bottom: -60px; left: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(182,255,42,0.04) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="font-size: 32px; margin-bottom: 16px;">✨</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 20px;">What You Get</h3>
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <div style="display: flex; gap: 14px; align-items: flex-start;">
+          <div style="width: 36px; height: 36px; background: rgba(182,255,42,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span style="font-size: 18px;">📱</span></div>
+          <div><div style="font-weight: 700; font-size: 14px; margin-bottom: 2px;">QR Code Menu</div><div style="color: var(--muted); font-size: 12px; line-height: 1.5;">Customers scan & order from their phone instantly</div></div>
+        </div>
+        <div style="display: flex; gap: 14px; align-items: flex-start;">
+          <div style="width: 36px; height: 36px; background: rgba(182,255,42,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span style="font-size: 18px;">⚡</span></div>
+          <div><div style="font-weight: 700; font-size: 14px; margin-bottom: 2px;">Real-time Orders</div><div style="color: var(--muted); font-size: 12px; line-height: 1.5;">Get order notifications instantly on your phone & dashboard</div></div>
+        </div>
+        <div style="display: flex; gap: 14px; align-items: flex-start;">
+          <div style="width: 36px; height: 36px; background: rgba(182,255,42,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span style="font-size: 18px;">🔔</span></div>
+          <div><div style="font-weight: 700; font-size: 14px; margin-bottom: 2px;">Waiter Calls</div><div style="color: var(--muted); font-size: 12px; line-height: 1.5;">Customers can buzz your staff with one tap — push notifications included</div></div>
+        </div>
+        <div style="display: flex; gap: 14px; align-items: flex-start;">
+          <div style="width: 36px; height: 36px; background: rgba(182,255,42,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span style="font-size: 18px;">🤖</span></div>
+          <div><div style="font-weight: 700; font-size: 14px; margin-bottom: 2px;">AI Order Suggestions</div><div style="color: var(--muted); font-size: 12px; line-height: 1.5;">Smart pairing suggestions boost your average order value</div></div>
+        </div>
+        <div style="display: flex; gap: 14px; align-items: flex-start;">
+          <div style="width: 36px; height: 36px; background: rgba(182,255,42,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span style="font-size: 18px;">📊</span></div>
+          <div><div style="font-weight: 700; font-size: 14px; margin-bottom: 2px;">Analytics Dashboard</div><div style="color: var(--muted); font-size: 12px; line-height: 1.5;">Track revenue, popular dishes, and customer patterns</div></div>
+        </div>
+      </div>
+      <div style="margin-top: 28px; padding: 16px; background: rgba(182,255,42,0.04); border: 1px solid rgba(182,255,42,0.1); border-radius: var(--r-md);">
+        <div style="font-size: 13px; color: var(--lime); font-weight: 700;">🎁 Free 10-Day Trial</div>
+        <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">No credit card needed. Full access to all features.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
 <!-- FOOTER -->
 <footer id="footer">
   <div style="width:100%; display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:40px; flex-wrap:wrap; gap:40px;">
@@ -709,25 +797,7 @@ section{position:relative;z-index:1;padding:120px 5%}
     </div>
   </div>
 
-  <!-- Sign In Modal -->
-  <div class="onboarding-modal" id="login-modal" style="max-width:400px; background:#111; color:#fff; border: 1px solid rgba(255,255,255,0.1);">
-     <div class="ob-header" style="background:transparent; border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <h2>Welcome Back</h2>
-        <p>Access your restaurant dashboard</p>
-     </div>
-     <div class="ob-content" style="padding: 32px; min-height: auto;">
-        <div class="ob-field">
-          <label class="ob-label" style="color:rgba(255,255,255,0.5)">Slug or Email</label>
-          <input type="text" id="login-ident" class="ob-input" style="background:#1a1a1a; border-color:rgba(255,255,255,0.1); color:#fff;" placeholder="e.g. grand-bistro">
-        </div>
-        <div class="ob-field">
-          <label class="ob-label" style="color:rgba(255,255,255,0.5)">Password</label>
-          <input type="password" id="login-pass" class="ob-input" style="background:#1a1a1a; border-color:rgba(255,255,255,0.1); color:#fff;" placeholder="••••••••">
-        </div>
-        <button class="ob-btn-next" onclick="completeLogin()" style="width:100%; justify-content:center; background:var(--lime); color:#000; margin-top:8px;">Sign In</button>
-        <button class="modal-close" onclick="closeModals()" style="color:rgba(255,255,255,0.4); width:100%;">Cancel</button>
-     </div>
-  </div>
+  <!-- Sign In Modal removed - moved to login.html -->
 </div>
 
 <script>
@@ -838,21 +908,14 @@ function openOnboarding(initialPlanId) {
 }
 
 function openLogin() {
-  const bg = document.getElementById('modal-bg');
-  const loginModal = document.getElementById('login-modal');
-  const obModal = document.getElementById('onboarding-modal');
-  if(bg) bg.classList.add('open');
-  if(loginModal) loginModal.classList.add('active');
-  if(obModal) obModal.classList.remove('active');
+  window.location.href = "login.html";
 }
 
 function closeModals() {
   const bg = document.getElementById('modal-bg');
   const obModal = document.getElementById('onboarding-modal');
-  const loginModal = document.getElementById('login-modal');
   if(bg) bg.classList.remove('open');
   if(obModal) obModal.classList.remove('active');
-  if(loginModal) loginModal.classList.remove('active');
 }
 
 function showStep(s) {
@@ -947,20 +1010,104 @@ async function handleComplete() {
   }
 }
 
-async function completeLogin() {
-   const ident = document.getElementById('login-ident').value.trim().toLowerCase();
-   const pass = document.getElementById('login-pass').value;
-   if (!ident || !pass) { alert("Please enter credentials."); return; }
-   try {
-     const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
-     const { data: rest, error } = await sbClient.from('restaurants').select('*').or(`slug.eq.${ident},owner_email.eq.${ident}`).single();
-     if (error || !rest) { alert("Restaurant not found."); return; }
-     if (String(rest.owner_password) !== String(pass)) { alert("Incorrect password."); return; }
-     if (rest.is_active === false) { alert("Your account has been suspended."); return; }
-     localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
-     window.location.href = "dashboard.html";
-   } catch(e) { alert("Login failed: " + e.message); }
+/* completeLogin moved to login.html */
+
+async function handleQuickRegister() {
+  const nameVal = document.getElementById('reg-name').value.trim();
+  const emailVal = document.getElementById('reg-email').value.trim();
+  const passwordVal = document.getElementById('reg-password').value;
+  const slugVal = nameVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+  if (!nameVal) { alert('Please enter your restaurant name.'); return; }
+  if (!emailVal) { alert('Please enter your email address.'); return; }
+  if (passwordVal.length < 6) { alert('Password must be at least 6 characters.'); return; }
+  if (!slugVal) { alert('Could not generate a URL from your name. Try a different name.'); return; }
+
+  const btn = document.getElementById('reg-submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span>Setting up...</span>';
+
+  try {
+    if (typeof supabase === 'undefined' || !CONFIG.supabaseUrl) throw new Error('Database not configured.');
+    const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+
+    const { data: rest, error: restErr } = await sbClient.from('restaurants').insert({
+      name: nameVal,
+      slug: slugVal,
+      owner_email: emailVal,
+      owner_password: passwordVal,
+      total_tables: 10
+    }).select().single();
+
+    if (restErr) throw restErr;
+    localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
+
+    // Show success state
+    document.getElementById('reg-form').style.display = 'none';
+    document.getElementById('reg-success').style.display = 'block';
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
+  } catch (e) {
+    alert('Registration failed: ' + e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Create My Restaurant →';
+  }
 }
+
+async function handleGoogleSignIn(mode) {
+  try {
+    if (typeof supabase === 'undefined' || !CONFIG.supabaseUrl) {
+      alert('Database not configured. Google Sign-In requires Supabase setup.'); return;
+    }
+    const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+    const { data, error } = await sbClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/index.html?auth_callback=true&mode=' + mode
+      }
+    });
+    if (error) throw error;
+    // Redirect happens automatically
+  } catch (e) {
+    alert('Google Sign-In failed: ' + e.message);
+  }
+}
+
+// Handle Google OAuth callback
+(async function checkGoogleCallback() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('auth_callback') !== 'true') return;
+  const mode = params.get('mode') || 'login';
+
+  try {
+    const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+    const { data: { user }, error } = await sbClient.auth.getUser();
+    if (error || !user) return;
+
+    const email = user.email;
+    if (mode === 'login') {
+      // Look up restaurant by email
+      const { data: rest, error: restErr } = await sbClient.from('restaurants').select('*').eq('owner_email', email).single();
+      if (restErr || !rest) {
+        alert('No restaurant found for this Google account. Please register first.');
+        history.replaceState(null, '', 'index.html');
+        return;
+      }
+      if (rest.is_active === false) { alert('Your account has been suspended.'); return; }
+      localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
+      window.location.href = 'dashboard.html';
+    } else {
+      // Pre-fill registration with Google email
+      const regEmail = document.getElementById('reg-email');
+      if (regEmail) regEmail.value = email;
+      // Scroll to registration
+      const regSection = document.getElementById('register');
+      if (regSection) regSection.scrollIntoView({ behavior: 'smooth' });
+      history.replaceState(null, '', 'index.html');
+    }
+  } catch (e) {
+    console.error('Google callback error:', e);
+  }
+})();
 
 lucide.createIcons();
 </script>

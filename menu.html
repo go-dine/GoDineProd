@@ -409,23 +409,41 @@ a{color:inherit;text-decoration:none}
 }
 
 /* ── FEATURED SECTION ── */
-.feat-section{display:none;padding:16px 16px 0}
+.feat-section{display:none;padding:16px 0 0;}
 .feat-section.show{display:block}
-.feat-card{
-  width:100%;background:linear-gradient(135deg, var(--s2) 0%, var(--s1) 100%);
-  border:1px solid var(--lime3);border-radius:var(--r2);padding:16px;
-  margin-bottom:10px;display:flex;align-items:center;gap:16px;
-  position:relative;overflow:hidden;
+.feat-card {
+  flex: 0 0 240px;
+  height: 160px;
+  background: var(--s2);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  scroll-snap-align: start;
+  border: 1px solid var(--border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.feat-card::after{
-  content:'CHEF''S SPECIAL';position:absolute;top:10px;right:-25px;
-  background:var(--lime);color:#000;font-size:8px;font-weight:800;
-  padding:2px 30px;transform:rotate(45deg);
+.feat-card::after {
+  content: "CHEF'S RECOMMENDATION";
+  position: absolute;
+  top: 14px;
+  right: -42px;
+  background: var(--lime);
+  color: #000;
+  font-size: 7px;
+  font-weight: 900;
+  padding: 4px 44px;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  z-index: 10;
 }
-.feat-emoji{font-size:40px}
-.feat-body{flex:1}
-.feat-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
-.feat-desc{font-size:12px;color:var(--muted);line-height:1.4}
+.feat-card:active { transform: scale(0.96); }
+.feat-emoji {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px; background: var(--s3);
+}
+.feat-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: 0.3s; }
+.feat-card:hover .feat-img { opacity: 0.8; transform: scale(1.05); }
 
 /* ── ZOMATO UI ── */
 .menu-fab{
@@ -488,11 +506,22 @@ a{color:inherit;text-decoration:none}
 .feat-info {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  padding: 12px;
-  background: linear-gradient(transparent, rgba(0,0,0,0.9));
+  padding: 16px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.95) 80%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
-.feat-name { font-size: 14px; font-weight: 700; color: white; margin-bottom: 2px; }
-.feat-price { font-size: 12px; color: var(--lime); font-weight: 700; }
+.feat-details { flex: 1; min-width: 0; }
+.feat-name { font-size: 15px; font-weight: 800; color: white; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.feat-price { font-size: 14px; color: var(--lime); font-weight: 800; font-family: 'Space Grotesk', sans-serif; }
+.feat-add-btn {
+  background: var(--lime); color: #000; border: none;
+  padding: 6px 14px; border-radius: 100px; font-size: 12px;
+  font-weight: 800; cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(182, 255, 42, 0.3);
+}
+.feat-add-btn:active { transform: scale(0.9); }
 
 /* ── STATUS TRACKER ── */
 .status-tracker {
@@ -700,9 +729,9 @@ a{color:inherit;text-decoration:none}
 
 <!-- FEATURED SECTION -->
 <div class="feat-section" id="feat-section" style="display:none">
-  <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-    <span>⭐</span> Chef's Specials
-  </div>
+  <div class="fav-title">
+      <span>⭐</span> Chef's Recommendations
+    </div>
   <div class="featured-row" id="feat-row"></div>
 </div>
 
@@ -737,7 +766,7 @@ a{color:inherit;text-decoration:none}
         <div class="cart-total-row">
       <div class="cart-count" id="cart-count">0</div>
       <div class="cart-label">View Order</div>
-    </div>
+    </div></div>
     <div class="cart-total" id="cart-bar-total">₹0</div>
   </div>
 </div>
@@ -757,17 +786,12 @@ a{color:inherit;text-decoration:none}
       <div id="ai-upsell-box" class="ai-upsell-container" style="display:none;">
         <div class="ai-header">
           <span class="ai-sparkle">✨</span>
-          <span class="ai-title">Smart Upselling</span>
+          <span class="ai-title">Recommended For You</span>
         </div>
-        <div class="ai-subtitle">Our AI discovered items that perfectly complement your current selection.</div>
+        <div class="ai-subtitle" style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Because deep down, you know you want to... pair it with these:</div>
         
         <div id="ai-suggestion-list" class="ai-list">
           <!-- Suggestions injected here -->
-        </div>
-
-        <div class="ai-insight">
-           <i data-lucide="trending-up" style="width:14px;height:14px;color:var(--lime)"></i>
-           <span>AI Suggestions are increasing average cart size by <b>18%</b></span>
         </div>
       </div>
 
@@ -1231,11 +1255,14 @@ async function updateCartBar() {
 /* ── ORDER SHEET ── */
 function openSheet() {
   renderSheet();
+  renderAISuggestions();
   document.getElementById('order-sheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
   history.pushState({ modal: 'sheet' }, '');
 }
 function closeSheet(fromPopState = false) {
   document.getElementById('order-sheet').classList.remove('open');
+  document.body.style.overflow = '';
   if (!fromPopState) history.back();
 }
 
@@ -1243,26 +1270,40 @@ function renderSheet() {
   const items = Object.values(cart);
   const total = items.reduce((s, i) => s + i.dish.price * i.qty, 0);
 
-  document.getElementById('sheet-items').innerHTML = items.map(({dish, qty}) =>
-    `<div class="cart-item">
-      <div class="ci-left">
-        <span class="ci-emoji">${dish.emoji}</span>
-        <div>
-          <div class="ci-name">${dish.name}</div>
-          <div class="ci-price">₹${dish.price} × ${qty}</div>
+  if (items.length === 0) {
+    document.getElementById('sheet-items').innerHTML = `
+      <div style="text-align:center; padding:40px 20px; color:var(--muted);">
+        <i data-lucide="shopping-bag" style="width:48px;height:48px;margin-bottom:16px;opacity:0.5;display:inline-block;"></i>
+        <p>Your order is empty</p>
+      </div>`;
+  } else {
+    document.getElementById('sheet-items').innerHTML = items.map(({dish, qty}) =>
+      `<div class="cart-item" style="display:flex; align-items:center; gap:16px; padding:16px; background:var(--s2); border-radius:16px; margin-bottom:12px; border:1px solid var(--border);">
+        <div class="ci-emoji" style="font-size:28px; width:48px; height:48px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border-radius:12px;">${dish.emoji}</div>
+        <div class="ci-left" style="flex-grow:1;">
+          <div class="ci-name" style="font-weight:700; font-size:15px; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+            ${dish.name}
+            ${dish.type === 'veg' ? '<i data-lucide="leaf" style="width:14px;height:14px;color:var(--lime)"></i>' : (dish.type === 'non-veg' ? '<i data-lucide="drumstick" style="width:14px;height:14px;color:#ff4d4d"></i>' : '')}
+          </div>
+          <div class="ci-price" style="font-family:'Space Grotesk', sans-serif; font-weight:600; color:var(--lime);">₹${dish.price} <span style="color:var(--muted); font-size:12px; font-weight:400;">× ${qty}</span></div>
         </div>
-      </div>
-      <div class="ci-qty">
-        <button onclick="changeQty('${dish.id}',-1)">−</button>
-        <span>${qty}</span>
-        <button onclick="changeQty('${dish.id}',1)">+</button>
-      </div>
-    </div>`
-  ).join('');
+        <div class="ci-qty" style="display:flex; align-items:center; gap:12px; background:var(--s1); padding:6px; border-radius:24px; border:1px solid var(--border);">
+          <button onclick="changeQty('${dish.id}',-1)" style="width:28px; height:28px; border-radius:50%; border:none; background:transparent; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i data-lucide="minus" style="width:16px;height:16px;"></i></button>
+          <span style="font-weight:700; font-size:14px; min-width:16px; text-align:center;">${qty}</span>
+          <button onclick="changeQty('${dish.id}',1)" style="width:28px; height:28px; border-radius:50%; border:none; background:var(--lime); color:#000; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i data-lucide="plus" style="width:16px;height:16px;"></i></button>
+        </div>
+      </div>`
+    ).join('');
+  }
 
   document.getElementById('bill').innerHTML = `
-    <div class="bill-row total"><span>Total</span><span>₹${total}</span></div>
+    <div class="bill-row total">
+      <span style="display:flex; align-items:center; gap:8px;"><i data-lucide="receipt" style="width:18px;height:18px;"></i> Total To Pay</span>
+      <span>₹${total}</span>
+    </div>
   `;
+  
+  if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 /* ── CHECKOUT & CUSTOMER DETAILS ── */
@@ -1478,11 +1519,14 @@ function renderFeatured() {
   }
   document.getElementById('feat-section').style.display = 'block';
   document.getElementById('feat-row').innerHTML = featured.map(d => `
-    <div class="feat-card" onclick="addItem('${d.id}')">
-      ${d.image_url ? `<img src="${d.image_url}" alt="${d.name}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--s3)">${d.emoji || '🍽️'}</div>`}
+    <div class="feat-card">
+      ${d.image_url ? `<img src="${d.image_url}" class="feat-img" alt="${d.name}">` : `<div class="feat-emoji">${d.emoji || '🍽️'}</div>`}
       <div class="feat-info">
-        <div class="feat-name">${d.name}</div>
-        <div class="feat-price">₹${d.price}</div>
+        <div class="feat-details">
+          <div class="feat-name">${d.name}</div>
+          <div class="feat-price">₹${d.price}</div>
+        </div>
+        <button class="feat-add-btn" onclick="addItem('${d.id}')">ADD</button>
       </div>
     </div>
   `).join('');
@@ -1580,7 +1624,7 @@ async function addOne(dishId) {
   
   // If order sheet is open, refresh suggestions
   if (document.getElementById('order-sheet').classList.contains('open')) {
-    renderOrderSheet();
+    renderSheet();
     renderAISuggestions();
   }
 }
@@ -1641,15 +1685,8 @@ function renderAISuggestions() {
   if (finalSuggestions.length > 0) {
     container.style.display = 'block';
     list.innerHTML = finalSuggestions.map(d => {
-      const isTarget = targets.includes(d.category);
-      const strategyLabel = isTarget ? 'Contextual Pairing' : 'Popularity Boost';
-      const strategyIcon = isTarget ? '🔗' : '🔥';
-      
       return `
         <div class="ai-card" onclick="addOne('${d.id}')">
-          <div style="font-size: 10px; font-weight: 800; color: rgba(182, 255, 42, 0.7); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
-            <span>${strategyIcon}</span> ${strategyLabel}
-          </div>
           <div class="ai-card-emoji">${d.emoji || '🍽️'}</div>
           <div class="ai-card-name">${d.name}</div>
           <div class="ai-card-price">₹${d.price}</div>
@@ -1663,12 +1700,7 @@ function renderAISuggestions() {
   }
 }
 
-function openSheet() {
-  document.getElementById('order-sheet').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  renderOrderSheet();
-  renderAISuggestions();
-}
+// The openSheet function is successfully hoisted to the top.
 
 function setupRestaurantListener() {
   // Use setupAnnouncementListener instead to keep it unified

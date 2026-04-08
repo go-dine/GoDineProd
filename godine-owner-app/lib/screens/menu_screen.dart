@@ -23,6 +23,7 @@ class _MenuScreenState extends State<MenuScreen> {
   final _emojiCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
   String _selectedCategory = 'Main Course';
+  bool _isFeaturedChecked = false;
 
   static const _categories = [
     'Main Course',
@@ -61,9 +62,10 @@ class _MenuScreenState extends State<MenuScreen> {
     _emojiCtrl.clear();
     _descCtrl.clear();
     _selectedCategory = 'Main Course';
+    _isFeaturedChecked = false;
   }
 
-  Future<void> _addDish() async {
+  Future<void> _saveDish(Dish? dishToEdit) async {
     final name = _nameCtrl.text.trim();
     final price = double.tryParse(_priceCtrl.text);
     if (name.isEmpty || price == null || price <= 0) {
@@ -74,21 +76,34 @@ class _MenuScreenState extends State<MenuScreen> {
     }
     setState(() => _saving = true);
     try {
-      await SupabaseService.addDish(
-        restaurantId: widget.restaurant.id,
-        name: name,
-        price: price,
-        category: _selectedCategory,
-        emoji: _emojiCtrl.text.trim(),
-        description: _descCtrl.text.trim(),
-      );
+      if (dishToEdit == null) {
+        await SupabaseService.addDish(
+          restaurantId: widget.restaurant.id,
+          name: name,
+          price: price,
+          category: _selectedCategory,
+          emoji: _emojiCtrl.text.trim(),
+          description: _descCtrl.text.trim(),
+          isFeatured: _isFeaturedChecked,
+        );
+      } else {
+        await SupabaseService.updateDish(
+          dishId: dishToEdit.id,
+          name: name,
+          price: price,
+          category: _selectedCategory,
+          emoji: _emojiCtrl.text.trim(),
+          description: _descCtrl.text.trim(),
+          isFeatured: _isFeaturedChecked,
+        );
+      }
       _clearForm();
       if (mounted) Navigator.pop(context);
       await _load();
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to add dish')),
+          SnackBar(content: Text('Failed to ${dishToEdit == null ? "add" : "update"} dish')),
         );
       }
     }
@@ -105,6 +120,21 @@ class _MenuScreenState extends State<MenuScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to update dish')),
+        );
+      }
+    }
+  }
+
+  Future<void> _toggleFeatured(String id, bool isFeatured) async {
+    try {
+      await SupabaseService.toggleFeatured(id, isFeatured);
+      setState(() {
+        _dishes = _dishes.map((d) => d.id == id ? d.copyWith(isFeatured: isFeatured) : d).toList();
+      });
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update feature status')),
         );
       }
     }
@@ -146,8 +176,17 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  void _showAddSheet() {
-    _clearForm();
+  void _showAddSheet({Dish? dishToEdit}) {
+    if (dishToEdit != null) {
+      _nameCtrl.text = dishToEdit.name;
+      _priceCtrl.text = dishToEdit.price.toString();
+      _emojiCtrl.text = dishToEdit.emoji;
+      _descCtrl.text = dishToEdit.description;
+      _selectedCategory = dishToEdit.category;
+      _isFeaturedChecked = dishToEdit.isFeatured;
+    } else {
+      _clearForm();
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -171,7 +210,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Add New Dish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.white)),
+                  Text(dishToEdit == null ? 'Add New Dish' : 'Edit Dish', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.white)),
                   const SizedBox(height: 20),
 
                   _sheetLabel('Dish Name *'),
@@ -239,6 +278,22 @@ class _MenuScreenState extends State<MenuScreen> {
                   _sheetLabel('Description'),
                   _sheetInput(_descCtrl, 'Short description', maxLines: 2),
 
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _isFeaturedChecked,
+                        onChanged: (val) => setSheetState(() => _isFeaturedChecked = val ?? false),
+                        activeColor: AppColors.lime,
+                        checkColor: Colors.black,
+                      ),
+                      const Text(
+                        "Mark as Chef's Recommendation",
+                        style: TextStyle(color: AppColors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -261,7 +316,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       Expanded(
                         flex: 2,
                         child: ElevatedButton(
-                          onPressed: _saving ? null : _addDish,
+                          onPressed: _saving ? null : () => _saveDish(dishToEdit),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.lime,
                             foregroundColor: AppColors.bg,
@@ -270,7 +325,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             disabledBackgroundColor: AppColors.lime.withOpacity(0.6),
                           ),
                           child: Text(
-                            _saving ? 'Adding...' : '+ Add to Menu',
+                            _saving ? 'Saving...' : (dishToEdit == null ? '+ Add to Menu' : 'Save Changes'),
                             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                           ),
                         ),
@@ -351,6 +406,8 @@ class _MenuScreenState extends State<MenuScreen> {
                       ...entry.value.map((d) => DishRow(
                             dish: d,
                             onToggle: _toggleDish,
+                            onToggleFeatured: _toggleFeatured,
+                            onEdit: () => _showAddSheet(dishToEdit: d),
                             onDelete: _deleteDish,
                           )),
                       const SizedBox(height: 20),

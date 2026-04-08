@@ -138,6 +138,21 @@ class SupabaseService {
     await client.from('restaurants').update({'fcm_token': token}).eq('id', restaurantId);
   }
 
+  static Future<void> removeFcmToken(String restaurantId, String token) async {
+    try {
+      // Remove from multi-device table
+      await client.from('owner_fcm_tokens').delete().eq('restaurant_id', restaurantId).eq('token', token);
+      
+      // Also clear from main restaurant table if it matches
+      final res = await client.from('restaurants').select('fcm_token').eq('id', restaurantId).maybeSingle();
+      if (res != null && res['fcm_token'] == token) {
+        await client.from('restaurants').update({'fcm_token': null}).eq('id', restaurantId);
+      }
+    } catch (e) {
+      debugPrint('Error removing FCM token: $e');
+    }
+  }
+
   static Future<void> updateRestaurantAnnouncement(String restaurantId, String? announcement) async {
     await client.from('restaurants').update({'announcement': announcement}).eq('id', restaurantId);
   }
@@ -155,8 +170,12 @@ class SupabaseService {
   }
 
   static Future<Map<String, dynamic>> fetchStats(String restaurantId) async {
-    // Current simple implementation: count orders and sum total
-    final orders = await client.from('orders').select('total').eq('restaurant_id', restaurantId).eq('status', 'completed');
+    // Current simple implementation: count orders and sum total for completed/ready/pending
+    final orders = await client
+        .from('orders')
+        .select('total')
+        .eq('restaurant_id', restaurantId)
+        .neq('status', 'cancelled');
     final List<dynamic> data = orders as List<dynamic>;
     
     double totalRevenue = 0;
@@ -193,6 +212,7 @@ class SupabaseService {
     required String category,
     required String emoji,
     required String description,
+    required bool isFeatured,
   }) async {
     await client.from('dishes').insert({
       'restaurant_id': restaurantId,
@@ -201,11 +221,35 @@ class SupabaseService {
       'category': category,
       'emoji': emoji.isEmpty ? '🍽️' : emoji,
       'description': description,
+      'is_featured': isFeatured,
     });
+  }
+
+  static Future<void> updateDish({
+    required String dishId,
+    required String name,
+    required double price,
+    required String category,
+    required String emoji,
+    required String description,
+    required bool isFeatured,
+  }) async {
+    await client.from('dishes').update({
+      'name': name,
+      'price': price,
+      'category': category,
+      'emoji': emoji.isEmpty ? '🍽️' : emoji,
+      'description': description,
+      'is_featured': isFeatured,
+    }).eq('id', dishId);
   }
 
   static Future<void> toggleDish(String dishId, bool available) async {
     await client.from('dishes').update({'available': available}).eq('id', dishId);
+  }
+
+  static Future<void> toggleFeatured(String dishId, bool isFeatured) async {
+    await client.from('dishes').update({'is_featured': isFeatured}).eq('id', dishId);
   }
 
   static Future<void> deleteDish(String dishId) async {
@@ -304,6 +348,46 @@ class SupabaseService {
 
   static void unsubscribe(RealtimeChannel channel) {
     client.removeChannel(channel);
+  }
+
+  // ───── Waiter Calls ─────
+
+  static Future<List<Map<String, dynamic>>> fetchActiveWaiterCalls(String restaurantId) async {
+    final res = await client
+        .from('waiter_calls')
+        .select()
+        .eq('restaurant_id', restaurantId)
+        .eq('is_completed', false)
+        .order('called_at', ascending: false);
+    return List<Map<String, dynamic>>.from(res as List);
+  }
+
+  static Future<void> dismissWaiterCall(String callId) async {
+    await client.from('waiter_calls').update({
+      'is_completed': true,
+      'dismissed_at': DateTime.now().toUtc().toIso8601String(),
+      'dismissed_by': 'owner',
+    }).eq('id', callId);
+  }
+
+  static RealtimeChannel subscribeToWaiterCalls(
+      String channelName, String restaurantId, void Function(PostgresChangePayload payload) onEvent) {
+    final channel = client.channel(channelName);
+    channel.onPostgresChanges(
+      event: PostgresChangeEvent.all,
+      schema: 'public',
+      table: 'waiter_calls',
+      filter: PostgresChangeFilter(
+        type: PostgresChangeFilterType.eq,
+        column: 'restaurant_id',
+        value: restaurantId,
+      ),
+      callback: (payload) {
+        onEvent(payload);
+      },
+    );
+    channel.subscribe();
+    return channel;
   }
 
   // ───── Feedback ─────

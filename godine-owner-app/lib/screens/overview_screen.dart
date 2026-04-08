@@ -51,9 +51,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
       final dishes = await SupabaseService.fetchDishes(widget.restaurant.id);
       if (!mounted) return;
       setState(() {
-        _orderCount = orders.length;
-        _revenue = orders.fold(0, (sum, o) => sum + o.total);
-        _pending = orders.where((o) => o.status == 'pending').length;
+        final activeOrders = orders.where((o) => o.status != 'cancelled').toList();
+        _orderCount = activeOrders.length;
+        _revenue = activeOrders.fold(0, (sum, o) => sum + o.total);
+        _pending = activeOrders.where((o) => o.status == 'pending').length;
         _activeDishes = dishes.where((d) => d.available).length;
         _recentOrders = orders.reversed.take(5).toList();
       });

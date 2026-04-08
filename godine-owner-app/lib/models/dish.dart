@@ -7,6 +7,7 @@ class Dish {
   final String category;
   final String emoji;
   final bool available;
+  final bool isFeatured;
   final String createdAt;
 
   Dish({
@@ -18,6 +19,7 @@ class Dish {
     this.category = 'Main Course',
     this.emoji = '🍽️',
     this.available = true,
+    this.isFeatured = false,
     this.createdAt = '',
   });
 
@@ -31,11 +33,12 @@ class Dish {
       category: json['category'] as String? ?? 'Main Course',
       emoji: json['emoji'] as String? ?? '🍽️',
       available: json['available'] as bool? ?? true,
+      isFeatured: json['is_featured'] as bool? ?? false,
       createdAt: json['created_at'] as String? ?? '',
     );
   }
 
-  Dish copyWith({bool? available}) {
+  Dish copyWith({bool? available, bool? isFeatured}) {
     return Dish(
       id: id,
       restaurantId: restaurantId,
@@ -45,6 +48,7 @@ class Dish {
       category: category,
       emoji: emoji,
       available: available ?? this.available,
+      isFeatured: isFeatured ?? this.isFeatured,
       createdAt: createdAt,
     );
   }

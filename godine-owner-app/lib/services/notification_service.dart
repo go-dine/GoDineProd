@@ -56,9 +56,22 @@ class NotificationService {
       const AndroidNotificationChannel(
         'godine_general',
         'General Notifications',
-        description: 'Notifications for waiter calls and updates',
+        description: 'Notifications for general updates',
         importance: Importance.high,
         playSound: true,
+      ),
+    );
+
+    // Waiter call notifications channel
+    await androidPlugin.createNotificationChannel(
+      const AndroidNotificationChannel(
+        'godine_waiter_calls',
+        'Waiter Calls',
+        description: 'High-priority alerts when a customer calls the waiter',
+        importance: Importance.max,
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
       ),
     );
   }
@@ -139,7 +152,7 @@ class NotificationService {
       channelName,
       channelDescription: isOrder
           ? 'High-priority alerts for incoming customer orders'
-          : 'Notifications for waiter calls and updates',
+          : 'Notifications for general updates',
       importance: Importance.max,
       priority: Priority.high,
       icon: '@mipmap/launcher_icon',
@@ -161,6 +174,41 @@ class NotificationService {
       body: body,
       notificationDetails: platformDetails,
       payload: data != null ? data.toString() : null,
+    );
+  }
+
+  /// Show a waiter call notification with dedicated high-priority channel
+  static Future<void> showWaiterCallNotification({
+    required String tableNumber,
+    String? callId,
+  }) async {
+    const androidDetails = AndroidNotificationDetails(
+      'godine_waiter_calls',
+      'Waiter Calls',
+      channelDescription: 'High-priority alerts when a customer calls the waiter',
+      importance: Importance.max,
+      priority: Priority.high,
+      icon: '@mipmap/launcher_icon',
+      playSound: true,
+      enableVibration: true,
+      enableLights: true,
+      fullScreenIntent: true,
+    );
+    const platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
+    );
+
+    await _notifications.show(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: '🔔 Waiter Call — Table $tableNumber',
+      body: 'A customer is requesting assistance at Table $tableNumber',
+      notificationDetails: platformDetails,
+      payload: callId,
     );
   }
 }

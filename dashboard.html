@@ -626,6 +626,41 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
   </div>
 </div>
 
+<div id="edit-dish-modal" class="preview-modal-overlay" onclick="if(event.target===this)this.style.display='none'">
+  <div class="preview-modal" style="text-align:left; max-width:400px; width:90%;">
+    <h3 style="margin-top:0; font-size:18px; color:var(--white);">Edit Dish</h3>
+    <input type="hidden" id="edit-dish-id" />
+    <div style="margin-bottom:12px;">
+      <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">Name</label>
+      <input type="text" id="edit-dish-name" style="width:100%; border:1px solid var(--border); background:var(--s1); color:var(--white); padding:10px; border-radius:8px;" />
+    </div>
+    <div style="display:flex; gap:12px; margin-bottom:12px;">
+      <div style="flex:1;">
+        <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">Price (₹)</label>
+        <input type="number" id="edit-dish-price" style="width:100%; border:1px solid var(--border); background:var(--s1); color:var(--white); padding:10px; border-radius:8px;" />
+      </div>
+      <div style="flex:1;">
+        <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">Category</label>
+        <input type="text" id="edit-dish-cat" style="width:100%; border:1px solid var(--border); background:var(--s1); color:var(--white); padding:10px; border-radius:8px;" />
+      </div>
+    </div>
+    <div style="display:flex; gap:12px; margin-bottom:12px;">
+      <div style="flex:1;">
+        <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">Emoji</label>
+        <input type="text" id="edit-dish-emoji" style="width:100%; border:1px solid var(--border); background:var(--s1); color:var(--white); padding:10px; border-radius:8px;" />
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">Short Description</label>
+      <input type="text" id="edit-dish-desc" style="width:100%; border:1px solid var(--border); background:var(--s1); color:var(--white); padding:10px; border-radius:8px;" />
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn-ghost" style="flex:1;" onclick="document.getElementById('edit-dish-modal').style.display='none'">Cancel</button>
+      <button class="btn-lime" style="flex:1;" onclick="saveEditDish()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1573,6 +1608,7 @@ function renderDishes() {
       <div class="d-info"><div class="d-name">${d.name}</div><div class="d-meta">${d.category} · ₹${d.price}${d.description ? ' · ' + d.description : ''}</div></div>
       <div class="d-actions">
         <label class="toggle" title="${d.available ? 'Available' : 'Unavailable'}"><input type="checkbox" ${d.available ? 'checked' : ''} onchange="toggleDish('${d.id}', this.checked)"/><span class="toggle-slider"></span></label>
+        <button class="btn-ghost btn-sm" onclick="openEditDish('${d.id}')">Edit</button>
         <button class="btn-red" onclick="deleteDish('${d.id}')">Delete</button>
       </div>
     </div>`).join('');
@@ -1595,7 +1631,39 @@ async function addDish() {
   } catch(e) { toast('⚠️ Failed to add dish'); }
 }
 
-function clearDishForm() { ['f-name','f-price','f-emoji','f-desc'].forEach(id => document.getElementById(id).value = ''); }
+ function clearDishForm() { ['f-name','f-price','f-emoji','f-desc'].forEach(id => document.getElementById(id).value = ''); }
+
+async function openEditDish(id) {
+  const d = dishes.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById('edit-dish-id').value = d.id;
+  document.getElementById('edit-dish-name').value = d.name;
+  document.getElementById('edit-dish-price').value = d.price;
+  document.getElementById('edit-dish-cat').value = d.category || '';
+  document.getElementById('edit-dish-emoji').value = d.emoji || '';
+  document.getElementById('edit-dish-desc').value = d.description || '';
+  document.getElementById('edit-dish-modal').style.display = 'flex';
+}
+
+async function saveEditDish() {
+  const id = document.getElementById('edit-dish-id').value;
+  const name = document.getElementById('edit-dish-name').value.trim();
+  const price = parseFloat(document.getElementById('edit-dish-price').value);
+  const category = document.getElementById('edit-dish-cat').value.trim() || 'Main Course';
+  const emoji = document.getElementById('edit-dish-emoji').value.trim() || '🍽️';
+  const description = document.getElementById('edit-dish-desc').value.trim();
+  
+  if (!name || isNaN(price) || price < 0) { toast('⚠️ Valid name and price are required'); return; }
+  if (isDemo) { document.getElementById('edit-dish-modal').style.display = 'none'; return; }
+  
+  try {
+    const { error } = await sb.from('dishes').update({ name, price, category, emoji, description }).eq('id', id);
+    if (error) throw error;
+    document.getElementById('edit-dish-modal').style.display = 'none';
+    toast('✅ Dish updated');
+    loadDishes();
+  } catch(e) { toast('⚠️ Failed to update dish'); }
+}
 
 async function toggleDish(id, available) {
   if (isDemo) return;

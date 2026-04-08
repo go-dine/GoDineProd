@@ -55,14 +55,15 @@ class _RevenueScreenState extends State<RevenueScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final totalRevenue = _orders.fold<double>(0, (s, o) => s + o.total);
-    final completedOrders = _orders.where((o) => o.status == 'completed').toList();
-    final avgOrder = _orders.isNotEmpty ? (totalRevenue / _orders.length).round() : 0;
+    final activeOrders = _orders.where((o) => o.status != 'cancelled').toList();
+    final totalRevenue = activeOrders.fold<double>(0, (s, o) => s + o.total);
+    final completedOrders = activeOrders.where((o) => o.status == 'completed').toList();
+    final avgOrder = activeOrders.isNotEmpty ? (totalRevenue / activeOrders.length).round() : 0;
     final currencyFmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
 
     // Top items
     final itemCounts = <String, _ItemStat>{};
-    for (final o in _orders) {
+    for (final o in activeOrders) {
       for (final item in o.items) {
         final stat = itemCounts.putIfAbsent(item.name, () => _ItemStat(item.name, item.emoji));
         stat.qty += item.qty;
@@ -74,7 +75,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
 
     // Hourly distribution
     final hourlyRevenue = <int, double>{};
-    for (final o in _orders) {
+    for (final o in activeOrders) {
       final h = DateTime.parse(o.createdAt).toLocal().hour;
       hourlyRevenue[h] = (hourlyRevenue[h] ?? 0) + o.total;
     }

@@ -15,6 +15,7 @@ import 'menu_screen.dart';
 import 'qr_codes_screen.dart';
 import 'feedback_screen.dart';
 import 'admin_dashboard_screen.dart';
+import 'waiter_calls_screen.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
@@ -99,6 +100,18 @@ class _AuthGateState extends State<AuthGate> {
   }
 
   Future<void> _handleLogout() async {
+    // Unregister FCM token before clearing auth
+    if (_restaurant != null) {
+      try {
+        final token = await NotificationService.getDeviceToken();
+        if (token != null) {
+          await SupabaseService.removeFcmToken(_restaurant!.id, token);
+        }
+      } catch (e) {
+        debugPrint('Logout FCM cleanup failed: $e');
+      }
+    }
+
     await SupabaseService.clearAuth();
     await SupabaseService.clearAdminAuth();
     setState(() {
@@ -119,8 +132,16 @@ class _AuthGateState extends State<AuthGate> {
     if (_restaurant != null) {
       return MainScaffold(
         restaurant: _restaurant!, 
-        onLogout: () {
+        onLogout: () async {
           if (_isAdmin) {
+            // If admin is impersonating, we should unregister the token for THIS restaurant 
+            // before returning to admin view.
+            try {
+              final token = await NotificationService.getDeviceToken();
+              if (token != null) {
+                await SupabaseService.removeFcmToken(widget.restaurant.id, token);
+              }
+            } catch (_) {}
             setState(() => _restaurant = null);
           } else {
             _handleLogout();
@@ -150,7 +171,9 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold> {
   int _currentIndex = 0;
   int _pendingCount = 0;
+  int _waiterCallCount = 0;
   RealtimeChannel? _adminChannel;
+  RealtimeChannel? _waiterChannel;
 
   @override
   void initState() {
@@ -171,30 +194,26 @@ class _MainScaffoldState extends State<MainScaffold> {
       },
     );
 
-    // Subscribe to waiter calls
-    SupabaseService.client
-        .channel('waiter-calls-${widget.restaurant.id}')
-        .onPostgresChanges(
-          event: PostgresChangeEvent.insert,
-          schema: 'public',
-          table: 'waiter_calls',
-          filter: PostgresChangeFilter(
-            type: PostgresChangeFilterType.eq,
-            column: 'restaurant_id',
-            value: widget.restaurant.id,
-          ),
-          callback: (payload) {
-            final nr = payload.newRecord;
-            if (nr != null) {
-              NotificationService.showLocalNotification(
-                id: nr['id'].hashCode,
-                title: '🔔 Waiter Call (Table ${nr['table_number']})',
-                body: 'A customer is requesting assistance.',
-              );
-            }
-          },
-        )
-        .subscribe();
+    // Subscribe to waiter calls for notifications
+    _waiterChannel = SupabaseService.subscribeToWaiterCalls(
+      'waiter-notif-${widget.restaurant.id}',
+      widget.restaurant.id,
+      (payload) {
+        if (payload.eventType == PostgresChangeEvent.insert) {
+          final nr = payload.newRecord;
+          if (nr != null) {
+            NotificationService.showWaiterCallNotification(
+              tableNumber: nr['table_number']?.toString() ?? '?',
+              callId: nr['id']?.toString(),
+            );
+          }
+        }
+        // Reload badge count on any change
+        _loadWaiterCallCount();
+      },
+    );
+
+    _loadWaiterCallCount();
   }
 
   @override
@@ -202,7 +221,17 @@ class _MainScaffoldState extends State<MainScaffold> {
     if (_adminChannel != null) {
       SupabaseService.unsubscribe(_adminChannel!);
     }
+    if (_waiterChannel != null) {
+      SupabaseService.unsubscribe(_waiterChannel!);
+    }
     super.dispose();
+  }
+
+  Future<void> _loadWaiterCallCount() async {
+    try {
+      final calls = await SupabaseService.fetchActiveWaiterCalls(widget.restaurant.id);
+      if (mounted) setState(() => _waiterCallCount = calls.length);
+    } catch (_) {}
   }
 
   void _onPendingCount(int count) {
@@ -214,6 +243,9 @@ class _MainScaffoldState extends State<MainScaffold> {
     final screens = [
       OverviewScreen(restaurant: widget.restaurant),
       OrdersScreen(restaurant: widget.restaurant, onPendingCount: _onPendingCount),
+      WaiterCallsScreen(restaurant: widget.restaurant, onActiveCount: (c) {
+        if (mounted) setState(() => _waiterCallCount = c);
+      }),
       RevenueScreen(restaurant: widget.restaurant),
       FeedbackScreen(restaurant: widget.restaurant),
       MenuScreen(restaurant: widget.restaurant),
@@ -308,6 +340,18 @@ class _MainScaffoldState extends State<MainScaffold> {
                 child: const Text('🧾', style: TextStyle(fontSize: 20)),
               ),
               label: 'Orders',
+            ),
+            BottomNavigationBarItem(
+              icon: Badge(
+                isLabelVisible: _waiterCallCount > 0,
+                label: Text(
+                  '$_waiterCallCount',
+                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF050505)),
+                ),
+                backgroundColor: const Color(0xFFFF6B35),
+                child: const Text('🔔', style: TextStyle(fontSize: 20)),
+              ),
+              label: 'Calls',
             ),
             const BottomNavigationBarItem(icon: Text('💰', style: TextStyle(fontSize: 20)), label: 'Revenue'),
             const BottomNavigationBarItem(icon: Text('💬', style: TextStyle(fontSize: 20)), label: 'Feedback'),

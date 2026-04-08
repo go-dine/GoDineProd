@@ -5,12 +5,16 @@ import '../models/dish.dart';
 class DishRow extends StatelessWidget {
   final Dish dish;
   final void Function(String id, bool available) onToggle;
+  final void Function(String id, bool isFeatured) onToggleFeatured;
+  final VoidCallback onEdit;
   final void Function(String id, String name) onDelete;
 
   const DishRow({
     super.key,
     required this.dish,
     required this.onToggle,
+    required this.onToggleFeatured,
+    required this.onEdit,
     required this.onDelete,
   });
 
@@ -39,13 +43,23 @@ class DishRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  dish.name,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.white,
-                  ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        dish.name,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                    if (dish.isFeatured) ...[
+                      const SizedBox(width: 6),
+                      const Icon(Icons.star_rounded, size: 14, color: AppColors.lime),
+                    ],
+                  ],
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -62,6 +76,15 @@ class DishRow extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              IconButton(
+                icon: Icon(
+                  dish.isFeatured ? Icons.star_rounded : Icons.star_border_rounded,
+                  color: dish.isFeatured ? AppColors.lime : AppColors.muted,
+                  size: 20,
+                ),
+                onPressed: () => onToggleFeatured(dish.id, !dish.isFeatured),
+                tooltip: "Mark as Chef's Recommendation",
+              ),
               Switch(
                 value: dish.available,
                 onChanged: (val) => onToggle(dish.id, val),
@@ -71,6 +94,26 @@ class DishRow extends StatelessWidget {
                 inactiveTrackColor: AppColors.surface3,
               ),
               const SizedBox(width: 4),
+              GestureDetector(
+                onTap: onEdit,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface2,
+                    border: Border.all(color: AppColors.border),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'Edit',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.muted,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
               GestureDetector(
                 onTap: () => onDelete(dish.id, dish.name),
                 child: Container(
