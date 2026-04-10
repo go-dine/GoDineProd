@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../theme.dart';
 import '../models/restaurant.dart';
 import '../models/dish.dart';
@@ -16,6 +19,7 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   List<Dish> _dishes = [];
   bool _saving = false;
+  bool _loading = true;
 
   // Form controllers
   final _nameCtrl = TextEditingController();
@@ -52,8 +56,10 @@ class _MenuScreenState extends State<MenuScreen> {
   Future<void> _load() async {
     try {
       final dishes = await SupabaseService.fetchDishes(widget.restaurant.id);
-      if (mounted) setState(() => _dishes = dishes);
-    } catch (_) {}
+      if (mounted) setState(() { _dishes = dishes; _loading = false; });
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   void _clearForm() {
@@ -210,6 +216,18 @@ class _MenuScreenState extends State<MenuScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Drag handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
                   Text(dishToEdit == null ? 'Add New Dish' : 'Edit Dish', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.white)),
                   const SizedBox(height: 20),
 
@@ -376,16 +394,34 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
             const SizedBox(height: 20),
 
-            if (_dishes.isEmpty)
-              const Center(
+            if (_loading)
+              ..._buildMenuShimmer()
+            else if (_dishes.isEmpty)
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 60),
+                  padding: const EdgeInsets.symmetric(vertical: 60),
                   child: Column(
                     children: [
-                      Text('🍽', style: TextStyle(fontSize: 36)),
-                      SizedBox(height: 12),
-                      Text('No dishes yet. Tap + to add your first dish!', style: TextStyle(fontSize: 14, color: AppColors.muted), textAlign: TextAlign.center),
+                      const Text('📋', style: TextStyle(fontSize: 64)),
+                      const SizedBox(height: 16),
+                      const Text('Your menu is empty', style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      )),
+                      const SizedBox(height: 8),
+                      const Text('Tap + to add your first dish!', style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF6B6B67),
+                      )),
                     ],
+                  )
+                  .animate()
+                  .fadeIn(duration: 500.ms)
+                  .scale(
+                    begin: const Offset(0.9, 0.9),
+                    duration: 500.ms,
+                    curve: Curves.easeOutBack,
                   ),
                 ),
               )
@@ -470,5 +506,23 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
       ),
     );
+  }
+  }
+
+  List<Widget> _buildMenuShimmer() {
+    return List.generate(4, (i) => Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Shimmer.fromColors(
+        baseColor: const Color(0xFF161616),
+        highlightColor: const Color(0xFF222222),
+        child: Container(
+          height: 64,
+          decoration: BoxDecoration(
+            color: const Color(0xFF161616),
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    ));
   }
 }

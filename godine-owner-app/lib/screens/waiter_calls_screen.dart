@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../theme.dart';
 import '../models/restaurant.dart';
 import '../services/supabase_service.dart';
@@ -50,6 +52,7 @@ class _WaiterCallsScreenState extends State<WaiterCallsScreen> {
   }
 
   Future<void> _dismiss(String callId) async {
+    HapticFeedback.mediumImpact();
     try {
       await SupabaseService.dismissWaiterCall(callId);
       if (mounted) {
@@ -150,6 +153,13 @@ class _WaiterCallsScreenState extends State<WaiterCallsScreen> {
                           ),
                         ],
                       ),
+                    )
+                    .animate()
+                    .fadeIn(duration: 500.ms)
+                    .scale(
+                      begin: const Offset(0.9, 0.9),
+                      duration: 500.ms,
+                      curve: Curves.easeOutBack,
                     ),
                   ),
                 )

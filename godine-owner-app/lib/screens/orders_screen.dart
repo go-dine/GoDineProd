@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../theme.dart';
 import '../models/restaurant.dart';
 import '../models/order.dart';
@@ -22,6 +25,8 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
   bool _loading = true;
   RealtimeChannel? _channel;
   late TabController _tabController;
+  bool _showNewOrderBanner = false;
+  String _newOrderTable = '';
 
   @override
   void initState() {
@@ -39,6 +44,16 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
         if (payload.eventType == PostgresChangeEvent.insert) {
           final newOrder = Order.fromJson(payload.newRecord);
           NotificationService.showNewOrderNotification(newOrder);
+          HapticFeedback.heavyImpact();
+          if (mounted) {
+            setState(() {
+              _showNewOrderBanner = true;
+              _newOrderTable = newOrder.tableNumber;
+            });
+            Future.delayed(const Duration(seconds: 5), () {
+              if (mounted) setState(() => _showNewOrderBanner = false);
+            });
+          }
         }
       },
     );
@@ -333,15 +348,70 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
             ],
           ),
         ),
-        body: _loading
-            ? const Center(child: CircularProgressIndicator(color: AppColors.lime))
-            : TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildGroupedOrderList(_liveOrders, emptyMsg: 'No live orders right now'),
-                  _buildGroupedOrderList(_historyOrders, emptyMsg: 'No history for today yet'),
-                ],
+        body: Stack(
+          children: [
+            _loading
+              ? _buildShimmerList()
+              : TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildGroupedOrderList(_liveOrders, emptyMsg: 'No live orders right now'),
+                    _buildGroupedOrderList(_historyOrders, emptyMsg: 'No history for today yet'),
+                  ],
+                ),
+            // New order banner
+            AnimatedSlide(
+              offset: _showNewOrderBanner ? Offset.zero : const Offset(0, -1),
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeOutCubic,
+              child: AnimatedOpacity(
+                opacity: _showNewOrderBanner ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 300),
+                child: GestureDetector(
+                  onTap: () => setState(() => _showNewOrderBanner = false),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                    color: const Color(0xFFB6FF2A),
+                    child: Row(children: [
+                      const Icon(Icons.notifications_active, color: Color(0xFF080808), size: 20),
+                      const SizedBox(width: 10),
+                      Text(
+                        '🔔 New order — Table $_newOrderTable',
+                        style: const TextStyle(
+                          color: Color(0xFF080808),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Icon(Icons.close, color: Color(0xFF080808), size: 18),
+                    ]),
+                  ),
+                ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerList() {
+    return ListView.builder(
+      itemCount: 5,
+      padding: const EdgeInsets.all(16),
+      itemBuilder: (ctx, i) => Shimmer.fromColors(
+        baseColor: const Color(0xFF161616),
+        highlightColor: const Color(0xFF222222),
+        child: Container(
+          height: 80,
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFF161616),
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
       ),
     );
   }
@@ -366,10 +436,26 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.check_circle_outline, size: 48, color: AppColors.muted),
-                const SizedBox(height: 16),
-                Text(emptyMsg, style: const TextStyle(color: AppColors.muted)),
+                const Text('🍽️', style: TextStyle(fontSize: 64)),
+                const SizedBox(height: 20),
+                Text(emptyMsg, style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                )),
+                const SizedBox(height: 8),
+                const Text('Your live orders will appear here', style: TextStyle(
+                  color: Color(0xFF6B6B67),
+                  fontSize: 14,
+                )),
               ],
+            )
+            .animate()
+            .fadeIn(duration: 500.ms)
+            .scale(
+              begin: const Offset(0.9, 0.9),
+              duration: 500.ms,
+              curve: Curves.easeOutBack,
             ),
           ),
         ),

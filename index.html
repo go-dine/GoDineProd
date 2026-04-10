@@ -418,10 +418,176 @@ section{position:relative;z-index:1;padding:120px 5%}
   .nav-links{display:none}
   .feat-grid{grid-template-columns:1fr}
 }
+
+/* ── ADD 1: SCROLL PROGRESS BAR ── */
+#scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--lime), var(--lime-sec));
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 0 8px rgba(182,255,42,0.5);
+  transition: width 0.08s linear;
+}
+
+/* ── ADD 2: NAV SCROLL EFFECT ── */
+nav.scrolled {
+  background: rgba(5,5,5,0.97);
+  box-shadow: 0 1px 0 var(--border),
+              0 4px 24px rgba(0,0,0,0.4);
+}
+
+/* ── ADD 3: HAMBURGER MENU ── */
+@media(max-width:640px) {
+  #hamburger { display:flex !important; }
+}
+#hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+#hamburger.open span:nth-child(2) { opacity:0; }
+#hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+#mobile-menu.open { display:flex !important; }
+
+/* ── ADD 5: BUTTON MICRO-INTERACTIONS ── */
+.btn-primary, .btn-outline, .nav-btn,
+.dp-btn, .p-btn-lime, .p-btn-ghost,
+.ob-btn-next, .ob-btn-back {
+  transition: transform 0.1s ease, box-shadow 0.2s ease,
+              background 0.2s ease !important;
+}
+.btn-primary:active, .nav-btn:active, .dp-btn-lime:active,
+.ob-btn-next:active {
+  transform: scale(0.96) !important;
+}
+.btn-outline:active, .dp-btn-outline:active,
+.p-btn-ghost:active, .ob-btn-back:active {
+  transform: scale(0.97) !important;
+}
+
+/* Focus styles for accessibility */
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--lime) !important;
+  outline-offset: 3px !important;
+  border-radius: 6px;
+}
+
+/* ── ADD 7: FAQ ACCORDION ── */
+.faq-item {
+  border-bottom: 1px solid var(--border);
+}
+#faq-list .faq-item:first-child {
+  border-top: 1px solid var(--border);
+}
+.faq-q {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--white);
+  text-align: left;
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 22px 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  transition: color 0.2s;
+}
+.faq-q:hover { color: var(--lime); }
+.faq-chevron {
+  font-size: 22px;
+  color: var(--lime);
+  font-weight: 300;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  display: inline-block;
+}
+.faq-item.open .faq-chevron { transform: rotate(45deg); }
+.faq-a {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+}
+.faq-item.open .faq-a {
+  max-height: 240px;
+  padding-bottom: 22px;
+}
+.faq-a p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* ── ADD 10: ONBOARDING MODAL DARK THEME FIX ── */
+.onboarding-modal {
+  background: #0e0e0e !important;
+  color: var(--white) !important;
+}
+.ob-header {
+  background: #151515 !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+.ob-content {
+  background: #0e0e0e !important;
+}
+.ob-footer {
+  background: #0e0e0e !important;
+  border-top: 1px solid var(--border) !important;
+}
+.ob-input {
+  background: #151515 !important;
+  border: 1px solid var(--border) !important;
+  color: var(--white) !important;
+  border-radius: 12px !important;
+}
+.ob-input:focus {
+  border-color: var(--lime) !important;
+  box-shadow: 0 0 0 3px rgba(182,255,42,0.08) !important;
+}
+.ob-label { color: var(--muted) !important; }
+.ob-btn-next {
+  background: var(--lime) !important;
+  color: #050505 !important;
+  border-radius: 50px !important;
+}
+.ob-btn-back {
+  background: transparent !important;
+  color: var(--muted) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 50px !important;
+}
+.price-card {
+  background: #151515 !important;
+  border-color: var(--border) !important;
+  color: var(--white) !important;
+}
+.price-card:hover, .price-card.selected {
+  border-color: var(--lime) !important;
+}
+.pc-name, .pc-price { color: var(--white) !important; }
+.pc-features li { color: var(--muted) !important; }
+.pc-btn {
+  background: transparent !important;
+  border: 1px solid var(--border) !important;
+  color: var(--white) !important;
+}
+.price-card.selected .pc-btn {
+  background: var(--lime) !important;
+  color: #050505 !important;
+  border-color: var(--lime) !important;
+}
 </style>
 </head>
 <body>
 
+<div id="scroll-progress"></div>
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 <canvas id="particleCanvas"></canvas>
@@ -437,6 +603,18 @@ section{position:relative;z-index:1;padding:120px 5%}
     </div>
     <a href="login.html" class="nav-signin">Sign in</a>
     <a href="javascript:void(0)" onclick="openOnboarding()" class="nav-btn">Get started free</a>
+    <button id="hamburger" aria-label="Open menu" style="display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:8px;">
+      <span style="display:block; width:22px; height:2px; background:var(--white); border-radius:2px; transition:all 0.3s ease;"></span>
+      <span style="display:block; width:22px; height:2px; background:var(--white); border-radius:2px; transition:all 0.3s ease;"></span>
+      <span style="display:block; width:22px; height:2px; background:var(--white); border-radius:2px; transition:all 0.3s ease;"></span>
+    </button>
+  </div>
+  <div id="mobile-menu" style="display:none; position:fixed; inset:64px 0 0 0; z-index:99; background:rgba(5,5,5,0.98); backdrop-filter:blur(24px); flex-direction:column; align-items:center; justify-content:center; gap:36px; padding:40px; border-top:1px solid var(--border);">
+    <a href="#features" style="font-size:28px; font-weight:700; font-family:'Space Grotesk',sans-serif;">Features</a>
+    <a href="#how" style="font-size:28px; font-weight:700; font-family:'Space Grotesk',sans-serif;">How it works</a>
+    <a href="#pricing" style="font-size:28px; font-weight:700; font-family:'Space Grotesk',sans-serif;">Pricing</a>
+    <a href="login.html" style="font-size:28px; font-weight:700; font-family:'Space Grotesk',sans-serif;">Sign in</a>
+    <a href="javascript:void(0)" onclick="openOnboarding()" class="nav-btn" style="font-size:16px; padding:14px 32px;">Get started free</a>
   </div>
 </nav>
 
@@ -581,6 +759,42 @@ section{position:relative;z-index:1;padding:120px 5%}
         <li><i data-lucide="check" style="width:16px;height:16px"></i> Dedicated Manager</li>
       </ul>
       <button class="dp-btn dp-btn-outline" onclick="openOnboarding(4)">Get Started</button>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ SECTION -->
+<section id="faq" style="padding:80px 5% 0; position:relative; z-index:1;">
+  <div style="max-width:680px; margin:0 auto;">
+    <div class="reveal" style="text-align:center; margin-bottom:48px;">
+      <p class="s-eyebrow">FAQ</p>
+      <h2 class="s-title" style="margin:0 auto; font-size:clamp(28px,3.5vw,44px);">Common questions</h2>
+    </div>
+    <div id="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">Do customers need to install an app?<span class="faq-chevron">+</span></button>
+        <div class="faq-a"><p>No. Customers scan the QR code with their phone camera and the menu opens instantly in the browser. Zero downloads, zero friction.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How long does setup take?<span class="faq-chevron">+</span></button>
+        <div class="faq-a"><p>Under 5 minutes. Register, add your dishes, download QR codes, place them on tables. Done.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What happens after the 10-day free trial?<span class="faq-chevron">+</span></button>
+        <div class="faq-a"><p>You choose a plan. If you don't upgrade, ordering pauses but your digital menu stays visible. Your data is never deleted.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I accept UPI payments?<span class="faq-chevron">+</span></button>
+        <div class="faq-a"><p>Yes, on Pro and Advanced plans. Customers pay directly to your UPI ID via GPay, PhonePe or any UPI app. Zero commission. No middleman.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I manage my menu from my phone?<span class="faq-chevron">+</span></button>
+        <div class="faq-a"><p>Yes. The owner dashboard works on any device — phone, tablet, or desktop. Update prices and mark items sold out in seconds from anywhere.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is GoDine suitable for small cafés and dhabas?<span class="faq-chevron">+</span></button>
+        <div class="faq-a"><p>Absolutely. The Basic plan is built for 1–5 table setups. No hardware required. Works with the phone you already have. Setup costs nothing.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -943,9 +1157,9 @@ function showStep(s) {
 
 function nextStep() {
   if (currentStep < 4) {
-    if (currentStep === 1 && !document.getElementById('ob-name').value) { alert("Please enter restaurant name."); return; }
+    if (currentStep === 1 && !document.getElementById('ob-name').value) { showToast('Please enter restaurant name.', 'error'); return; }
     if (currentStep === 3 && (!document.getElementById('ob-email').value || document.getElementById('ob-password').value.length < 6)) {
-      alert("Please enter a valid email and password (min 6 chars)."); return;
+      showToast('Please enter a valid email and password (min 6 chars).', 'error'); return;
     }
     showStep(currentStep + 1);
   } else { handleComplete(); }
@@ -976,7 +1190,7 @@ async function handleComplete() {
   const emailVal = document.getElementById('ob-email').value;
   const passwordVal = document.getElementById('ob-password').value;
 
-  if (!slugVal) { alert('Please enter a unique slug/URL.'); return; }
+  if (!slugVal) { showToast('Please enter a unique slug/URL.', 'error'); return; }
 
   const btn = document.getElementById('ob-next');
   if(btn) {
@@ -998,10 +1212,10 @@ async function handleComplete() {
 
     if (restErr) throw restErr;
     localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
-    alert("Registration successful! Redirecting to your dashboard...");
+    showToast('Registration successful! Redirecting to your dashboard...', 'success');
     window.location.href = "dashboard.html";
   } catch(e) {
-    alert("Error: " + e.message);
+    showToast('Error: ' + e.message, 'error');
     if (btn) {
       btn.disabled = false;
       btn.innerHTML = '<span>Complete Setup</span> <i data-lucide="chevron-right" style="width:18px;height:18px"></i>';
@@ -1018,10 +1232,10 @@ async function handleQuickRegister() {
   const passwordVal = document.getElementById('reg-password').value;
   const slugVal = nameVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-  if (!nameVal) { alert('Please enter your restaurant name.'); return; }
-  if (!emailVal) { alert('Please enter your email address.'); return; }
-  if (passwordVal.length < 6) { alert('Password must be at least 6 characters.'); return; }
-  if (!slugVal) { alert('Could not generate a URL from your name. Try a different name.'); return; }
+  if (!nameVal) { showToast('Please enter your restaurant name.', 'error'); return; }
+  if (!emailVal) { showToast('Please enter your email address.', 'error'); return; }
+  if (passwordVal.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
+  if (!slugVal) { showToast('Could not generate a URL from your name. Try a different name.', 'error'); return; }
 
   const btn = document.getElementById('reg-submit-btn');
   btn.disabled = true;
@@ -1047,7 +1261,7 @@ async function handleQuickRegister() {
     document.getElementById('reg-success').style.display = 'block';
     setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
   } catch (e) {
-    alert('Registration failed: ' + e.message);
+    showToast('Registration failed: ' + e.message, 'error');
     btn.disabled = false;
     btn.innerHTML = 'Create My Restaurant →';
   }
@@ -1056,7 +1270,7 @@ async function handleQuickRegister() {
 async function handleGoogleSignIn(mode) {
   try {
     if (typeof supabase === 'undefined' || !CONFIG.supabaseUrl) {
-      alert('Database not configured. Google Sign-In requires Supabase setup.'); return;
+      showToast('Database not configured. Google Sign-In requires Supabase setup.', 'error'); return;
     }
     const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
     const { data, error } = await sbClient.auth.signInWithOAuth({
@@ -1068,7 +1282,7 @@ async function handleGoogleSignIn(mode) {
     if (error) throw error;
     // Redirect happens automatically
   } catch (e) {
-    alert('Google Sign-In failed: ' + e.message);
+    showToast('Google Sign-In failed: ' + e.message, 'error');
   }
 }
 
@@ -1088,11 +1302,11 @@ async function handleGoogleSignIn(mode) {
       // Look up restaurant by email
       const { data: rest, error: restErr } = await sbClient.from('restaurants').select('*').eq('owner_email', email).single();
       if (restErr || !rest) {
-        alert('No restaurant found for this Google account. Please register first.');
+        showToast('No restaurant found for this Google account. Please register first.', 'error');
         history.replaceState(null, '', 'index.html');
         return;
       }
-      if (rest.is_active === false) { alert('Your account has been suspended.'); return; }
+      if (rest.is_active === false) { showToast('Your account has been suspended.', 'error'); return; }
       localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
       window.location.href = 'dashboard.html';
     } else {
@@ -1110,6 +1324,151 @@ async function handleGoogleSignIn(mode) {
 })();
 
 lucide.createIcons();
+
+/* ── ADD 1 & 2: SCROLL PROGRESS + NAV SCROLL ── */
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  document.getElementById('scroll-progress').style.width = pct + '%';
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+/* ── ADD 3: HAMBURGER MENU ── */
+const hbBtn = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+if (hbBtn) {
+  hbBtn.addEventListener('click', () => {
+    hbBtn.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      hbBtn.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+}
+
+/* ── ADD 4: TOAST SYSTEM ── */
+function showToast(msg, type = 'success') {
+  const colors = { success: 'var(--lime)', error: '#ff4d4d', info: 'rgba(255,255,255,0.3)' };
+  const t = document.createElement('div');
+  t.style.cssText = `
+    background: var(--s2); border: 1px solid ${colors[type]}; border-radius: 12px;
+    padding: 14px 18px; font-size: 13px; font-weight: 600; color: var(--white);
+    font-family: 'Manrope', sans-serif; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    opacity: 0; transform: translateY(16px);
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events: auto; cursor: pointer; display: flex; align-items: center; gap: 10px;
+  `;
+  const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+  t.innerHTML = `<span style="color:${colors[type]};font-weight:800;">${icon}</span> ${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
+  t.onclick = () => dismissToast(t);
+  setTimeout(() => dismissToast(t), 4000);
+}
+function dismissToast(t) {
+  t.style.opacity = '0'; t.style.transform = 'translateY(8px)';
+  setTimeout(() => t.remove(), 300);
+}
+
+/* ── ADD 6: HOW IT WORKS AUTO-CYCLING ── */
+let stepTimer;
+let stepIndex = 0;
+const hwSteps = document.querySelectorAll('.hw-step');
+function cycleToStep(i) {
+  hwSteps.forEach(s => s.classList.remove('active'));
+  if (hwSteps[i]) hwSteps[i].classList.add('active');
+  stepIndex = i;
+}
+function startStepCycle() {
+  stopStepCycle();
+  stepTimer = setInterval(() => {
+    stepIndex = (stepIndex + 1) % hwSteps.length;
+    cycleToStep(stepIndex);
+  }, 3000);
+}
+function stopStepCycle() { clearInterval(stepTimer); }
+hwSteps.forEach((s, i) => {
+  s.addEventListener('click', () => {
+    stopStepCycle();
+    cycleToStep(i);
+    startStepCycle();
+  });
+});
+startStepCycle();
+
+/* ── ADD 7: FAQ ACCORDION ── */
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+</script>
+
+<!-- ADD 4: TOAST CONTAINER -->
+<div id="toast-container" style="position:fixed; bottom:24px; right:24px; z-index:10000; display:flex; flex-direction:column; gap:10px; pointer-events:none; max-width:320px;"></div>
+
+<!-- ADD 9: MOTION ANIMATIONS -->
+<script type="module">
+import { animate, scroll, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js";
+
+const heroBadge = document.querySelector('.hero-badge');
+if (heroBadge) {
+  animate(heroBadge, { opacity:[0,1], y:[24,0] }, { duration:0.6, easing:'ease-out' });
+}
+const heroPhone = document.querySelector('.hero-phone-wrap');
+if (heroPhone) {
+  animate(heroPhone, { opacity:[0,1], y:[40,0], scale:[0.95,1] }, { duration:0.8, delay:0.3, easing:[0.25,0.46,0.45,0.94] });
+  animate('.phone', { y:[0,-10,0] }, { duration:4, repeat:Infinity, easing:'ease-in-out' });
+}
+inView('.feat-grid', () => {
+  animate('.f-card', { opacity:[0,1], y:[32,0] }, { delay: stagger(0.1), duration:0.55, easing:'ease-out' });
+}, { amount: 0.1 });
+inView('.how', () => {
+  animate('.hw-step', { opacity:[0,1], x:[-16,0] }, { delay: stagger(0.12), duration:0.45, easing:'ease-out' });
+  animate('.qr-frame', { opacity:[0,1], scale:[0.88,1] }, { duration:0.65, delay:0.25, easing:[0.34,1.56,0.64,1] });
+}, { amount: 0.15 });
+inView('.t-card', () => {
+  animate('.t-card', { opacity:[0,1], y:[40,0] }, { delay: stagger(0.1), duration:0.55, easing:'ease-out' });
+}, { amount: 0.1 });
+inView('.dark-price-grid', () => {
+  animate('.dark-price-card', { opacity:[0,1], y:[32,0], scale:[0.97,1] }, { delay: stagger(0.08), duration:0.55, easing:[0.34,1.56,0.64,1] });
+}, { amount: 0.1 });
+inView('#faq-list', () => {
+  animate('.faq-item', { opacity:[0,1], x:[-12,0] }, { delay: stagger(0.07), duration:0.4, easing:'ease-out' });
+}, { amount: 0.1 });
+
+const orb1 = document.querySelector('.orb-1');
+const orb2 = document.querySelector('.orb-2');
+const heroEl = document.querySelector('.hero');
+if (orb1 && heroEl) { scroll(animate(orb1, { y:[0,50] }, { easing:'linear' }), { target: heroEl }); }
+if (orb2 && heroEl) { scroll(animate(orb2, { y:[0,-30] }, { easing:'linear' }), { target: heroEl }); }
+
+const track = document.querySelector('.strip-track');
+if (track) {
+  track.addEventListener('mouseenter', () => { track.style.animationPlayState = 'paused'; });
+  track.addEventListener('mouseleave', () => { track.style.animationPlayState = 'running'; });
+}
+
+document.querySelectorAll('.f-card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    animate(card, { boxShadow: '0 0 0 1px rgba(182,255,42,0.25), 0 16px 48px rgba(0,0,0,0.5)' }, { duration: 0.2 });
+  });
+  card.addEventListener('mouseleave', () => {
+    animate(card, { boxShadow: 'none' }, { duration: 0.3 });
+  });
+});
+
+const primaryBtns = document.querySelectorAll('.btn-primary');
+primaryBtns.forEach(btn => {
+  animate(btn, { scale:[1, 1.025, 1] }, { duration:2.5, repeat:Infinity, easing:'ease-in-out', delay:3 });
+});
 </script>
 </body>
 </html>

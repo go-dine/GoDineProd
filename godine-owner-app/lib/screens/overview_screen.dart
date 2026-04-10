@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../theme.dart';
 import '../models/restaurant.dart';
 import '../models/order.dart';
@@ -151,7 +153,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
               const SizedBox(width: 12),
               StatCard(label: 'Revenue', value: revenueStr, sub: "Today's earnings", accent: true),
             ],
-          ),
+          )
+          .animate()
+          .fadeIn(duration: 400.ms)
+          .slideY(begin: 0.15, end: 0, duration: 400.ms, curve: Curves.easeOutCubic),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -159,7 +164,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
               const SizedBox(width: 12),
               StatCard(label: 'Menu Items', value: '$_activeDishes', sub: 'Active dishes'),
             ],
-          ),
+          )
+          .animate()
+          .fadeIn(duration: 400.ms, delay: 100.ms)
+          .slideY(begin: 0.15, end: 0, duration: 400.ms, delay: 100.ms, curve: Curves.easeOutCubic),
           const SizedBox(height: 32),
 
           const Text('Store Management', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.white)),
@@ -277,7 +285,10 @@ class _ManagementCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
