@@ -1461,14 +1461,17 @@ function showSuccess(total, orderId, token) {
 
 function updateStatusUI(status) {
   const steps = ['pending', 'preparing', 'ready'];
-  const currentIndex = steps.indexOf(status);
+  let currentIndex = steps.indexOf(status);
+  
+  if (status === 'completed') currentIndex = steps.length;
+  if (status === 'cancelled') currentIndex = -1;
   
   steps.forEach((s, i) => {
     const el = document.getElementById('step-' + s);
     if (!el) return;
     el.classList.remove('active', 'completed');
-    if (i < currentIndex) el.classList.add('completed');
-    if (i === currentIndex) el.classList.add('active');
+    if (currentIndex >= steps.length || i < currentIndex) el.classList.add('completed');
+    else if (i === currentIndex) el.classList.add('active');
   });
 
   // Show feedback if ready

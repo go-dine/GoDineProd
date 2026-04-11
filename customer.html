@@ -192,10 +192,6 @@ async function boot() {
   setupRealtime();
   setupRestaurantListener();
   
-  await fetchOrders();
-  setupRealtime();
-  setupRestaurantListener();
-  
   // Update timers on buttons every second without full re-render
   setInterval(updateTimers, 1000);
 }

@@ -507,7 +507,6 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     );
   }
-  }
 
   List<Widget> _buildMenuShimmer() {
     return List.generate(4, (i) => Padding(

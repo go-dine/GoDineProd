@@ -139,7 +139,7 @@ class _AuthGateState extends State<AuthGate> {
             try {
               final token = await NotificationService.getDeviceToken();
               if (token != null) {
-                await SupabaseService.removeFcmToken(widget.restaurant.id, token);
+                await SupabaseService.removeFcmToken(_restaurant!.id, token);
               }
             } catch (_) {}
             setState(() => _restaurant = null);
@@ -182,15 +182,9 @@ class _MainScaffoldState extends State<MainScaffold> {
       'owner-notifications-${widget.restaurant.id}',
       widget.restaurant.id,
       (payload) {
-        if (payload.eventType == PostgresChangeEvent.insert) {
-          final newRecord = payload.newRecord;
-          if (newRecord != null) {
-            final order = Order.fromJson(newRecord);
-            if (order.status == 'pending') {
-              NotificationService.showNewOrderNotification(order);
-            }
-          }
-        }
+        // Badge counts are updated via OrdersScreen's own subscription.
+        // We only need this channel for global awareness (e.g., pending count in bottom nav).
+        // Notification is handled by OrdersScreen to avoid duplicates.
       },
     );
 
