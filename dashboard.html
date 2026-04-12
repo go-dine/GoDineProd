@@ -1620,7 +1620,7 @@ function renderDishes() {
   el.innerHTML = dishes.map(d => `
     <div class="dish-row">
       <div class="d-emoji">${d.emoji || '🍽️'}</div>
-      <div class="d-info"><div class="d-name">${d.name} ${d.is_featured ? '<span style="color:var(--lime);font-size:14px;" title="Chef\\'s Special">⭐</span>' : ''}</div><div class="d-meta">${d.category} · ₹${d.price}${d.description ? ' · ' + d.description : ''}</div></div>
+      <div class="d-info"><div class="d-name">${d.name} ${d.is_featured ? `<span style="color:var(--lime);font-size:14px;" title="Chef's Special">⭐</span>` : ""}</div><div class="d-meta">${d.category} · ₹${d.price}${d.description ? " · " + d.description : ""}</div></div>
       <div class="d-actions">
         <button class="btn-ghost btn-sm" onclick="toggleFeatured('${d.id}', ${!d.is_featured})" title="Mark as Chef's Special">${d.is_featured ? '⭐ Unstar' : '☆ Star'}</button>
         <label class="toggle" title="${d.available ? 'Available' : 'Unavailable'}"><input type="checkbox" ${d.available ? 'checked' : ''} onchange="toggleDish('${d.id}', this.checked)"/><span class="toggle-slider"></span></label>
@@ -1690,7 +1690,7 @@ async function toggleFeatured(id, isFeatured) {
   if (isDemo) return;
   try { 
     await sb.from('dishes').update({is_featured: isFeatured}).eq('id',id); 
-    toast(isFeatured ? '⭐ Marked as Chef\\'s Special' : 'Removed from Chef\\'s Special'); 
+    toast(isFeatured ? "⭐ Marked as Chef's Special" : "Removed from Chef's Special"); 
     loadDishes();
   } catch(e) { toast('⚠️ Failed to update'); }
 }
