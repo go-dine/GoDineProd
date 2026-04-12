@@ -966,12 +966,16 @@ function setupRealtime() {
   if (!leadsChannel) {
     leadsChannel = sb.channel('public:leads')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, payload => {
+        console.log('Realtime Lead:', payload);
         loadLeads();
-      }).subscribe();
+      }).subscribe((status) => {
+        console.log('Leads Subscription Status:', status);
+      });
   }
 
   // 2. Orders Listener
   if (restaurant && !realtimeChannel) {
+    console.log('Setting up Realtime for:', restaurant.id);
     realtimeChannel = sb.channel('public:orders:' + restaurant.id)
       .on('postgres_changes', { 
         event: '*', 
@@ -979,18 +983,25 @@ function setupRealtime() {
         table: 'orders', 
         filter: `restaurant_id=eq.${restaurant.id}` 
       }, payload => {
+        console.log('Realtime Order Event:', payload.eventType, payload);
         if (payload.eventType === 'INSERT') {
           notifyOwner('New Order! 🔔', `Table ${payload.new.table_number} ordered ₹${payload.new.total}`);
         }
         loadOrders();
         loadOverview();
-      }).subscribe();
+      }).subscribe((status) => {
+        console.log('Orders Subscription Status:', status);
+        if (status === 'CHANNEL_ERROR') toast('⚠️ Realtime sync error. Please refresh.');
+      });
   } else if (!restaurant && !realtimeChannel && sessionStorage.getItem('godineAdminMode') === "true") {
     realtimeChannel = sb.channel('public:all-orders')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+        console.log('Admin Realtime Order Event:', payload);
         loadAllOrders();
         loadOverview();
-      }).subscribe();
+      }).subscribe((status) => {
+        console.log('Admin Orders Subscription Status:', status);
+      });
   }
 }
 
@@ -1003,9 +1014,12 @@ function setupCallsRealtime() {
       table: 'waiter_calls', 
       filter: `restaurant_id=eq.${restaurant.id}` 
     }, payload => {
+      console.log('Realtime Call:', payload);
       notifyOwner('Waiter Requested! 🛎️', `Table ${payload.new.table_number} needs assistance`);
       loadCalls();
-    }).subscribe();
+    }).subscribe((status) => {
+      console.log('Calls Subscription Status:', status);
+    });
 }
 
 function checkSubscription() {
@@ -1579,6 +1593,7 @@ async function updateStatus(id, status) {
   try {
     await sb.from('orders').update(payload).eq('id', id);
     await loadOrders();
+    await loadOverview();
     toast('Order updated → ' + status);
   } catch(e) { toast('⚠️ Failed to update order'); }
 }

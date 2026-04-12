@@ -34,9 +34,16 @@ END $$;
 -- Add tables to publication
 ALTER PUBLICATION supabase_realtime ADD TABLE orders;
 ALTER PUBLICATION supabase_realtime ADD TABLE leads;
+ALTER PUBLICATION supabase_realtime ADD TABLE waiter_calls;
 
--- 5. Disable RLS for development (Recommended only for initial setup)
+-- 5. Set Replica Identity to FULL for Realtime tables
+-- This ensures that for UPDATE events, we get old vs new data and reliable filtering.
+ALTER TABLE public.orders REPLICA IDENTITY FULL;
+ALTER TABLE public.waiter_calls REPLICA IDENTITY FULL;
+
+-- 6. Disable RLS for development (Recommended only for initial setup)
 ALTER TABLE leads DISABLE ROW LEVEL SECURITY;
 ALTER TABLE restaurants DISABLE ROW LEVEL SECURITY;
 ALTER TABLE orders DISABLE ROW LEVEL SECURITY;
 ALTER TABLE dishes DISABLE ROW LEVEL SECURITY;
+ALTER TABLE waiter_calls DISABLE ROW LEVEL SECURITY;
