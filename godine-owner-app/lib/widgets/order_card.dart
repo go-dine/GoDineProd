@@ -161,17 +161,44 @@ class OrderCard extends StatelessWidget {
             const SizedBox(height: 14),
             ...order.items.map(
               (item) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Text.rich(
-                  TextSpan(children: [
-                    TextSpan(text: '${item.emoji} '),
-                    TextSpan(
-                      text: '${item.qty}×',
-                      style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.white),
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface2,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                          ? Image.network(
+                              item.imageUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Center(
+                                child: Text(item.emoji, style: const TextStyle(fontSize: 14)),
+                              ),
+                            )
+                          : Center(
+                              child: Text(item.emoji, style: const TextStyle(fontSize: 14)),
+                            ),
                     ),
-                    TextSpan(text: ' ${item.name} — ₹${(item.price * item.qty).toStringAsFixed(0)}'),
-                  ]),
-                  style: const TextStyle(fontSize: 13, color: AppColors.muted, height: 1.5),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text.rich(
+                        TextSpan(children: [
+                          TextSpan(
+                            text: '${item.qty}×',
+                            style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.white),
+                          ),
+                          TextSpan(text: ' ${item.name} — ₹${(item.price * item.qty).toStringAsFixed(0)}'),
+                        ]),
+                        style: const TextStyle(fontSize: 13, color: AppColors.muted),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

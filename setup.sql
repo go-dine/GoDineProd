@@ -71,3 +71,30 @@ insert into dishes (restaurant_id, name, description, price, category, emoji) va
   ('00000000-0000-0000-0000-000000000001', 'Fresh Lime Soda',     'Sweet or salt, chilled',              80,  'Beverages',   '🍋'),
   ('00000000-0000-0000-0000-000000000001', 'Chocolate Lava Cake', 'Warm, vanilla ice cream',            220,  'Desserts',    '🍫'),
   ('00000000-0000-0000-0000-000000000001', 'Gulab Jamun',         'Classic, sugar syrup, warm',         140,  'Desserts',    '🍮');
+
+-- ─────────────────────────────────────────────────────────
+-- Image Generator Extension
+-- ─────────────────────────────────────────────────────────
+
+-- Ensure columns exist
+alter table dishes add column if not exists image_url text;
+alter table dishes add column if not exists image_generated boolean default false;
+alter table dishes add column if not exists image_updated_at timestamp;
+
+-- Create storage bucket (ignore if exists)
+insert into storage.buckets (id, name, public) 
+values ('dish-images', 'dish-images', true)
+on conflict (id) do nothing;
+
+-- Storage Policies
+-- Note: These might fail if already created or if run multiple times without proper guards
+-- But for a clean setup.sql they are perfect.
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Public Access' AND tablename = 'objects' AND schemaname = 'storage') THEN
+        create policy "Public Access" on storage.objects for select using (bucket_id = 'dish-images');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Service Role Access' AND tablename = 'objects' AND schemaname = 'storage') THEN
+        create policy "Service Role Access" on storage.objects for all using (bucket_id = 'dish-images') with check (bucket_id = 'dish-images');
+    END IF;
+END $$;

@@ -211,6 +211,7 @@ class SupabaseService {
     required double price,
     required String category,
     required String emoji,
+    String? imageUrl,
     required String description,
     required bool isFeatured,
   }) async {
@@ -220,6 +221,7 @@ class SupabaseService {
       'price': price,
       'category': category,
       'emoji': emoji.isEmpty ? '🍽️' : emoji,
+      'image_url': imageUrl,
       'description': description,
       'is_featured': isFeatured,
     });
@@ -231,6 +233,7 @@ class SupabaseService {
     required double price,
     required String category,
     required String emoji,
+    String? imageUrl,
     required String description,
     required bool isFeatured,
   }) async {
@@ -239,6 +242,7 @@ class SupabaseService {
       'price': price,
       'category': category,
       'emoji': emoji.isEmpty ? '🍽️' : emoji,
+      'image_url': imageUrl,
       'description': description,
       'is_featured': isFeatured,
     }).eq('id', dishId);

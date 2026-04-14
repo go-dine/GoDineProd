@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>My Orders | Live Tracking — Go Dine</title>
 <meta name="description" content="Track your restaurant orders in real-time. View estimated wait times and order status. Powered by Go Dine."/>
-<link rel="canonical" href="https://godine.in/customer.html"/>
+<link rel="canonical" href="https://godine.in/customer" />
 
 <!-- Open Graph Tags -->
 <meta property="og:title" content="My Orders — Go Dine" />
@@ -102,7 +102,8 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
 </style>
 </style>
 </head>
-<body id="top">
+<body id="top" style="position: relative;">
+<h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;">My Orders — GoDine</h1>
 <div id="toast"></div>
 
 <div id="auth-guard">
@@ -276,7 +277,7 @@ function renderOrders(list) {
         <div class="empty-icon">🍽️</div>
         <h3>No orders found</h3>
         <p>Looks like you haven't ordered anything yet.</p>
-        <a href="menu.html?r=${restaurantSlug}&table=${tableNum}" class="back-btn">Go to Menu</a>
+        <a href="menu?r=${restaurantSlug}&table=${tableNum}" class="back-btn">Go to Menu</a>
       </div>
     `;
     return;
@@ -360,7 +361,7 @@ function createOrderCard(o) {
         <span>₹${o.total}</span>
       </div>
         <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
-          ${showFeedbackBtn ? `<a href="feedback.html?r=${restaurantSlug}&order=${o.id}" class="feedback-btn">⭐ Rate Your Experience</a>` : '<div></div>'}
+          ${showFeedbackBtn ? `<a href="feedback?r=${restaurantSlug}&order=${o.id}" class="feedback-btn">⭐ Rate Your Experience</a>` : '<div></div>'}
           ${(o.status === 'completed' && hasFeedback) ? `<div class="feedback-done">✅ Feedback submitted</div>` : ''}
           ${showCancelBtn ? `<button class="cancel-btn" data-time="${orderTime}" onclick="cancelCustomerOrder('${o.id}')">Cancel (${timerText})</button>` : ''}
         </div>

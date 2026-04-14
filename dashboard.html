@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="assets/icon.png"/>
 <meta name="description" content="Go Dine Owner Dashboard — manage your restaurant menu, orders, and QR codes."/>
 <meta name="robots" content="noindex, nofollow"/>
-<link rel="canonical" href="https://godine.in/dashboard.html"/>
+<link rel="canonical" href="https://godine.in/dashboard" />
 
 <!-- Open Graph Tags -->
 <meta property="og:title" content="Owner Dashboard — Go Dine" />
@@ -313,7 +313,8 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 
 </style>
 </head>
-<body>
+<body style="position: relative;">
+<h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;">GoDine Owner Dashboard</h1>
 
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
@@ -329,7 +330,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <input class="auth-input" type="password" id="login-pw" placeholder="Enter owner password" onkeydown="if(event.key==='Enter')doLogin()"/>
       <button class="auth-btn" onclick="doLogin()">Sign In →</button>
       <div class="auth-error" id="login-err">Invalid username or password.</div>
-      <div class="auth-toggle">Interested in joining? <a onclick="window.location.href='index.html#cta_banner'">Contact us</a></div>
+      <div class="auth-toggle">Interested in joining? <a onclick="window.location.href='index#cta_banner'">Contact us</a></div>
     </div>
   </div>
 </div>
@@ -1097,7 +1098,7 @@ function renderAllRestaurants() {
             <span class="toggle-slider"></span>
           </label>
         </div>
-        <a href="menu.html?r=${r.slug}" target="_blank" class="btn-ghost btn-sm" style="text-decoration:none;">View Menu</a>
+        <a href="menu?r=${r.slug}" target="_blank" class="btn-ghost btn-sm" style="text-decoration:none;">View Menu</a>
         <button class="btn-lime btn-sm" onclick="impersonateRestaurant('${r.id}')">Impersonate 👁</button>
       </div>
     </div>`).join('');
@@ -1429,7 +1430,14 @@ function renderOrders() {
           <span class="status-badge sb-${o.status}">${o.status.toUpperCase()}</span>
         </div>
         ${o.customer_name ? `<div style="font-size:0.8rem; color:#888; margin-bottom: 8px;">👤 ${o.customer_name} (${o.customer_phone})</div>` : ''}
-        <div class="order-items">${o.items.map(i => `<div class="order-item">${i.emoji || '🍽'} <b>${i.qty}×</b> ${i.name} — ₹${i.price * i.qty}</div>`).join('')}</div>
+        <div class="order-items">${o.items.map(i => `<div class="order-item" style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <div style="width:24px;height:24px;border-radius:4px;overflow:hidden;background:var(--s3);display:flex;align-items:center;justify-content:center;border:1px solid var(--border);flex-shrink:0;">
+            ${i.image_url 
+              ? `<img src="${i.image_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;font-size:14px;">${i.emoji || '🍽'}</span>` 
+              : `<span style="font-size:14px;">${i.emoji || '🍽'}</span>`}
+          </div>
+          <div style="flex:1;"><b>${i.qty}×</b> ${i.name} — ₹${i.price * i.qty}</div>
+        </div>`).join('')}</div>
         ${o.note ? `<div class="order-note">📝 ${o.note}</div>` : ''}
         <div class="order-foot"><div class="order-total">₹${o.total}</div><div class="status-actions">
           ${o.status === 'completed' ? '' : `<button class="btn-red btn-sm" onclick="cancelOrder('${o.id}')">🗑 Cancel</button>`}
@@ -1618,8 +1626,12 @@ function renderDishes() {
   document.getElementById('dish-count').textContent = dishes.length + ' items';
   if (!dishes.length) { el.innerHTML = `<div class="empty-state"><div class="icon">🍽</div><p>No dishes yet. Add one above!</p></div>`; return; }
   el.innerHTML = dishes.map(d => `
-    <div class="dish-row">
-      <div class="d-emoji">${d.emoji || '🍽️'}</div>
+    <div class="dish-row" style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);">
+      <div class="d-visual" style="width:40px;height:40px;border-radius:8px;overflow:hidden;background:var(--s3);display:flex;align-items:center;justify-content:center;border:1px solid var(--border);flex-shrink:0;">
+        ${d.image_url 
+          ? `<img src="${d.image_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;font-size:18px;">${d.emoji || '🍽️'}</span>` 
+          : `<span style="font-size:18px;">${d.emoji || '🍽️'}</span>`}
+      </div>
       <div class="d-info"><div class="d-name">${d.name} ${d.is_featured ? `<span style="color:var(--lime);font-size:14px;" title="Chef's Special">⭐</span>` : ""}</div><div class="d-meta">${d.category} · ₹${d.price}${d.description ? " · " + d.description : ""}</div></div>
       <div class="d-actions">
         <button class="btn-ghost btn-sm" onclick="toggleFeatured('${d.id}', ${!d.is_featured})" title="Mark as Chef's Special">${d.is_featured ? '⭐ Unstar' : '☆ Star'}</button>

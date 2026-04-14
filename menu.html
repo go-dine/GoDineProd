@@ -6,8 +6,8 @@
 <title>Go Dine — Menu</title>
 <link rel="icon" type="image/png" href="assets/favicon.png"/>
 <link rel="apple-touch-icon" href="assets/icon.png"/>
-<meta name="description" content="Browse the menu and place your order. Powered by Go Dine — the smart dining platform."/>
-<link rel="canonical" href="https://godine.in/menu.html"/>
+<meta name="description" content="Browse the menu and place your order instantly. Powered by GoDine — the smart dining platform for restaurants."/>
+<link rel="canonical" href="https://godine.in/menu" />
 
 <!-- Open Graph Tags -->
 <meta property="og:title" content="Restaurant Menu — Go Dine" />
@@ -97,12 +97,17 @@ a{color:inherit;text-decoration:none}
   transition:border-color 0.2s;
 }
 .dish-card.unavailable{opacity:0.4;pointer-events:none}
-.dish-emoji{
-  width:64px;height:64px;flex-shrink:0;
-  border-radius:12px;background:var(--s3);
+.dish-visual{
+  width:72px;height:72px;flex-shrink:0;
+  border-radius:16px;background:var(--s3);
   display:flex;align-items:center;justify-content:center;
-  font-size:30px;
+  overflow:hidden;border:1px solid var(--border);
+  transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+.dish-card:hover .dish-visual{transform:scale(1.05)}
+.dish-img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;}
+.dish-card:hover .dish-img{transform:scale(1.1)}
+.dish-emoji{font-size:32px;display:flex;align-items:center;justify-content:center}
 .dish-body{flex:1;min-width:0}
 .dish-name{font-size:15px;font-weight:600;font-family:'Space Grotesk',sans-serif;margin-bottom:4px}
 .dish-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px}
@@ -679,19 +684,19 @@ a{color:inherit;text-decoration:none}
 <!-- HEADER -->
 <div class="header" id="header">
   <div class="header-top">
-    <a href="index.html" class="logo">Go <b>Dine</b></a>
+    <a href="/" class="logo">Go <b>Dine</b></a>
     <div style="display:flex;align-items:center;gap:10px">
       <button onclick="callWaiter()" class="table-badge" style="background:var(--s3);color:var(--white);border-color:var(--border);cursor:pointer;display:flex;align-items:center;gap:6px;">
         <i data-lucide="bell" style="width:14px;height:14px;"></i>Call Waiter
       </button>
-      <a href="customer.html" id="view-orders-link" class="table-badge" style="background:var(--s2);color:var(--white);border-color:var(--border);display:none;">
+      <a href="customer" id="view-orders-link" class="table-badge" style="background:var(--s2);color:var(--white);border-color:var(--border);display:none;">
         <i data-lucide="clipboard-list" style="width:14px;height:14px;margin-right:4px;vertical-align:middle;"></i>My Orders
       </a>
       <div class="table-badge" id="table-display">TABLE —</div>
     </div>
   </div>
   <div class="rest-info">
-    <div class="rest-name" id="rest-name">Loading...</div>
+    <h1 class="rest-name" id="rest-name">Loading...</h1>
     <div class="rest-meta" id="rest-meta">Dine In · Scan &amp; Order</div>
   </div>
   <div class="search-wrap">
@@ -1012,7 +1017,7 @@ function showError(title, msg) {
       <div class="e-icon">🚫</div>
       <h2>${title}</h2>
       <p>${msg}</p>
-      <a href="index.html">← Back to Go Dine</a>
+      <a href="/">← Back to Go Dine</a>
     </div>`;
 }
 
@@ -1172,8 +1177,12 @@ function dishCard(d) {
       ? `<button class="add-btn" onclick="addItem('${d.id}')">+ Add</button>`
       : `<span class="unavail-tag">Unavailable</span>`;
 
+  const visual = d.image_url 
+    ? `<div class="dish-visual"><img src="${d.image_url}" class="dish-img" alt="${d.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="dish-emoji" style="display:none">${d.emoji || '🍽️'}</div></div>`
+    : `<div class="dish-visual"><div class="dish-emoji">${d.emoji || '🍽️'}</div></div>`;
+
   return `<div class="dish-card${!d.available ? ' unavailable' : ''}" id="card-${d.id}">
-    <div class="dish-emoji">${d.emoji || '🍽️'}</div>
+    ${visual}
     <div class="dish-body">
       <div class="dish-name">${d.name}</div>
       <div class="dish-desc">${d.description || ''}</div>
@@ -1279,7 +1288,12 @@ function renderSheet() {
   } else {
     document.getElementById('sheet-items').innerHTML = items.map(({dish, qty}) =>
       `<div class="cart-item" style="display:flex; align-items:center; gap:16px; padding:16px; background:var(--s2); border-radius:16px; margin-bottom:12px; border:1px solid var(--border);">
-        <div class="ci-emoji" style="font-size:28px; width:48px; height:48px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border-radius:12px;">${dish.emoji}</div>
+        <div class="ci-visual" style="width:48px; height:48px; flex-shrink:0; border-radius:12px; overflow:hidden; background:rgba(255,255,255,0.05); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;">
+          ${dish.image_url 
+            ? `<img src="${dish.image_url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+               <div class="ci-emoji" style="display:none; font-size:24px;">${dish.emoji || '🍽️'}</div>` 
+            : `<div class="ci-emoji" style="font-size:24px;">${dish.emoji || '🍽️'}</div>`}
+        </div>
         <div class="ci-left" style="flex-grow:1;">
           <div class="ci-name" style="font-weight:700; font-size:15px; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
             ${dish.name}
@@ -1375,7 +1389,7 @@ async function actualPlaceOrder(name, phone) {
   const token = Math.floor(Math.random() * 90 + 10).toString(); // 2-digit token (10-99)
   
   const originalNote = document.getElementById('order-note').value.trim();
-  const orderItems = items.map(({dish, qty}) => ({id: dish.id, name: dish.name, emoji: dish.emoji, price: dish.price, qty}));
+  const orderItems = items.map(({dish, qty}) => ({id: dish.id, name: dish.name, emoji: dish.emoji, image_url: dish.image_url, price: dish.price, qty}));
 
   if (isDemo) {
     setTimeout(() => {
@@ -1522,14 +1536,16 @@ function renderFeatured() {
   }
   document.getElementById('feat-section').style.display = 'block';
   document.getElementById('feat-row').innerHTML = featured.map(d => `
-    <div class="feat-card">
-      ${d.image_url ? `<img src="${d.image_url}" class="feat-img" alt="${d.name}">` : `<div class="feat-emoji">${d.emoji || '🍽️'}</div>`}
+    <div class="feat-card" onclick="addItem('${d.id}')">
+      ${d.image_url 
+        ? `<img src="${d.image_url}" class="feat-img" alt="${d.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="feat-emoji" style="display:none">${d.emoji || '🍽️'}</div>` 
+        : `<div class="feat-emoji">${d.emoji || '🍽️'}</div>`}
       <div class="feat-info">
         <div class="feat-details">
           <div class="feat-name">${d.name}</div>
           <div class="feat-price">₹${d.price}</div>
         </div>
-        <button class="feat-add-btn" onclick="addItem('${d.id}')">ADD</button>
+        <button class="feat-add-btn">ADD</button>
       </div>
     </div>
   `).join('');
@@ -1603,7 +1619,12 @@ async function loadFavorites() {
     if (favDishes.length > 0) {
       document.getElementById('fav-scroll').innerHTML = favDishes.map(d => `
         <div class="fav-card" onclick="addOne('${d.id}')">
-          <div class="fav-emoji">${d.emoji || '🍽️'}</div>
+          <div class="fav-visual" style="height:60px; border-radius:10px; overflow:hidden; margin-bottom:8px; background:var(--s3); display:flex; align-items:center; justify-content:center; border:1px solid var(--border);">
+            ${d.image_url 
+              ? `<img src="${d.image_url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                 <div class="fav-emoji" style="display:none;font-size:24px;">${d.emoji || '🍽️'}</div>` 
+              : `<div class="fav-emoji" style="font-size:24px;">${d.emoji || '🍽️'}</div>`}
+          </div>
           <div class="fav-name">${d.name}</div>
           <div class="fav-meta">₹${d.price}</div>
           <button class="fav-add">Quick Add</button>
@@ -1690,7 +1711,12 @@ function renderAISuggestions() {
     list.innerHTML = finalSuggestions.map(d => {
       return `
         <div class="ai-card" onclick="addOne('${d.id}')">
-          <div class="ai-card-emoji">${d.emoji || '🍽️'}</div>
+          <div class="ai-visual" style="height:70px; border-radius:10px; overflow:hidden; margin-bottom:8px; background:var(--s3); display:flex; align-items:center; justify-content:center; border:1px solid var(--border);">
+            ${d.image_url 
+              ? `<img src="${d.image_url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                 <div class="ai-card-emoji" style="display:none;font-size:24px;">${d.emoji || '🍽️'}</div>` 
+              : `<div class="ai-card-emoji" style="font-size:24px;">${d.emoji || '🍽️'}</div>`}
+          </div>
           <div class="ai-card-name">${d.name}</div>
           <div class="ai-card-price">₹${d.price}</div>
           <div class="ai-card-add">+</div>

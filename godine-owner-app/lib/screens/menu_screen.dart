@@ -89,6 +89,7 @@ class _MenuScreenState extends State<MenuScreen> {
           price: price,
           category: _selectedCategory,
           emoji: _emojiCtrl.text.trim(),
+          imageUrl: null, // New dishes start without image via app
           description: _descCtrl.text.trim(),
           isFeatured: _isFeaturedChecked,
         );
@@ -99,6 +100,7 @@ class _MenuScreenState extends State<MenuScreen> {
           price: price,
           category: _selectedCategory,
           emoji: _emojiCtrl.text.trim(),
+          imageUrl: dishToEdit.imageUrl, // Preserve existing image
           description: _descCtrl.text.trim(),
           isFeatured: _isFeaturedChecked,
         );

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "6e20ad8e-0487-4c08-bdaa-3aaae3c371b6",
+    "name": "Veg steam Momo (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (32ad2f75-1755-4953-b26e-cd03c83b0bb1)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:01:58.108Z"
+  },
+  {
+    "id": "de68da2b-7ff6-4187-bad3-03576dfd4742",
+    "name": "Cloud 7 (Medium)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (3dd24730-55a3-4626-9028-e77ea97db07a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:01:59.778Z"
+  },
+  {
+    "id": "8287c793-c205-4de9-9f48-cdb833da7202",
+    "name": "Veg Extra Loaded (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (a46a03a7-515c-481e-a2fa-7994cc8f83ff)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:02:01.477Z"
+  },
+  {
+    "id": "689eb5df-b293-41cc-b4fd-039ccea951e2",
+    "name": "Paneer & Capsicum Special",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (3d61b972-19ba-445e-867c-beb6f3ae72d6)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:02:03.094Z"
+  },
+  {
+    "id": "cfd55865-e9e0-4449-9c6e-96523e2e6a88",
+    "name": "Spicy Paneer (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (964b1a08-9449-4307-bdf4-d2ce9905d22a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:02:04.755Z"
+  },
+  {
+    "id": "94fdfc8e-eeb3-4ad9-b5c4-dbe11b7f56f7",
+    "name": "Veggie Supreme (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (d52f3fba-8fcb-4832-9a1c-50e9ffb95b85)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:02:06.398Z"
+  },
+  {
+    "id": "23a602f7-d5fa-4e23-ab78-19264e0f6ab4",
+    "name": "Veg Extra Loaded (Medium)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (c457fa3c-6f36-4320-8f40-849ab04c3a76)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:02:08.016Z"
+  },
+  {
+    "id": "de1a8f44-40d3-40cd-a010-467e0234dea1",
+    "name": "Veggie Supreme (Medium)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (9c9d5fa8-8078-40b2-9617-52420140ad4a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:02:09.670Z"
+  },
+  {
+    "id": "a2746b97-faaf-4469-abe0-8a369dbdbf0f",
+    "name": "Cloud 7 (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (aa5154f6-c506-4e6a-8d3d-92284643b037)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:02:11.290Z"
+  },
+  {
+    "id": "3695ad74-6873-4557-8d4b-15a7feee2530",
+    "name": "Paneer & Golden Corn Special",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (9861ea78-6b01-4165-a235-c3042751b6ba)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:02:12.945Z"
+  },
+  {
+    "id": "6e20ad8e-0487-4c08-bdaa-3aaae3c371b6",
+    "name": "Veg steam Momo (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (af7759e3-4d9d-4e18-87dd-23b95708d081)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:08.247Z"
+  },
+  {
+    "id": "de68da2b-7ff6-4187-bad3-03576dfd4742",
+    "name": "Cloud 7 (Medium)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (4181e9a3-8fa1-43bf-a391-0e0e858adb5c)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:09.857Z"
+  },
+  {
+    "id": "8287c793-c205-4de9-9f48-cdb833da7202",
+    "name": "Veg Extra Loaded (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (c8cba55b-901c-471f-9e33-0d5eebe03f3f)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:11.462Z"
+  },
+  {
+    "id": "689eb5df-b293-41cc-b4fd-039ccea951e2",
+    "name": "Paneer & Capsicum Special",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (4c979417-28be-40e5-8fee-282c05c2e9e1)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:13.083Z"
+  },
+  {
+    "id": "cfd55865-e9e0-4449-9c6e-96523e2e6a88",
+    "name": "Spicy Paneer (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (57a17bbd-ebdf-466a-9ec6-98d1f8c567c8)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:14.803Z"
+  },
+  {
+    "id": "94fdfc8e-eeb3-4ad9-b5c4-dbe11b7f56f7",
+    "name": "Veggie Supreme (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (da4ecda7-28e0-47ea-a5c0-244f44f9a5d0)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:16.411Z"
+  },
+  {
+    "id": "23a602f7-d5fa-4e23-ab78-19264e0f6ab4",
+    "name": "Veg Extra Loaded (Medium)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (ae616a91-9ce5-4044-870e-1d6cf2827dbc)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:18.022Z"
+  },
+  {
+    "id": "de1a8f44-40d3-40cd-a010-467e0234dea1",
+    "name": "Veggie Supreme (Medium)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2ad420b8-271e-4768-94e2-93bb0a1c0697)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:19.631Z"
+  },
+  {
+    "id": "a2746b97-faaf-4469-abe0-8a369dbdbf0f",
+    "name": "Cloud 7 (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (9ffd5964-4358-4667-b7ad-1ad3efd4c893)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:21.353Z"
+  },
+  {
+    "id": "3695ad74-6873-4557-8d4b-15a7feee2530",
+    "name": "Paneer & Golden Corn Special",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (027beb52-57ee-45b1-b5b3-c9ba3a741804)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-14T18:03:22.991Z"
+  }
+]

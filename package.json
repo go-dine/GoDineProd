@@ -1,0 +1,25 @@
+{
+  "name": "godine-project",
+  "version": "1.0.0",
+  "description": "> **Scan. Order. Enjoy.** — A multi-tenant platform for restaurant owners to manage menus, and for customers to order seamlessly via QR codes.",
+  "main": "config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/go-dine/GoDineProd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/go-dine/GoDineProd/issues"
+  },
+  "homepage": "https://github.com/go-dine/GoDineProd#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.103.0",
+    "dotenv": "^17.4.2",
+    "node-fetch": "^2.7.0"
+  }
+}

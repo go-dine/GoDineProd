@@ -3,12 +3,14 @@ class OrderItem {
   final int qty;
   final double price;
   final String emoji;
+  final String? imageUrl;
 
   OrderItem({
     required this.name,
     required this.qty,
     required this.price,
     this.emoji = '🍽',
+    this.imageUrl,
   });
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class OrderItem {
       qty: (json['qty'] as num).toInt(),
       price: (json['price'] as num).toDouble(),
       emoji: json['emoji'] as String? ?? '🍽',
+      imageUrl: json['image_url'] as String?,
     );
   }
 }

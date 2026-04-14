@@ -27,14 +27,33 @@ class DishRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Emoji
-          SizedBox(
-            width: 36,
-            child: Text(
-              dish.emoji.isNotEmpty ? dish.emoji : '🍽️',
-              style: const TextStyle(fontSize: 24),
-              textAlign: TextAlign.center,
+          // Visual (Image or Emoji)
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.surface2,
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+              border: Border.all(color: AppColors.border),
             ),
+            clipBehavior: Clip.antiAlias,
+            child: dish.imageUrl != null && dish.imageUrl!.isNotEmpty
+                ? Image.network(
+                    dish.imageUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Center(
+                      child: Text(
+                        dish.emoji.isNotEmpty ? dish.emoji : '🍽️',
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      dish.emoji.isNotEmpty ? dish.emoji : '🍽️',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ),
           ),
           const SizedBox(width: 12),
 
