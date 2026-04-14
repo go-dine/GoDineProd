@@ -1,11 +1,15 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false,
   "redirects": [
     {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "www.godine.in" }],
-      "destination": "https://godine.in/$1",
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.godine.in"
+        }
+      ],
+      "destination": "https://godine.in/:path*",
       "permanent": true
     }
   ],
