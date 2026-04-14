@@ -54,6 +54,15 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
               if (mounted) setState(() => _showNewOrderBanner = false);
             });
           }
+        } else if (payload.eventType == PostgresChangeEvent.update) {
+          final updatedOrder = Order.fromJson(payload.newRecord);
+          final oldOrder = payload.oldRecord.isNotEmpty ? Order.fromJson(payload.oldRecord) : null;
+          
+          // Only notify if status actually changed
+          if (oldOrder == null || oldOrder.status != updatedOrder.status) {
+            NotificationService.showStatusUpdateNotification(updatedOrder);
+            HapticFeedback.mediumImpact();
+          }
         }
       },
     );

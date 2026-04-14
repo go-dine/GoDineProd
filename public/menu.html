@@ -27,6 +27,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://unpkg.com/lucide@0.469.0/dist/lucide.min.js"></script>
 <script src="config.js"></script>
+<script src="notifications.js"></script>
+<script src="customer-notifications.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1000,6 +1002,25 @@ async function boot() {
   if (window.currentUser && window.currentUser.phone) {
     loadFavorites();
   }
+
+  // RESUME ACTIVE ORDER TRACKING
+  const activeOrderId = localStorage.getItem('godine_active_order_id');
+  if (activeOrderId && !isDemo && sb) {
+    try {
+      const { data: order, error } = await sb.from('orders').select('*').eq('id', activeOrderId).single();
+      if (!error && order && order.status !== 'completed' && order.status !== 'cancelled') {
+        console.log('Order Resume Activated:', activeOrderId);
+        showSuccess(order.total, order.id, order.token_number);
+        
+        // Initialize Premium Customer Notifications on resume
+        if (typeof GoDineCustomer !== 'undefined') {
+          GoDineCustomer.init(sb, order.id);
+        }
+      } else if (order && (order.status === 'completed' || order.status === 'cancelled')) {
+        localStorage.removeItem('godine_active_order_id');
+      }
+    } catch(e) { console.error('Error resuming order:', e); }
+  }
 }
 
 function applyRestaurant() {
@@ -1412,11 +1433,19 @@ async function actualPlaceOrder(name, phone) {
       token_number: token,
       status: 'pending',
       payment_method: paymentMethod
-    }).select().single();
+    }).select();
 
     if (error) throw error;
     
-    showSuccess(total, data.id, data.token_number);
+    const order = data[0];
+    localStorage.setItem('godine_active_order_id', order.id);
+    
+    // Initialize Premium Customer Notifications
+    if (typeof GoDineCustomer !== 'undefined') {
+      GoDineCustomer.init(sb, order.id);
+    }
+
+    showSuccess(order.total, order.id, order.token_number);
     localStorage.removeItem('godine_cart');
   } catch(e) {
     console.error('Order Placement Error:', e);
@@ -1554,6 +1583,7 @@ function renderFeatured() {
 function resetOrder() {
   cart = {};
   updateCartBar();
+  localStorage.removeItem('godine_active_order_id');
   document.getElementById('success-screen').classList.remove('show');
   document.getElementById('place-btn').disabled = false;
   document.getElementById('place-btn').textContent = 'Place Order →';

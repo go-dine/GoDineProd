@@ -211,4 +211,23 @@ class NotificationService {
       payload: callId,
     );
   }
+
+  /// Show a status update notification
+  static Future<void> showStatusUpdateNotification(Order order) async {
+    final statusMap = {
+      'pending': 'PENDING',
+      'preparing': 'PREPARING',
+      'ready': 'READY',
+      'completed': 'COMPLETED',
+      'cancelled': 'CANCELLED'
+    };
+    final status = statusMap[order.status] ?? order.status.toUpperCase();
+    
+    await showLocalNotification(
+      id: order.id.hashCode,
+      title: 'Status Updated — Table ${order.tableNumber}',
+      body: 'Order is now $status',
+      isOrder: false,
+    );
+  }
 }

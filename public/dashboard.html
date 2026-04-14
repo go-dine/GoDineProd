@@ -665,6 +665,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 
 <div id="toast"></div>
 
+<script src="notifications.js"></script>
 <script>
 // ============================================================
 // MASTER ADMIN CREDENTIALS (change before going live)
@@ -926,6 +927,15 @@ function finalizeInit() {
   
   setupRealtime();
   setupCallsRealtime();
+  
+  // Initialize Premium Notifications
+  // Initialize Premium Notifications (Handles both Alerts & UI reloads)
+  if (typeof GoDineNotify !== 'undefined' && restaurant) {
+    realtimeChannel = GoDineNotify.init(sb, restaurant.id, (payload) => {
+      loadOrders();
+      loadOverview();
+    });
+  }
 
   document.getElementById('overview-date').textContent =
     new Date().toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
@@ -938,7 +948,10 @@ function finalizeInit() {
 }
 
 function notifyOwner(title, body) {
-  if (soundEnabled) orderSound.play().catch(() => {});
+  if (soundEnabled) {
+    if (typeof GoDineNotify !== 'undefined') GoDineNotify.playOrderTone();
+    else orderSound.play().catch(() => {});
+  }
   toast(`🔔 ${title}: ${body}`);
 
   // Service Worker notification (works in background tabs)
@@ -953,7 +966,8 @@ function notifyOwner(title, body) {
         renotify: true
       });
     });
-  } else if ('Notification' in window && Notification.permission === 'granted') {
+  } else if ('Notification' in window && Notification.permission === 'granted' && typeof GoDineNotify === 'undefined') {
+    // Only use basic notification if premium one isn't active
     new Notification(title, {
       body: body,
       icon: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png'
@@ -975,9 +989,10 @@ function setupRealtime() {
       });
   }
 
-  // 2. Orders Listener
+  // 2. Orders Listener (Skippped if GoDineNotify already handled it)
   if (restaurant && !realtimeChannel) {
-    console.log('Setting up Realtime for:', restaurant.id);
+    // Fallback if GoDineNotify failed or was not initialized
+    console.log('Setting up Fallback Realtime for:', restaurant.id);
     realtimeChannel = sb.channel('public:orders:' + restaurant.id)
       .on('postgres_changes', { 
         event: '*', 
@@ -985,20 +1000,18 @@ function setupRealtime() {
         table: 'orders', 
         filter: `restaurant_id=eq.${restaurant.id}` 
       }, payload => {
-        console.log('Realtime Order Event:', payload.eventType, payload);
-        if (payload.eventType === 'INSERT') {
-          notifyOwner('New Order! 🔔', `Table ${payload.new.table_number} ordered ₹${payload.new.total}`);
-        }
         loadOrders();
         loadOverview();
-      }).subscribe((status) => {
-        console.log('Orders Subscription Status:', status);
-        if (status === 'CHANNEL_ERROR') toast('⚠️ Realtime sync error. Please refresh.');
-      });
+      }).subscribe();
   } else if (!restaurant && !realtimeChannel && sessionStorage.getItem('godineAdminMode') === "true") {
     realtimeChannel = sb.channel('public:all-orders')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
         console.log('Admin Realtime Order Event:', payload);
+        
+        if (payload.eventType === 'UPDATE' && payload.old && payload.new && payload.old.status !== payload.new.status) {
+          toast(`🔔 Table ${payload.new.table_number}: Status changed to ${payload.new.status.toUpperCase()}`);
+        }
+
         loadAllOrders();
         loadOverview();
       }).subscribe((status) => {
