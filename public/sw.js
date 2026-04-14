@@ -20,12 +20,12 @@ self.addEventListener('notificationclick', event => {
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
       // Focus existing dashboard tab if found
       for (const client of clients) {
-        if (client.url.includes('/dashboard') && 'focus' in client) {
+        if (client.url.includes('dashboard.html') && 'focus' in client) {
           return client.focus();
         }
       }
       // Otherwise open a new tab
-      return self.clients.openWindow('/dashboard');
+      return self.clients.openWindow('dashboard.html');
     })
   );
 });

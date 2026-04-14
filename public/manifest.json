@@ -2,7 +2,7 @@
   "name": "Go Dine - Scan, Order, Enjoy",
   "short_name": "Go Dine",
   "description": "Smart dining platform for restaurants and cafés.",
-  "start_url": "/",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#b6ff2a",

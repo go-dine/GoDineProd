@@ -200,8 +200,8 @@ let restaurantId = null;
 let ratings = { food: 0, service: 0 };
 
 // Set back links
-document.getElementById('back-link').href = `customer?r=${restaurantSlug}`;
-document.getElementById('success-back-link').href = `menu?r=${restaurantSlug}`;
+document.getElementById('back-link').href = `customer.html?r=${restaurantSlug}`;
+document.getElementById('success-back-link').href = `menu.html?r=${restaurantSlug}`;
 
 // Fetch restaurant ID
 async function boot() {
