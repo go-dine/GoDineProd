@@ -58,9 +58,9 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" type="text/css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="https://unpkg.com/lucide@0.469.0"></script>
+<script src="https://unpkg.com/lucide@0.469.0/dist/lucide.min.js"></script>
 <script src="config.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -1276,7 +1276,7 @@ async function handleGoogleSignIn(mode) {
     const { data, error } = await sbClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/index.html?auth_callback=true&mode=' + mode
+        redirectTo: window.location.origin + '/?auth_callback=true&mode=' + mode
       }
     });
     if (error) throw error;
@@ -1303,7 +1303,7 @@ async function handleGoogleSignIn(mode) {
       const { data: rest, error: restErr } = await sbClient.from('restaurants').select('*').eq('owner_email', email).single();
       if (restErr || !rest) {
         showToast('No restaurant found for this Google account. Please register first.', 'error');
-        history.replaceState(null, '', 'index.html');
+        history.replaceState(null, '', '/');
         return;
       }
       if (rest.is_active === false) { showToast('Your account has been suspended.', 'error'); return; }
@@ -1316,7 +1316,7 @@ async function handleGoogleSignIn(mode) {
       // Scroll to registration
       const regSection = document.getElementById('register');
       if (regSection) regSection.scrollIntoView({ behavior: 'smooth' });
-      history.replaceState(null, '', 'index.html');
+      history.replaceState(null, '', '/');
     }
   } catch (e) {
     console.error('Google callback error:', e);
