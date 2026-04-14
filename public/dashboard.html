@@ -14,7 +14,7 @@
 <meta property="og:title" content="Owner Dashboard — Go Dine" />
 <meta property="og:description" content="Manage your restaurant with Go Dine." />
 <meta property="og:image" content="https://godine.in/assets/og-image.jpg" />
-<meta property="og:url" content="https://godine.in/dashboard.html" />
+<meta property="og:url" content="https://godine.in/dashboard" />
 <meta property="og:type" content="website" />
 
 <!-- Twitter Card Tags -->
@@ -330,7 +330,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <input class="auth-input" type="password" id="login-pw" placeholder="Enter owner password" onkeydown="if(event.key==='Enter')doLogin()"/>
       <button class="auth-btn" onclick="doLogin()">Sign In →</button>
       <div class="auth-error" id="login-err">Invalid username or password.</div>
-      <div class="auth-toggle">Interested in joining? <a onclick="window.location.href='index#cta_banner'">Contact us</a></div>
+      <div class="auth-toggle">Interested in joining? <a onclick="window.location.href='/#cta_banner'">Contact us</a></div>
     </div>
   </div>
 </div>
@@ -1722,7 +1722,7 @@ function buildQR() {
     return; 
   }
   const totalTables = restaurant.total_tables || 10;
-  const base = location.origin + location.pathname.replace('dashboard.html', 'menu.html');
+  const base = location.origin + '/menu';
   for (let t = 1; t <= totalTables; t++) {
     const url = base + '?r=' + restaurant.slug + '&table=' + t;
     const card = document.createElement('div');

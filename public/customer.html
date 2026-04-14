@@ -11,7 +11,7 @@
 <meta property="og:title" content="My Orders — Go Dine" />
 <meta property="og:description" content="Track your restaurant orders in real-time." />
 <meta property="og:image" content="https://godine.in/assets/og-image.jpg" />
-<meta property="og:url" content="https://godine.in/customer.html" />
+<meta property="og:url" content="https://godine.in/customer" />
 <meta property="og:type" content="website" />
 
 <!-- Twitter Card Tags -->
@@ -158,7 +158,7 @@ const restaurantSlug = params.get('r');
 const tableNum = params.get('table') || localStorage.getItem('godine_table') || '1';
 
 if (!restaurantSlug) {
-  window.location.href = 'index.html';
+  window.location.href = '/';
 }
 
 let restaurant = null;
@@ -170,14 +170,14 @@ try { feedbackGiven = JSON.parse(localStorage.getItem('godine_feedback') || '[]'
 async function boot() {
   const savedGuest = localStorage.getItem('godine_guest');
   if (!savedGuest) {
-    window.location.href = `menu.html?r=${restaurantSlug}`;
+    window.location.href = `menu?r=${restaurantSlug}`;
     return;
   }
   
   try {
     currentUser = JSON.parse(savedGuest);
   } catch(e) {
-    window.location.href = `menu.html?r=${restaurantSlug}`;
+    window.location.href = `menu?r=${restaurantSlug}`;
     return;
   }
 
@@ -185,7 +185,7 @@ async function boot() {
   document.getElementById('header').style.display = 'flex';
   document.getElementById('content').style.display = 'block';
   
-  document.querySelector('.back-link').href = `menu.html?r=${restaurantSlug}&table=${tableNum}`;
+  document.querySelector('.back-link').href = `menu?r=${restaurantSlug}&table=${tableNum}`;
   document.getElementById('rest-name').textContent = `Hello, ${currentUser.name.split(' ')[0]}!`;
 
   await fetchRestaurant();

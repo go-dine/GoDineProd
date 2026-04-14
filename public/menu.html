@@ -13,7 +13,7 @@
 <meta property="og:title" content="Restaurant Menu — Go Dine" />
 <meta property="og:description" content="Browse the menu and place your order instantly from your phone." />
 <meta property="og:image" content="https://godine.in/assets/og-image.jpg" />
-<meta property="og:url" content="https://godine.in/menu.html" />
+<meta property="og:url" content="https://godine.in/menu" />
 <meta property="og:type" content="website" />
 
 <!-- Twitter Card Tags -->
@@ -912,7 +912,7 @@ if (!isDemo) {
 const params = new URLSearchParams(location.search);
 const restaurantSlug = params.get('r');
 if (!restaurantSlug) {
-  window.location.href = 'index.html';
+  window.location.href = '/';
 }
 const tableNum = params.get('table') || localStorage.getItem('godine_table') || '1';
 if (params.get('table')) localStorage.setItem('godine_table', tableNum);
