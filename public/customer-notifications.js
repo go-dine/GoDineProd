@@ -104,6 +104,59 @@ const GoDineCustomer = (() => {
     return result === 'granted';
   }
 
+  // ── Web Push Registration ─────────────────────
+  const VAPID_PUBLIC_KEY = 'BBt1ykJipLTVYA3IYu8l5TL5Rwp9lhMsUBfUJVJQMYOZL9S1jxwGifAb5GjfqgcrimpG-PhtIVyYcrxEM4Wy334';
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
+
+  async function registerWebPush(supabase, customerPhone) {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      console.warn('[GoDine Customer] Push not supported');
+      return;
+    }
+
+    try {
+      const permission = await requestPermission();
+      if (!permission) return;
+
+      const registration = await navigator.serviceWorker.ready;
+      
+      // Subscribe to Push
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+
+      console.log('[GoDine Customer] Registered for Web Push');
+
+      // Save to Supabase
+      const { endpoint, keys } = subscription.toJSON();
+      const { error } = await supabase
+        .from('web_push_subscriptions')
+        .upsert({
+          endpoint: endpoint,
+          p256dh: keys.p256dh,
+          auth: keys.auth,
+          customer_phone: customerPhone
+        }, { onConflict: 'endpoint' });
+
+      if (error) throw error;
+      console.log('[GoDine Customer] Subscription synced to database');
+
+    } catch (err) {
+      console.error('[GoDine Customer] Push registration failed:', err);
+    }
+  }
+
   function showPush(statusKey, orderId) {
     if (Notification.permission !== 'granted') return;
     const cfg   = STATUS[statusKey];
@@ -254,6 +307,13 @@ const GoDineCustomer = (() => {
   function init(supabase, orderId) {
     requestPermission();
     injectBannerStyles();
+
+    // 1. Fetch order details to get customer phone for push targeting
+    supabase.from('orders').select('customer_phone').eq('id', orderId).single().then(({data}) => {
+      if (data?.customer_phone) {
+        registerWebPush(supabase, data.customer_phone);
+      }
+    });
 
     const channel = supabase.channel(`customer-order-${orderId}`);
     

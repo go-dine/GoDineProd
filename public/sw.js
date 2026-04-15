@@ -32,14 +32,18 @@ self.addEventListener('push', event => {
   // Determine icon and badge based on notification type
   const isWaiterCall = data.data?.type === 'waiter_call';
   const isOrder = data.data?.type === 'new_order';
+  const isStatusUpdate = data.data?.type === 'order_status_update';
 
   const options = {
     body: data.body || 'You have a new notification',
-    icon: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png',
+    icon: isStatusUpdate 
+       ? 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png' 
+       : 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png',
     badge: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png',
     vibrate: isWaiterCall ? [300, 100, 300, 100, 300] : [200, 100, 200],
     tag: isWaiterCall ? 'godine-waiter-' + (data.data?.table_number || Date.now()) 
        : isOrder ? 'godine-order-' + Date.now()
+       : isStatusUpdate ? 'godine-status-' + (data.data?.order_id || Date.now())
        : 'godine-push-' + Date.now(),
     renotify: true,
     requireInteraction: true, // Keep notification visible until user interacts

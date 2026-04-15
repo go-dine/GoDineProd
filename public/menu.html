@@ -1848,6 +1848,13 @@ async function bootWithListener() {
 }
 bootWithListener();
 if (typeof lucide !== 'undefined') lucide.createIcons();
+
+// Register Service Worker for background status updates
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+    .then(reg => console.log('[GoDine SW] Registered'))
+    .catch(err => console.error('[GoDine SW] Failed:', err));
+}
 </script>
 </body>
 </html>
