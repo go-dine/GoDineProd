@@ -51,11 +51,65 @@ const GoDineNotify = (() => {
 
   // ── 2.  BROWSER NOTIFICATION  ────────────────
 
+  function urlB64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/\-/g, '+')
+      .replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
+
   async function requestPermission() {
     if (!('Notification' in window)) return false;
     if (Notification.permission === 'granted') return true;
     const result = await Notification.requestPermission();
     return result === 'granted';
+  }
+
+  async function registerWebPush(supabase, restaurantId) {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    
+    try {
+      const permission = await requestPermission();
+      if (!permission) return;
+
+      const registration = await navigator.serviceWorker.ready;
+      
+      // VAPID public key
+      const applicationServerKey = urlB64ToUint8Array('BBt1ykJipLTVYA3IYu8l5TL5Rwp9lhMsUBfUJVJQMYOZL9S1jxwGifAb5GjfqgcrimpG-PhtIVyYcrxEM4Wy334');
+      
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey
+      });
+
+      const subData = JSON.parse(JSON.stringify(subscription));
+
+      // Save to Supabase (using UPSERT logic by checking existing first, or just inserting and handling duplicate)
+      const { data: existing } = await supabase
+        .from('web_push_subscriptions')
+        .select('id')
+        .eq('endpoint', subData.endpoint)
+        .single();
+        
+      if (!existing) {
+        await supabase.from('web_push_subscriptions').insert({
+          restaurant_id: restaurantId,
+          endpoint: subData.endpoint,
+          p256dh: subData.keys.p256dh,
+          auth: subData.keys.auth
+        });
+        console.log('[Web Push] Subscribed successfully');
+      }
+
+    } catch(e) {
+      console.error('[Web Push] Subscription failed:', e);
+    }
   }
 
   function showBrowserNotification(order, isUpdate = false) {
@@ -146,7 +200,7 @@ const GoDineNotify = (() => {
   // ── 5.  INIT  ────────────────────────────────
 
   function init(supabase, restaurantId, onUpdate) {
-    requestPermission();
+    registerWebPush(supabase, restaurantId);
     
     return supabase
       .channel(`godine-notify-${restaurantId}`)

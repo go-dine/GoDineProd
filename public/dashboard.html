@@ -954,19 +954,7 @@ function notifyOwner(title, body) {
   }
   toast(`🔔 ${title}: ${body}`);
 
-  // Service Worker notification (works in background tabs)
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.ready.then(reg => {
-      reg.showNotification(title, {
-        body: body,
-        icon: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png',
-        badge: 'https://cdn-icons-png.flaticon.com/512/3500/3500833.png',
-        vibrate: [200, 100, 200],
-        tag: 'godine-order-' + Date.now(),
-        renotify: true
-      });
-    });
-  } else if ('Notification' in window && Notification.permission === 'granted' && typeof GoDineNotify === 'undefined') {
+  if ('Notification' in window && Notification.permission === 'granted' && typeof GoDineNotify === 'undefined') {
     // Only use basic notification if premium one isn't active
     new Notification(title, {
       body: body,
