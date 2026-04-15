@@ -118,5 +118,1214 @@
     "name": "Paneer & Golden Corn Special",
     "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (027beb52-57ee-45b1-b5b3-c9ba3a741804)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
     "timestamp": "2026-04-14T18:03:22.991Z"
+  },
+  {
+    "id": "4b877620-4b17-478d-ad77-ec29a410c031",
+    "name": "Indian Tandoori Paneer - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/indian-tandoori-paneer---medium.jpg",
+    "timestamp": "2026-04-15T11:36:11.324Z"
+  },
+  {
+    "id": "c5b901ae-5698-417b-a26a-fa07133a6fad",
+    "name": "Capsicum Mania",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/capsicum-mania.jpg",
+    "timestamp": "2026-04-15T11:36:15.807Z"
+  },
+  {
+    "id": "93bc1fa3-04e7-42ff-8598-1dd04470c81e",
+    "name": "Paneer Tikka Butter Masala - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/paneer-tikka-butter-masala---medium.jpg",
+    "timestamp": "2026-04-15T11:36:19.937Z"
+  },
+  {
+    "id": "730a6cc8-9fc1-41b4-bd42-5c189502ac99",
+    "name": "Cheese Burst Pizza - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/cheese-burst-pizza---regular.jpg",
+    "timestamp": "2026-04-15T11:36:24.381Z"
+  },
+  {
+    "id": "8287c793-c205-4de9-9f48-cdb833da7202",
+    "name": "Veg Extra Loaded (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/veg-extra-loaded--regular-.jpg",
+    "timestamp": "2026-04-15T11:36:28.473Z"
+  },
+  {
+    "id": "689eb5df-b293-41cc-b4fd-039ccea951e2",
+    "name": "Paneer & Capsicum Special",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/paneer---capsicum-special.jpg",
+    "timestamp": "2026-04-15T11:36:32.524Z"
+  },
+  {
+    "id": "cfd55865-e9e0-4449-9c6e-96523e2e6a88",
+    "name": "Spicy Paneer (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/spicy-paneer--regular-.jpg",
+    "timestamp": "2026-04-15T11:36:36.975Z"
+  },
+  {
+    "id": "94fdfc8e-eeb3-4ad9-b5c4-dbe11b7f56f7",
+    "name": "Veggie Supreme (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/veggie-supreme--regular-.jpg",
+    "timestamp": "2026-04-15T11:36:41.179Z"
+  },
+  {
+    "id": "02ba364d-f809-4127-b705-fd84f0cb63e1",
+    "name": "Blue Lagoon mocktail",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/blue-lagoon-mocktail.jpg",
+    "timestamp": "2026-04-15T11:36:45.627Z"
+  },
+  {
+    "id": "f1f0a1c8-bfae-47cf-9073-28c989271680",
+    "name": "Cold Coffee",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/cold-coffee.jpg",
+    "timestamp": "2026-04-15T11:36:49.681Z"
+  },
+  {
+    "id": "1704ead5-461c-4768-9e35-bebdc359d0c1",
+    "name": "banana shake",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/banana-shake.jpg",
+    "timestamp": "2026-04-15T11:36:54.160Z"
+  },
+  {
+    "id": "c7d2de2f-6592-424b-9260-fa20bc55f185",
+    "name": "mishrambu shake",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/mishrambu-shake.jpg",
+    "timestamp": "2026-04-15T11:36:58.192Z"
+  },
+  {
+    "id": "4d57b772-dafe-46db-a7f7-9d5bc57676ea",
+    "name": "French Fries (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/french-fries--full-.jpg",
+    "timestamp": "2026-04-15T11:37:02.397Z"
+  },
+  {
+    "id": "de01b809-bcb0-4362-9311-ebf8b57d8ea8",
+    "name": "Veg Double Combo",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/veg-double-combo.jpg",
+    "timestamp": "2026-04-15T11:37:06.406Z"
+  },
+  {
+    "id": "e35821b5-0608-48bd-b348-14518389b4c3",
+    "name": "Veg Parcle Combo",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/veg-parcle-combo.jpg",
+    "timestamp": "2026-04-15T11:37:10.474Z"
+  },
+  {
+    "id": "9c99d2cf-765f-447c-98ba-5a878557db91",
+    "name": "Country Side - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/country-side---medium.jpg",
+    "timestamp": "2026-04-15T11:37:14.798Z"
+  },
+  {
+    "id": "5bc0d93e-9a8b-4e99-b80a-25e2cecc036c",
+    "name": "Spicy Delight - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/spicy-delight---medium.jpg",
+    "timestamp": "2026-04-15T11:37:18.884Z"
+  },
+  {
+    "id": "84d987d4-bd70-405b-90e2-a0d4bff4bb72",
+    "name": "Garlic Bread",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/garlic-bread.jpg",
+    "timestamp": "2026-04-15T11:37:22.790Z"
+  },
+  {
+    "id": "39ce1951-d2db-4078-bed1-c39dd84c677d",
+    "name": "Pizza",
+    "restaurant": "pizza-hut",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-hut/pizza.jpg",
+    "timestamp": "2026-04-15T11:37:26.854Z"
+  },
+  {
+    "id": "11eb22b8-c47d-438f-835e-7ae833414587",
+    "name": "oreo shake",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/oreo-shake.jpg",
+    "timestamp": "2026-04-15T11:37:30.776Z"
+  },
+  {
+    "id": "30cebd99-d0c1-4643-84f0-60fcc3a668e4",
+    "name": "Chilli potato (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/chilli-potato--half-.jpg",
+    "timestamp": "2026-04-15T11:37:44.253Z"
+  },
+  {
+    "id": "ea9c1d29-ac57-424e-962e-f7de23e98fb6",
+    "name": "Spicy Paneer (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/spicy-paneer--medium-.jpg",
+    "timestamp": "2026-04-15T11:37:48.737Z"
+  },
+  {
+    "id": "305f4c1d-354c-4fad-a0bf-0a9c64b94594",
+    "name": "Mexicana (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/mexicana--regular-.jpg",
+    "timestamp": "2026-04-15T11:37:52.739Z"
+  },
+  {
+    "id": "541f4a74-860f-4b52-b251-c1ff17e4a65d",
+    "name": "Mexicana (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/mexicana--medium-.jpg",
+    "timestamp": "2026-04-15T11:37:57.045Z"
+  },
+  {
+    "id": "78b0b394-0b54-4ce2-b88a-41e2e94cab14",
+    "name": "Veg steam Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-steam-momo--full-.jpg",
+    "timestamp": "2026-04-15T11:38:01.011Z"
+  },
+  {
+    "id": "b868b4bb-c29f-452d-a813-06d859708528",
+    "name": "Veg fried Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-fried-momo--half-.jpg",
+    "timestamp": "2026-04-15T11:38:05.220Z"
+  },
+  {
+    "id": "14f69bff-a7d5-456f-8d6a-0ea8ecd46219",
+    "name": "Veg fried Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-fried-momo--full-.jpg",
+    "timestamp": "2026-04-15T11:38:09.187Z"
+  },
+  {
+    "id": "3b755ce6-068f-450a-b07a-93fe8dd64604",
+    "name": "Veg Kurkure Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-kurkure-momo--half-.jpg",
+    "timestamp": "2026-04-15T11:38:13.088Z"
+  },
+  {
+    "id": "6e20ad8e-0487-4c08-bdaa-3aaae3c371b6",
+    "name": "Veg steam Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-steam-momo--half-.jpg",
+    "timestamp": "2026-04-15T11:38:17.587Z"
+  },
+  {
+    "id": "de68da2b-7ff6-4187-bad3-03576dfd4742",
+    "name": "Cloud 7 (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/cloud-7--medium-.jpg",
+    "timestamp": "2026-04-15T11:38:21.617Z"
+  },
+  {
+    "id": "a88990e1-7f6a-4572-8b9b-f2e6aae131af",
+    "name": "Veg Kurkure Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-kurkure-momo--full-.jpg",
+    "timestamp": "2026-04-15T11:38:25.860Z"
+  },
+  {
+    "id": "d1e2dbde-c161-4a5d-a262-632e2ada0c28",
+    "name": "Spicy Paneer - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/spicy-paneer---medium.jpg",
+    "timestamp": "2026-04-15T11:38:29.929Z"
+  },
+  {
+    "id": "b54a6f62-446d-45ea-b123-d7263d74f3f6",
+    "name": "Spicy Parcel Veg",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/spicy-parcel-veg.jpg",
+    "timestamp": "2026-04-15T11:38:33.833Z"
+  },
+  {
+    "id": "536bfeaa-cd82-4d3b-8adb-dc0554812b0b",
+    "name": "Chai",
+    "restaurant": "pizza-hut",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-hut/chai.jpg",
+    "timestamp": "2026-04-15T11:38:38.014Z"
+  },
+  {
+    "id": "7ad5f647-f9f2-4518-9962-375266f05742",
+    "name": "Calzone Veg",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/calzone-veg.jpg",
+    "timestamp": "2026-04-15T11:38:42.166Z"
+  },
+  {
+    "id": "593d9e25-84ff-4038-aaa1-9a8c790d8683",
+    "name": "Spicy Delight (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/spicy-delight--medium-.jpg",
+    "timestamp": "2026-04-15T11:38:46.093Z"
+  },
+  {
+    "id": "afce5ed0-4ffc-4ddb-9e2b-1b7ccd8242a0",
+    "name": "Country Feast (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/country-feast--medium-.jpg",
+    "timestamp": "2026-04-15T11:38:49.987Z"
+  },
+  {
+    "id": "ac177396-c94b-4205-bb37-a211841d7921",
+    "name": "Party Meal",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/party-meal.jpg",
+    "timestamp": "2026-04-15T11:38:53.886Z"
+  },
+  {
+    "id": "19eed328-bcfb-4e49-97dd-8dc858b0c762",
+    "name": "Gourmate (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/gourmate--regular-.jpg",
+    "timestamp": "2026-04-15T11:38:58.022Z"
+  },
+  {
+    "id": "1330be04-167a-4df2-b3a8-99a32c8bf584",
+    "name": "Gourmate (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/gourmate--medium-.jpg",
+    "timestamp": "2026-04-15T11:39:02.775Z"
+  },
+  {
+    "id": "d76b4b4e-ea4e-4f5a-8a8c-740ebe45cf5b",
+    "name": "Double Loaded Cheese (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/double-loaded-cheese--medium-.jpg",
+    "timestamp": "2026-04-15T11:39:14.193Z"
+  },
+  {
+    "id": "29067787-5f72-40a5-b649-2bf6452337bb",
+    "name": "Deluxe (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/deluxe--regular-.jpg",
+    "timestamp": "2026-04-15T11:39:18.548Z"
+  },
+  {
+    "id": "9a0e8f3b-1703-43eb-8e4a-3efdec64fa14",
+    "name": "Paneer Sandwich",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-sandwich.jpg",
+    "timestamp": "2026-04-15T11:39:22.655Z"
+  },
+  {
+    "id": "3e5daad3-7f49-495f-841a-2f6bf52535ce",
+    "name": "halwa",
+    "restaurant": "grand",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/grand/halwa.jpg",
+    "timestamp": "2026-04-15T11:39:26.648Z"
+  },
+  {
+    "id": "f586dc1a-5d2f-4cee-8197-8fc26c12e96b",
+    "name": "Cheese Corn (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/cheese-corn--medium-.jpg",
+    "timestamp": "2026-04-15T11:39:30.859Z"
+  },
+  {
+    "id": "82198349-b9cc-403f-a4a9-d51e4fd0f17a",
+    "name": "Cheese Tomato (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/cheese-tomato--regular-.jpg",
+    "timestamp": "2026-04-15T11:39:35.252Z"
+  },
+  {
+    "id": "30c0628f-8d7e-454c-b736-6f44a85b9359",
+    "name": "Margherita (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/margherita--regular-.jpg",
+    "timestamp": "2026-04-15T11:39:39.641Z"
+  },
+  {
+    "id": "15e1ee63-d093-41a0-a249-a906a5d68e91",
+    "name": "Pasta Pizza (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/pasta-pizza--regular-.jpg",
+    "timestamp": "2026-04-15T11:39:43.937Z"
+  },
+  {
+    "id": "10c09e1d-def9-4998-b690-bc8e5841a46f",
+    "name": "Manchurian (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/manchurian--half-.jpg",
+    "timestamp": "2026-04-15T11:39:48.371Z"
+  },
+  {
+    "id": "39b798c2-df07-402f-a87d-aa15efd2a28b",
+    "name": "Paneer Manchurian (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-manchurian--full-.jpg",
+    "timestamp": "2026-04-15T11:39:52.750Z"
+  },
+  {
+    "id": "611d2498-f828-46e2-aed5-20a3c7b26ed4",
+    "name": "Chilli Paneer (Dry/Gravy)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/chilli-paneer--dry-gravy-.jpg",
+    "timestamp": "2026-04-15T11:39:57.297Z"
+  },
+  {
+    "id": "e4d3b7f6-9bfd-441e-876a-6de108abbcba",
+    "name": "Hot Chocolate",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/hot-chocolate.jpg",
+    "timestamp": "2026-04-15T11:40:01.869Z"
+  },
+  {
+    "id": "8d34f5b4-b8c9-48fd-98b8-ee2e30ef9284",
+    "name": "butterscotch",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/butterscotch.jpg",
+    "timestamp": "2026-04-15T11:40:06.180Z"
+  },
+  {
+    "id": "921619f6-25e2-4535-a9d5-b21d1396eec4",
+    "name": "Veg chilly Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-chilly-momo--full-.jpg",
+    "timestamp": "2026-04-15T11:40:10.631Z"
+  },
+  {
+    "id": "39f07511-3637-4291-a5e8-e0838aaa4634",
+    "name": "Veg Afgani Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-afgani-momo--half-.jpg",
+    "timestamp": "2026-04-15T11:40:15.882Z"
+  },
+  {
+    "id": "23a602f7-d5fa-4e23-ab78-19264e0f6ab4",
+    "name": "Veg Extra Loaded (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/veg-extra-loaded--medium-.jpg",
+    "timestamp": "2026-04-15T11:40:21.019Z"
+  },
+  {
+    "id": "de1a8f44-40d3-40cd-a010-467e0234dea1",
+    "name": "Veggie Supreme (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/veggie-supreme--medium-.jpg",
+    "timestamp": "2026-04-15T11:40:25.363Z"
+  },
+  {
+    "id": "a2746b97-faaf-4469-abe0-8a369dbdbf0f",
+    "name": "Cloud 7 (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/cloud-7--regular-.jpg",
+    "timestamp": "2026-04-15T11:40:29.556Z"
+  },
+  {
+    "id": "3695ad74-6873-4557-8d4b-15a7feee2530",
+    "name": "Paneer & Golden Corn Special",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/paneer---golden-corn-special.jpg",
+    "timestamp": "2026-04-15T11:40:33.933Z"
+  },
+  {
+    "id": "d339ca54-de5e-4a7a-8b36-dd1d324da193",
+    "name": "kiwi",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/kiwi.jpg",
+    "timestamp": "2026-04-15T11:40:38.382Z"
+  },
+  {
+    "id": "fdce77d1-cd59-4d40-80f0-a22d3f268ba3",
+    "name": "Cheese Corn (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/cheese-corn--regular-.jpg",
+    "timestamp": "2026-04-15T11:40:48.935Z"
+  },
+  {
+    "id": "426d9881-a3b3-4ee8-ab2e-689390450f22",
+    "name": "Cheese Paneer (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/cheese-paneer--regular-.jpg",
+    "timestamp": "2026-04-15T11:40:53.548Z"
+  },
+  {
+    "id": "d04fdc12-ad2a-465a-9bca-ec3f7e77c64b",
+    "name": "Cheese Tomato (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/cheese-tomato--medium-.jpg",
+    "timestamp": "2026-04-15T11:40:57.770Z"
+  },
+  {
+    "id": "b36bf94d-9272-4206-94b4-72dc068d8382",
+    "name": "Margherita (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/margherita--medium-.jpg",
+    "timestamp": "2026-04-15T11:41:01.950Z"
+  },
+  {
+    "id": "b316c8c8-94da-40b8-9085-a97432545d0e",
+    "name": "Farmfresh (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/farmfresh--medium-.jpg",
+    "timestamp": "2026-04-15T11:41:06.114Z"
+  },
+  {
+    "id": "12a10cc1-d1ca-4bf3-a5fe-c83208811f8e",
+    "name": "Pasta Pizza (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/pasta-pizza--medium-.jpg",
+    "timestamp": "2026-04-15T11:41:10.290Z"
+  },
+  {
+    "id": "1448ad1e-e42d-465f-bf71-492bc487613b",
+    "name": "Deluxe Veggie - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/deluxe-veggie---large.jpg",
+    "timestamp": "2026-04-15T11:41:14.814Z"
+  },
+  {
+    "id": "c7d88084-d0b2-44f7-b427-64dd71cc1d12",
+    "name": "Cheese Pasta Pizza - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/cheese-pasta-pizza---large.jpg",
+    "timestamp": "2026-04-15T11:41:19.036Z"
+  },
+  {
+    "id": "94a8685f-3f98-4b27-917e-3cfd6e467a55",
+    "name": "4 Paper (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/4-paper--regular-.jpg",
+    "timestamp": "2026-04-15T11:41:23.130Z"
+  },
+  {
+    "id": "a97ef805-e1a8-4b2c-a1ae-f2686b7d7812",
+    "name": "Kid Meal",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/kid-meal.jpg",
+    "timestamp": "2026-04-15T11:41:27.099Z"
+  },
+  {
+    "id": "052a5e39-30ab-427a-ad0b-c212415b2ba8",
+    "name": "Meal for 2",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/meal-for-2.jpg",
+    "timestamp": "2026-04-15T11:41:31.062Z"
+  },
+  {
+    "id": "f9957971-29b9-469a-ae6f-6423771b8df3",
+    "name": "Honey chilli potato (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/honey-chilli-potato--full-.jpg",
+    "timestamp": "2026-04-15T11:41:35.130Z"
+  },
+  {
+    "id": "58a0d1bd-07f3-4d6b-8e8f-1c1d96351667",
+    "name": "Vegetable Maggie",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/vegetable-maggie.jpg",
+    "timestamp": "2026-04-15T11:41:39.263Z"
+  },
+  {
+    "id": "a8faf4e4-ecb6-4c43-b5cb-cfedbdd90335",
+    "name": "Paneer Noodles (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-noodles--half-.jpg",
+    "timestamp": "2026-04-15T11:41:44.135Z"
+  },
+  {
+    "id": "e23530c7-4ea6-48f6-8a50-fe6ea30ffecf",
+    "name": "Paneer Noodles (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-noodles--full-.jpg",
+    "timestamp": "2026-04-15T11:41:48.350Z"
+  },
+  {
+    "id": "3bbee558-2264-4791-bf25-902d01dff3a6",
+    "name": "Chilli garlic Noodles (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/chilli-garlic-noodles--full-.jpg",
+    "timestamp": "2026-04-15T11:41:52.419Z"
+  },
+  {
+    "id": "25d8d671-c37c-46f8-aebe-7303ab1d1e78",
+    "name": "Garlic Noodles (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/garlic-noodles--half-.jpg",
+    "timestamp": "2026-04-15T11:41:56.498Z"
+  },
+  {
+    "id": "e19c7dcf-d9cd-4998-9883-65ed5178174c",
+    "name": "Mushroom Noodles (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/mushroom-noodles--half-.jpg",
+    "timestamp": "2026-04-15T11:42:00.473Z"
+  },
+  {
+    "id": "722d2fb0-996f-4608-9fbf-9e66c24f573e",
+    "name": "Cicken vada paw",
+    "restaurant": "grand",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/grand/cicken-vada-paw.jpg",
+    "timestamp": "2026-04-15T11:42:04.547Z"
+  },
+  {
+    "id": "7003f4c3-0d50-4fb9-8c53-fd68899adbd2",
+    "name": "Mushroom Noodles (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/mushroom-noodles--full-.jpg",
+    "timestamp": "2026-04-15T11:42:09.341Z"
+  },
+  {
+    "id": "d7693283-e0dd-454b-90bd-175d33152bd5",
+    "name": "greenapple mocktail",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/greenapple-mocktail.jpg",
+    "timestamp": "2026-04-15T11:42:13.329Z"
+  },
+  {
+    "id": "73f69eab-f179-4b8b-9307-198ce68e1f13",
+    "name": "Butter Maggie",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (ea2193d0-05cd-44ba-aea3-74e8777d28a6)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:14.939Z"
+  },
+  {
+    "id": "048a31d5-e2fd-4210-b914-d8a50a53e94d",
+    "name": "crispy corn 🌽 half",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (e2a407a5-31c1-45f8-9ed1-a519adeee80d)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:16.550Z"
+  },
+  {
+    "id": "0a749c55-16fb-4fb5-807d-029731b100f9",
+    "name": "Cheese Paneer (Medium)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (83ce6e8e-550a-4a2e-82f1-6615a84500f0)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:18.151Z"
+  },
+  {
+    "id": "4105f0dd-4209-4d23-a97a-c5a2665b0e4c",
+    "name": "Farm House - Medium",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (277d6f3c-76fc-4504-81e5-d0033cf33c7f)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:19.747Z"
+  },
+  {
+    "id": "96a6a909-2e03-4b94-9f8e-7721302bda6e",
+    "name": "Mexicana - Medium",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (1a05167e-3cd1-4633-b9bd-aa098f1cb4cd)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:21.348Z"
+  },
+  {
+    "id": "1d74b479-5579-4351-9e60-f464deb2c4e3",
+    "name": "Mexicana - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (d7954414-a4e2-4852-b91a-c9782f2ba33a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:22.953Z"
+  },
+  {
+    "id": "85fe3df6-43d0-4c68-82b3-d4740340853e",
+    "name": "Deluxe (Medium)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2a49c1a8-21e9-47b8-a1ad-cfb81673a6dc)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:24.551Z"
+  },
+  {
+    "id": "3327f269-ebf5-4402-a48e-3042910f4005",
+    "name": "Hakka Noodles (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (b7a77fa8-06bf-43fd-9c25-d717f68fc4ec)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:26.155Z"
+  },
+  {
+    "id": "a28fbd8b-8852-47bd-a7cc-4430eb81119d",
+    "name": "Veg Noodles (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (03017974-f865-43ad-adbc-e0318f0a77c9)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:27.752Z"
+  },
+  {
+    "id": "9a484434-0d57-4fa1-8f24-e3850fb83f9d",
+    "name": "Jeera Fried rice (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (879dc2b1-7f08-4ca9-b3c7-eac170946b9e)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:29.356Z"
+  },
+  {
+    "id": "c0658f1d-deed-4629-8e33-3412fc6a1d86",
+    "name": "Mushroom Fried rice (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (df8a9501-5bba-4a0b-97a7-85f0b16924f6)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:30.955Z"
+  },
+  {
+    "id": "e823ddd0-c03e-4407-81ff-52ddbe1265e4",
+    "name": "Paneer Fried rice (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (3a079de7-805a-4503-b4ba-cd34df0ea3fd)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:32.560Z"
+  },
+  {
+    "id": "170a1d94-2650-4085-843f-fd59306fca14",
+    "name": "Paneer Fried rice (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (e1547c58-3ed0-4a56-8e36-ba499ffd56c6)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:34.168Z"
+  },
+  {
+    "id": "56c55a03-c033-4c07-8d6c-592550901ed0",
+    "name": "Manchurian Fried rice (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (72ff7060-1527-4eb8-9daf-d21ac47717e1)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:35.779Z"
+  },
+  {
+    "id": "e679d370-edcd-4e04-b242-232efd390324",
+    "name": "Veg Fried rice (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (239d124d-8841-4216-a248-549f28dbd7e5)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:37.377Z"
+  },
+  {
+    "id": "4de8a0ac-52ae-4d44-81bd-421749645196",
+    "name": "Veg Fried rice (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (b917ba8b-6d3f-45cf-927e-3728bac87671)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:38.981Z"
+  },
+  {
+    "id": "37c4cdd9-3027-47f7-ae61-d4db199095ce",
+    "name": "Mexicana - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (f8e67468-f5bd-48e1-910b-dfe8e47d34ff)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:40.577Z"
+  },
+  {
+    "id": "6dc795e6-e27d-442e-9502-0f54d848f7af",
+    "name": "Veg Roll",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2c2ca182-c020-43d3-bc3e-93792b4f8454)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:42.181Z"
+  },
+  {
+    "id": "37b4ebd6-8230-411f-acb9-e00250815065",
+    "name": "Cheese Burst Pizza - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (8adf81a9-cea4-47fe-80d3-c3a6800f02e1)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:43.792Z"
+  },
+  {
+    "id": "88536981-4870-4c70-85e5-cc9019151694",
+    "name": "Farm House - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (3911b4d3-42f5-4a0f-b38e-1e247b5ea90e)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:45.436Z"
+  },
+  {
+    "id": "820164c4-64aa-490f-829e-47f6eb6484bf",
+    "name": "Country Side - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (c9db3c0e-71e1-4c11-889a-f60919d0a907)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:47.048Z"
+  },
+  {
+    "id": "3eceaa20-42a7-46dd-a808-11f300459f21",
+    "name": "Country Side - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (f6ff855e-6fb5-4297-be84-d257634b05da)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:48.713Z"
+  },
+  {
+    "id": "91ab372e-fdae-4d9d-a4de-cb04e5b23113",
+    "name": "Spicy Delight - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (5af97a80-bc8b-4aea-bf64-baeb2af09093)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:50.352Z"
+  },
+  {
+    "id": "dd32e39a-562e-45d9-807c-4a0187ae55cd",
+    "name": "Spicy Delight - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (dd00af88-c8b8-4e2c-8a08-c78718527bf6)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:51.969Z"
+  },
+  {
+    "id": "0c134d77-3398-4dc4-a8cc-3643b4f8ecd9",
+    "name": "Deluxe Veggie - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (d1b0d733-fc4a-4b02-9b1a-ad14782ca750)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:53.580Z"
+  },
+  {
+    "id": "af89b47c-23c2-431f-8f3e-c0c5daaa6da6",
+    "name": "Deluxe Veggie - Medium",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (ff6f31a3-bae5-434f-bdb0-c65610b971ab)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:55.182Z"
+  },
+  {
+    "id": "28c3c44a-1db1-4d29-ad7d-4d18a742d7bb",
+    "name": "Cheese Pasta Pizza - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (8c7589cb-944b-4543-b3cb-7b5e573d1361)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:56.795Z"
+  },
+  {
+    "id": "2462651d-bd68-4840-a357-992335763d6e",
+    "name": "Cheese Pasta Pizza - Medium",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (0fb672f8-b07a-487a-84d1-4441447121e5)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:42:58.401Z"
+  },
+  {
+    "id": "9a22f75b-2e72-4b42-8b9d-0ab0d60ca016",
+    "name": "Spicy Paneer - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (b450962d-a4ed-46e7-a6c5-14debd8868df)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:00.009Z"
+  },
+  {
+    "id": "ba8015f6-6943-4b67-aee6-459312683b21",
+    "name": "Spicy Paneer - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (f91a8a9d-be37-4745-a8b2-b492511d942c)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:01.620Z"
+  },
+  {
+    "id": "020650f1-b85a-491c-a3e5-71bdcb52b155",
+    "name": "Indian Tandoori Paneer - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (aec6fcc0-cdbc-414c-915d-b28b4b9e353a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:03.221Z"
+  },
+  {
+    "id": "71889285-f5fb-4903-aa1a-618763778f14",
+    "name": "Cloud 7 - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (e5e3e82a-f96a-4ba8-b3d1-b9c364dff66e)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:04.832Z"
+  },
+  {
+    "id": "9336f589-97d7-4362-a9cf-95157d7007aa",
+    "name": "Cloud 7 - Medium",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (5176e449-d511-41a7-82fa-2a15177ddea7)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:06.443Z"
+  },
+  {
+    "id": "147dd689-8a8c-429e-ac5d-b1717f40f9f6",
+    "name": "Veg Extra Loaded - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (4058ba8d-f4ea-40e7-925a-be0c380c9a79)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:08.040Z"
+  },
+  {
+    "id": "f91021e2-f1d0-46cb-a91d-75bc19d1bf56",
+    "name": "Indian Tandoori Paneer - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (32d2ea0f-ca93-48b5-95fc-e7608113ef6a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:09.643Z"
+  },
+  {
+    "id": "ce78ea38-83ed-468d-a16e-3109a1616ed5",
+    "name": "Onion Mania",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (471a4c7d-524c-40a5-9803-f1a9e273cfc8)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:11.251Z"
+  },
+  {
+    "id": "557e54aa-b617-48ce-9002-d5bb24470e9a",
+    "name": "Golden Corn Mania",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (e1d7eea5-15e1-4a6a-b656-8c684db4e7bd)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:12.848Z"
+  },
+  {
+    "id": "cd425614-e94c-421a-a4f3-775cbed4d1e1",
+    "name": "Paneer Tikka Butter Masala - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (9b81d7ac-3013-4d06-9f1f-26a138392a7b)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:14.451Z"
+  },
+  {
+    "id": "7cc41253-c167-42b2-9bc8-632048518285",
+    "name": "Veg Extra Loaded - Medium",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (0a105a50-7e2f-4ad0-ae6d-08d934b47bb3)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:16.053Z"
+  },
+  {
+    "id": "13ef1a80-4c83-40be-bfcc-c0c51f5dcc01",
+    "name": "Farm House - Regular",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (fa5eac4a-24d4-4606-a164-51fdde3d4a8e)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:17.655Z"
+  },
+  {
+    "id": "62857afd-e430-4e63-84e1-de7310cef94e",
+    "name": "Cheese Burst Pizza - Medium",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (da7a9a7e-c19d-4c10-bd15-7ada93cbfbea)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:19.261Z"
+  },
+  {
+    "id": "c7be7382-d904-459d-963a-9e48367bbaa4",
+    "name": "Spring Roll",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (a21a0503-ee94-4a1a-aad9-33923eacdd07)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:20.863Z"
+  },
+  {
+    "id": "2f425618-8e92-4618-928d-478df517b49f",
+    "name": "Premium Veg Pack of 4 + 1.25L Cold Drink",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (83d15fdd-3f62-4837-8e6e-2d161bbd28cb)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:22.466Z"
+  },
+  {
+    "id": "c27faaad-0b34-4308-99d5-de5a54e83db7",
+    "name": "Paneer Roll",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (3abf1858-db45-4f66-99dd-14c0e519bd0c)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:24.067Z"
+  },
+  {
+    "id": "0f9980c9-e54e-4f56-a722-6a3b5f3794b5",
+    "name": "Veg Sandwich",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (06ab86e4-1a9d-42de-8799-ea3d6902f932)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:25.667Z"
+  },
+  {
+    "id": "261942cd-8441-44ba-916b-a080a598ba42",
+    "name": "Cheese sandwich",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (b285a893-cb3c-4c37-8a15-e83e7e3c543f)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:27.264Z"
+  },
+  {
+    "id": "36e33231-09b2-4077-a99d-4d1351adec8e",
+    "name": "Tea",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (a3b48374-fb3d-4a0e-a20c-f55e3fa58f57)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:28.865Z"
+  },
+  {
+    "id": "14bde4e6-965d-40d4-ba8b-94200becf871",
+    "name": "Coffee",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (813bcfcb-83c0-47b0-a12e-9ed331a022a7)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:30.470Z"
+  },
+  {
+    "id": "e39b3299-b085-4f5b-b87c-f39a0419b6d8",
+    "name": "pineapple shake",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (748b1d6e-2f2d-455e-8c9a-8684ac645e05)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:32.069Z"
+  },
+  {
+    "id": "8ae50db4-a2a7-4316-bf2b-8bf9dd501bc0",
+    "name": "mango shake",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (71199ee4-50c6-42de-9566-9b69e37b097d)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:33.675Z"
+  },
+  {
+    "id": "d43ccabc-0896-4a57-8d56-2259ff268d83",
+    "name": "blueberry shake",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (a39cbf49-afd7-44d0-bdcd-75f0eed491b1)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:35.272Z"
+  },
+  {
+    "id": "a4d2c753-e426-48e9-a1b7-d9eb2cab37ed",
+    "name": "kitkat shake",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (4607a8e3-c7ad-4787-a939-ea561ebf648f)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:36.873Z"
+  },
+  {
+    "id": "01e691cc-2dc3-418e-b120-4d7e624764d0",
+    "name": "strawberry shake",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (5c2c3e64-1fcd-478b-847b-eaa9ae4a9e5b)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:38.473Z"
+  },
+  {
+    "id": "08ee019c-b922-4d80-83b6-de5c564e760a",
+    "name": "French Fries (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (694411c2-b7df-4c49-b2e6-cbc9731a9368)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:40.081Z"
+  },
+  {
+    "id": "c5729f04-d5f3-474b-8180-d93ecbd4dd31",
+    "name": "Chilli potato (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (35b7e722-e6f8-401f-941e-5259f2bfafcc)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:41.686Z"
+  },
+  {
+    "id": "6232512e-acd0-4ed0-a43d-af495db92d19",
+    "name": "Honey chilli potato (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (d8b52b3f-5480-4bd8-9404-f6fbc84dc769)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:43.284Z"
+  },
+  {
+    "id": "5b646630-f3ae-4076-ad41-32695c542ddc",
+    "name": "Stuffed Garlic Bread",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (996793df-3bbc-4c28-a7b7-60f0d4a414fa)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:44.888Z"
+  },
+  {
+    "id": "4d8c0681-ac3d-464b-af5e-87f8995caa0d",
+    "name": "Stuffed Garlic Bread - Onion/Corn",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (0cb66b68-8928-4405-ad68-e088bebeed9a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:46.493Z"
+  },
+  {
+    "id": "a3e0b095-f7ce-4669-94e5-77e48d70493a",
+    "name": "Garlic Bread",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (c076ca90-7219-4827-a2dc-3130d56ca6d9)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:48.103Z"
+  },
+  {
+    "id": "945d53da-7baf-4a4c-b52f-eb9f14f6dce5",
+    "name": "Stuffed Garlic Bread - Paneer Tikka",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (e7f7cc75-2e35-48b9-a0e2-8fac121ad5f1)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:49.699Z"
+  },
+  {
+    "id": "f42cdca8-379e-40a0-adc9-cb618fd364e6",
+    "name": "Mushroom Roll",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (f4ef4de2-4fa0-45ae-891b-efd9cc593a3f)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:51.301Z"
+  },
+  {
+    "id": "4393b09c-7d29-44f4-adc4-cbdc41801226",
+    "name": "Veg Pasta Red / White",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (9377d64d-20bd-4928-bd34-d795f432894d)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:52.907Z"
+  },
+  {
+    "id": "f0af8e0d-9863-4c60-a341-e454a604015d",
+    "name": "Red sauce pasta",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (c2ae10be-4d15-47a5-b586-b9c9db1eb69c)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:54.505Z"
+  },
+  {
+    "id": "016f1183-e902-4bb5-9c20-88d7a8959abf",
+    "name": "mojito mocktail",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (4f36c2c7-3130-4568-8330-e5043075d6cc)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:56.115Z"
+  },
+  {
+    "id": "4dcc3c60-39d8-4c79-b570-5da1b1990868",
+    "name": "strawberry mocktail",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (667f4bc8-18a4-4a57-aff7-06be65bed637)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:57.715Z"
+  },
+  {
+    "id": "3a1c3d7b-af15-4b22-84e5-f013eaa0f9ed",
+    "name": "butter chicken",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (fc401b2c-00bc-4634-a9c1-739acecf4571)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:43:59.321Z"
+  },
+  {
+    "id": "96c0f492-1ca8-4cb0-ac3f-3922d0367d50",
+    "name": "Veg Afgani Momo (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (e418ab6a-fd61-43b6-8c69-3d46f8845256)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:00.943Z"
+  },
+  {
+    "id": "84b9a844-d130-4359-9d4c-fa9028f0a2fb",
+    "name": "Paneer Fried Momo (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (d220f713-4afb-411e-a184-54e7239c0b73)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:02.550Z"
+  },
+  {
+    "id": "bb877402-8461-45b8-b1b9-c77974cd7868",
+    "name": "Paneer Fried Momo (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (6f71c2b5-38f8-4fc3-9d63-adb021eadf06)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:04.165Z"
+  },
+  {
+    "id": "e44e6d20-0383-40be-9d8c-f59ac42a1f2d",
+    "name": "Paneer Kurkure Momo (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2e20c235-f4f0-4fc0-9d60-cf63871f36e3)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:05.776Z"
+  },
+  {
+    "id": "62850781-bb76-4305-bcf5-87791f27b943",
+    "name": "Paneer Kurkure Momo (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (a2286799-7204-413a-9dbc-e2a51e7f84b8)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:07.392Z"
+  },
+  {
+    "id": "788c18bf-e7ad-40b9-b0b7-aa99863fd0bd",
+    "name": "Paneer Chilli Momo (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (fe4fc332-4f0f-4626-8724-0b1ee397e71f)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:09.007Z"
+  },
+  {
+    "id": "2bc523cf-b988-4681-a9ef-af667462dc3c",
+    "name": "Paneer Chilli Momo (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (43e7ada4-66bd-45a0-b9df-e4a24f25b2ee)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:10.610Z"
+  },
+  {
+    "id": "ba80dd58-150f-47b2-9040-e245b25e2376",
+    "name": "4 Paper (Medium)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (7e6a2c52-0f71-4a58-9416-b8d63e38ff9a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:12.225Z"
+  },
+  {
+    "id": "b2b0a4fa-c9da-4d68-8bba-1304bc92236a",
+    "name": "Paneer Tikka Butter Masala - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (b61676f6-4d33-4380-b00f-5b5a3a4e64cc)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:13.839Z"
+  },
+  {
+    "id": "44eea011-0daa-49a3-ba34-dc20b7d62680",
+    "name": "Paneer & Onion Special",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (1ec1da31-1e51-44c9-a4e2-ea9fe0b7f874)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:15.444Z"
+  },
+  {
+    "id": "ed29d09b-981d-43e7-a64a-158b516b7aa8",
+    "name": "creamy momo half",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (b89384c2-03d0-421d-ba4c-164388e2d339)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:17.059Z"
+  },
+  {
+    "id": "d0f9f231-df49-4672-b7ee-79000a2835ef",
+    "name": "Veg chilly Momo (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (3ad9eba6-b145-4e24-9ed7-67326d2d0c51)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:18.661Z"
+  },
+  {
+    "id": "d75e1996-78c5-47a5-8b81-7015e1b57c0c",
+    "name": "Veg Tandoori Momo (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (0b4f8843-6477-42d3-b473-e188ec513335)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:20.280Z"
+  },
+  {
+    "id": "34034199-a5f1-45d6-8775-64156303610e",
+    "name": "Veg Tandoori Momo (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (47353ff2-e934-4611-9cec-f923cebb51bf)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:21.887Z"
+  },
+  {
+    "id": "fc22c936-f21b-4ee4-a073-2c5d65547571",
+    "name": "Paneer Steamed Momo (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (08736650-161e-4f96-9865-606d1baa47c0)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:23.500Z"
+  },
+  {
+    "id": "c99756e0-a1e7-4b84-9758-4bfcfc540a27",
+    "name": "Paneer Steamed Momo (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (40408972-b892-45be-aef2-aad4e69a8590)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:25.109Z"
+  },
+  {
+    "id": "c1c9c81b-2d80-4212-9abd-7bd2d02ebdee",
+    "name": "Spicy Delight (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (167ef728-b346-415c-9c75-f01a9672f3aa)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:26.722Z"
+  },
+  {
+    "id": "5df86e8f-dd33-463d-9f09-c6a70dd06eb1",
+    "name": "Country Feast (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (be40596b-fbe4-4f7f-9724-d9346a27c17b)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:28.338Z"
+  },
+  {
+    "id": "d8f18d0a-fde4-46d4-ab5b-df040f95e0ca",
+    "name": "Farmfresh (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (e94f0f49-50d0-4f7b-ad50-98c5a9e13775)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:29.961Z"
+  },
+  {
+    "id": "f79bd64e-fe86-4d7c-b7fd-42c39b82512b",
+    "name": "Veg Singles Combo",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (22765339-259d-4b7b-828d-29ff7a975a2e)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:31.571Z"
+  },
+  {
+    "id": "d119a14e-83ee-479f-82bc-1a4921467d28",
+    "name": "Garlic Combo",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2f6cb03f-760a-4bd3-95b9-f2fe5e851cff)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:33.183Z"
+  },
+  {
+    "id": "08a3982f-b74d-4741-81e8-f5a72ef7dd6f",
+    "name": "Paneer Manchurian (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (492180fb-c548-46d6-be51-4c00ddbefab9)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:34.788Z"
+  },
+  {
+    "id": "1b0e2b3d-d7d1-4d1c-b07f-79003363477c",
+    "name": "Manchurian (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (c38547fc-ec6f-4acd-9aa6-4dc457cd325d)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:36.401Z"
+  },
+  {
+    "id": "c66f5228-da79-4e3c-bab5-d980bcb8e36e",
+    "name": "Bun Makkhan",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2818014f-0872-47b4-ac0b-e5e9d6be6aa2)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:38.000Z"
+  },
+  {
+    "id": "d67cc581-f07e-45b3-976a-564464779a4c",
+    "name": "Plain Maggie",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (86acfc5c-9730-4540-83fd-e88876fe277d)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:39.599Z"
+  },
+  {
+    "id": "9641c4cb-cd22-4b66-8a54-d9201b6ea164",
+    "name": "Veg Noodles (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (4e9078cd-72cc-4366-b237-a35172832ebd)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:41.198Z"
+  },
+  {
+    "id": "5847961f-1ca9-432f-992e-66ce18e2a185",
+    "name": "Chilli garlic Noodles (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (b5bd2cf6-cbd0-4d00-b9e0-bacff8bb5f5a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:42.800Z"
+  },
+  {
+    "id": "bba3cf23-2fd4-40bc-836c-39a1e276bbdd",
+    "name": "Garlic Noodles (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (b0c76955-aa67-42f0-accd-4b210275f459)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:44.408Z"
+  },
+  {
+    "id": "8d0c5a06-455e-492b-ba0a-1fd75975fd95",
+    "name": "Hakka Noodles (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (4a4ac54e-5a1b-4958-bf2e-efbb09f0005d)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:46.014Z"
+  },
+  {
+    "id": "139f128f-11c5-4615-8afb-c0b37900a00e",
+    "name": "Jeera Fried rice (Half)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (839d0ba6-d273-47e1-92c7-8aef7852be29)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:47.619Z"
+  },
+  {
+    "id": "8946c0a1-f30e-49d3-9bdb-7b6107bb84de",
+    "name": "Mushroom Fried rice (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (d3e28a46-25f2-4da7-8678-6a220be4359a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:49.222Z"
+  },
+  {
+    "id": "99d70cbb-8e26-431c-bb3f-20b5f7b84db2",
+    "name": "Manchurian Fried rice (Full)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (dfa58ff2-4525-4b74-9abc-ba30bc030d6c)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:50.823Z"
+  },
+  {
+    "id": "42ded907-eb64-444d-a8f1-e3f8c7e1b7f3",
+    "name": "Mexican Paneer Roll",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (a4658253-7b2d-48b9-88bc-1f5ae37ffb85)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:52.430Z"
+  },
+  {
+    "id": "5592072a-3165-4811-ad62-f4eee57f6d83",
+    "name": "crispy corn 🌽 full",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (11badf95-dbe8-4319-a103-ecc655f7e00d)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:54.038Z"
+  },
+  {
+    "id": "85c42fb6-1da0-4119-9bad-7322249ed422",
+    "name": "Hot Lava Cake",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (5e463838-1609-4857-ad80-d984ab559fbf)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:55.643Z"
+  },
+  {
+    "id": "5fcc351d-e8b7-487e-ae2f-7f179723e2a1",
+    "name": "Meal for 1",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (6a69be9a-b55d-4362-bef0-adaea2b2b577)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:57.245Z"
+  },
+  {
+    "id": "b58345cb-2036-4b5c-afa3-53a8076c6eb7",
+    "name": "Meal for 3",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (46d545f7-716e-4d85-8156-60a61c74a131)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:44:58.849Z"
+  },
+  {
+    "id": "5c7f33dc-7304-4284-8953-f2aed33ce9af",
+    "name": "Cloud 7 - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (3a48be2b-97bd-4fa9-a2df-9a9be3182dab)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:45:00.460Z"
+  },
+  {
+    "id": "75e4a541-61fc-40ad-a82f-c84190c7aaab",
+    "name": "Veg Extra Loaded - Large",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (7fd90b32-14c6-4be4-9989-13db9e66ebd6)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:45:02.070Z"
+  },
+  {
+    "id": "55a03d64-6444-4c59-80c9-82e13c996cb1",
+    "name": "White sauce pasta",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (514e25e0-9672-4597-8f2a-be203413f9e5)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:45:03.672Z"
+  },
+  {
+    "id": "d09c16b3-08b4-458b-8a80-4a60fa08c232",
+    "name": "Double Loaded Cheese (Regular)",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (56b3974b-f49c-4a93-9fbf-9243983d816b)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-15T11:45:05.271Z"
   }
 ]

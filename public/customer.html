@@ -54,9 +54,14 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
 .eta-highlight{font-weight:700;color:#3498db;}
 
 .order-items{margin-top:16px;border-top:1px solid rgba(255,255,255,0.05);padding-top:16px;}
-.ci-item{display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:8px;color:#bbb;}
-.ci-name{display:flex;gap:8px;}
-.ci-qty{font-weight:700;color:#fff;}
+.ci-item{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:8px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px solid rgba(255,255,255,0.04);}
+.ci-visual{width:48px;height:48px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.05);}
+.ci-img{width:100%;height:100%;object-fit:cover;}
+.ci-emoji{font-size:1.5rem;}
+.ci-info{flex:1;min-width:0;}
+.ci-name-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;}
+.ci-name{font-weight:600;font-size:0.95rem;color:#fff;}
+.ci-qty{font-size:0.8rem;color:#888;}
 .order-total{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;}
 
 .empty-state{text-align:center;padding:40px 20px;color:#888;}
@@ -358,7 +363,18 @@ function createOrderCard(o) {
       <div class="order-items">
         ${o.items.map(i => `
           <div class="ci-item">
-            <span class="ci-name"><span class="ci-qty">${i.qty}×</span> ${i.name}</span>
+            <div class="ci-visual">
+              ${i.image_url 
+                ? `<img src="${i.image_url}" class="ci-img" alt="${i.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                   <div class="ci-emoji" style="display:none">${i.emoji || '🍽️'}</div>` 
+                : `<div class="ci-emoji">${i.emoji || '🍽️'}</div>`}
+            </div>
+            <div class="ci-info">
+              <div class="ci-name-row">
+                <span class="ci-name">${i.name}</span>
+                <span class="ci-qty">${i.qty}×</span>
+              </div>
+            </div>
           </div>
         `).join('')}
       </div>

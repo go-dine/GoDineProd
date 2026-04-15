@@ -65,8 +65,18 @@ async function generateAIImage(prompt) {
 
   // Cloudflare returns an image buffer directly for this model or a JSON with base64/url depending on response
   // Flux returns an image stream (application/octet-stream)
-  const buffer = await response.buffer();
-  return buffer;
+  const resText = await response.text();
+  try {
+    const json = JSON.parse(resText);
+    if (json.result && json.result.image) {
+      return Buffer.from(json.result.image, 'base64');
+    } else {
+      throw new Error("Invalid JSON response shape from Cloudflare AI");
+    }
+  } catch (e) {
+    // If it's not JSON, maybe it's a direct buffer stream
+    return Buffer.from(resText, 'binary');
+  }
 }
 
 async function run() {
@@ -78,7 +88,7 @@ async function run() {
     .from('dishes')
     .select('*, restaurants(name, slug)')
     .eq('image_generated', false)
-    .limit(20);
+    .limit(200);
 
   if (fetchErr) {
     console.error('Failed to fetch dishes:', fetchErr);
