@@ -1074,14 +1074,19 @@ async function openRazorpayRenewal() {
   btn.disabled = true;
 
   try {
-    const amount = 24900; // Hardcoded default Pro plan for renewals for now
+    const amount = 24900; // Default Pro plan renewal
     const selectedPlanId = 2; 
 
-    const orderRes = await fetch(`${CONFIG.supabaseUrl}/functions/v1/create-razorpay-order`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, plan: selectedPlanId })
-    });
+    let orderRes;
+    try {
+      orderRes = await fetch(`${CONFIG.supabaseUrl}/functions/v1/create-razorpay-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, plan: selectedPlanId })
+      });
+    } catch (networkErr) {
+      throw new Error('Payment service is not available yet. Please contact the admin to deploy payment functions.');
+    }
     const orderData = await orderRes.json();
 
     if (!orderRes.ok) throw new Error(orderData.error || "Failed to create order");
@@ -1133,7 +1138,7 @@ async function openRazorpayRenewal() {
     rzp.open();
 
   } catch(e) {
-    toast('⚠️ Error: ' + e.message);
+    toast('⚠️ ' + e.message);
     btn.innerText = ogText;
     btn.disabled = false;
   }

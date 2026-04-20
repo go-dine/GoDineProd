@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../theme.dart';
 import '../models/restaurant.dart';
 import '../models/order.dart';
@@ -13,7 +16,6 @@ import 'active_hours_screen.dart';
 import 'analytics_screen.dart';
 import 'announcement_screen.dart';
 import 'suggestions_screen.dart';
-
 class OverviewScreen extends StatefulWidget {
   final Restaurant restaurant;
   const OverviewScreen({super.key, required this.restaurant});
@@ -29,6 +31,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
   int _activeDishes = 0;
   List<Order> _recentOrders = [];
   RealtimeChannel? _channel;
+  late Razorpay _razorpay;
+  bool _isProcessingPayment = false;
+
+  static const String _razorpayKeyId = 'rzp_test_Sftzc4oWuOEUPH';
+  static const String _supabaseUrl = 'https://qqnrucnsvupfywyzlofa.supabase.co';
 
   @override
   void initState() {
@@ -39,11 +46,17 @@ class _OverviewScreenState extends State<OverviewScreen> {
       widget.restaurant.id, 
       (payload) => _load(),
     );
+
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
   void dispose() {
     if (_channel != null) SupabaseService.unsubscribe(_channel!);
+    _razorpay.clear();
     super.dispose();
   }
 
@@ -70,6 +83,114 @@ class _OverviewScreenState extends State<OverviewScreen> {
     return '${diff ~/ 3600} hr ago';
   }
 
+  // ── Razorpay Payment Flow ──
+
+  Future<void> _startRazorpayCheckout() async {
+    if (_isProcessingPayment) return;
+    setState(() => _isProcessingPayment = true);
+
+    try {
+      // 1. Create order via Edge Function
+      final res = await http.post(
+        Uri.parse('$_supabaseUrl/functions/v1/create-razorpay-order'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'amount': 24900, 'currency': 'INR'}),
+      );
+
+      if (res.statusCode != 200) {
+        final err = jsonDecode(res.body);
+        throw Exception(err['error'] ?? 'Failed to create order');
+      }
+
+      final orderData = jsonDecode(res.body);
+
+      // 2. Open Razorpay native checkout
+      final options = {
+        'key': _razorpayKeyId,
+        'amount': orderData['amount'],
+        'currency': orderData['currency'],
+        'name': 'Go Dine',
+        'description': 'Subscription Renewal',
+        'order_id': orderData['id'],
+        'theme': {'color': '#b6ff2a'},
+      };
+      _razorpay.open(options);
+    } catch (e) {
+      setState(() => _isProcessingPayment = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('⚠️ ${e.toString().replaceAll('Exception: ', '')}'),
+            backgroundColor: const Color(0xFF7F1D1D),
+          ),
+        );
+      }
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    try {
+      final res = await http.post(
+        Uri.parse('$_supabaseUrl/functions/v1/verify-razorpay-payment'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'razorpay_payment_id': response.paymentId,
+          'razorpay_order_id': response.orderId,
+          'razorpay_signature': response.signature,
+          'restaurant_id': widget.restaurant.id,
+          'plan_id': 2,
+        }),
+      );
+
+      if (res.statusCode != 200) {
+        final err = jsonDecode(res.body);
+        throw Exception(err['error'] ?? 'Verification failed');
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Payment successful! Subscription extended.'),
+            backgroundColor: Color(0xFF064E3B),
+          ),
+        );
+      }
+      _load(); // Reload data
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('⚠️ Verification error: ${e.toString().replaceAll('Exception: ', '')}'),
+            backgroundColor: const Color(0xFF7F1D1D),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessingPayment = false);
+    }
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    setState(() => _isProcessingPayment = false);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Payment failed: ${response.message ?? 'Unknown error'}'),
+          backgroundColor: const Color(0xFF7F1D1D),
+        ),
+      );
+    }
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    setState(() => _isProcessingPayment = false);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('External wallet selected: ${response.walletName}')),
+      );
+    }
+  }
+
   Widget? _buildSubscriptionBanner() {
     final subEnd = widget.restaurant.subscriptionEnd;
     if (subEnd == null) return null;
@@ -88,13 +209,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
       bgColor = const Color(0xFF450A0A);
       borderColor = const Color(0xFF7F1D1D);
       textColor = const Color(0xFFFCA5A5);
-      text = 'Your $typeStr has expired. Please contact support.';
+      text = 'Your $typeStr has expired. Renew to continue.';
       icon = Icons.warning_amber_rounded;
     } else if (diffDays <= 7) {
       bgColor = const Color(0xFF451A03);
       borderColor = const Color(0xFF78350F);
       textColor = const Color(0xFFFCD34D);
-      text = 'Your $typeStr ends in $diffDays day${diffDays > 1 ? 's' : ''}. Please renew soon.';
+      text = 'Your $typeStr ends in $diffDays day${diffDays > 1 ? 's' : ''}. Renew soon.';
       icon = Icons.hourglass_bottom_rounded;
     } else {
       bgColor = const Color(0xFF064E3B);
@@ -104,9 +225,15 @@ class _OverviewScreenState extends State<OverviewScreen> {
       icon = Icons.check_circle_outline_rounded;
     }
 
+    final String btnLabel = diffDays <= 0
+        ? 'Renew Now'
+        : diffDays <= 7
+            ? 'Renew Early'
+            : 'Upgrade';
+
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: bgColor,
         border: Border.all(color: borderColor),
@@ -119,7 +246,24 @@ class _OverviewScreenState extends State<OverviewScreen> {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(color: textColor, fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: textColor, fontSize: 12, fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            height: 32,
+            child: ElevatedButton(
+              onPressed: _isProcessingPayment ? null : _startRazorpayCheckout,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.lime,
+                foregroundColor: AppColors.bg,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+              ),
+              child: _isProcessingPayment
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.bg))
+                  : Text(btnLabel),
             ),
           ),
         ],
