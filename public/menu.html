@@ -92,41 +92,47 @@ a{color:inherit;text-decoration:none}
 .section-head:first-child{margin-top:0}
 
 /* ── DISH CARD ── */
+.dish-grid{
+  display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:12px;
+}
 .dish-card{
-  display:flex;align-items:flex-start;gap:14px;
+  display:flex;align-items:flex-start;gap:8px;
   background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r2);padding:16px;margin-bottom:10px;
-  transition:border-color 0.2s;
+  border-radius:12px;padding:10px;margin-bottom:0px; /* margin removed for grid */
+  transition:border-color 0.2s;box-sizing:border-box;
 }
 .dish-card.unavailable{opacity:0.4;pointer-events:none}
 .dish-visual{
-  width:72px;height:72px;flex-shrink:0;
-  border-radius:16px;background:var(--s3);
+  width:48px;height:48px;flex-shrink:0;
+  border-radius:8px;background:var(--s3);
   display:flex;align-items:center;justify-content:center;
   overflow:hidden;border:1px solid var(--border);
-  transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .dish-card:hover .dish-visual{transform:scale(1.05)}
 .dish-img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;}
 .dish-card:hover .dish-img{transform:scale(1.1)}
-.dish-emoji{font-size:32px;display:flex;align-items:center;justify-content:center}
-.dish-body{flex:1;min-width:0}
-.dish-name{font-size:15px;font-weight:600;font-family:'Space Grotesk',sans-serif;margin-bottom:4px}
-.dish-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px}
-.dish-bottom{display:flex;align-items:center;justify-content:space-between}
-.dish-price{font-size:16px;font-weight:700;color:var(--lime)}
-.qty-ctrl{display:flex;align-items:center;gap:0;border:1px solid var(--lime3);border-radius:8px;overflow:hidden}
+.dish-emoji{font-size:24px;display:flex;align-items:center;justify-content:center}
+
+.dish-body{flex:1;min-width:0;display:flex;flex-direction:column;min-height:48px;}
+.dish-title-row{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px;}
+.dish-name-wrap{display:flex;align-items:center;gap:4px;overflow:hidden;}
+.dish-name{font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dish-price{font-size:12px;font-weight:700;color:var(--lime);flex-shrink:0;}
+.dish-desc{font-size:10px;color:var(--muted);line-height:1.4;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.dish-bottom{display:flex;align-items:center;justify-content:flex-end;margin-top:auto;}
+
+.qty-ctrl{display:flex;align-items:center;gap:0;border:1px solid var(--lime3);border-radius:6px;overflow:hidden}
 .qty-btn{
-  width:32px;height:32px;background:transparent;color:var(--lime);
+  width:26px;height:26px;background:transparent;color:var(--lime);
   border:none;cursor:pointer;font-size:16px;font-weight:700;
   display:flex;align-items:center;justify-content:center;
   transition:background 0.15s;font-family:'Manrope',sans-serif;
 }
 .qty-btn:hover{background:var(--lime2)}
-.qty-num{width:28px;text-align:center;font-size:13px;font-weight:700;color:var(--white)}
+.qty-num{width:20px;text-align:center;font-size:12px;font-weight:700;color:var(--white)}
 .add-btn{
-  padding:8px 16px;background:transparent;
-  border:1px solid var(--lime3);border-radius:8px;
+  padding:4px 12px;background:transparent;
+  border:1px solid var(--lime3);border-radius:6px;
   color:var(--lime);font-size:12px;font-weight:700;
   cursor:pointer;transition:all 0.2s;font-family:'Manrope',sans-serif;
 }
@@ -1179,10 +1185,11 @@ function renderMenu(search = '') {
     const groups = {};
     filtered.forEach(d => { (groups[d.category] = groups[d.category] || []).push(d); });
     el.innerHTML = Object.entries(groups).map(([cat, dishes]) =>
-      `<div class="section-head" id="cat-${cat.replace(/\s+/g,'-')}">${cat}</div>` + dishes.map(dishCard).join('')
+      `<div class="section-head" id="cat-${cat.replace(/\s+/g,'-')}">${cat}</div>` + 
+      `<div class="dish-grid">${dishes.map(dishCard).join('')}</div>`
     ).join('');
   } else {
-    el.innerHTML = filtered.map(dishCard).join('');
+    el.innerHTML = `<div class="dish-grid">${filtered.map(dishCard).join('')}</div>`;
   }
 }
 
@@ -1195,20 +1202,28 @@ function dishCard(d) {
         <button class="qty-btn" onclick="changeQty('${d.id}',1)">+</button>
        </div>`
     : d.available
-      ? `<button class="add-btn" onclick="addItem('${d.id}')">+ Add</button>`
-      : `<span class="unavail-tag">Unavailable</span>`;
+      ? `<button class="add-btn" onclick="addItem('${d.id}')">Add</button>`
+      : `<span class="unavail-tag">Off</span>`;
 
   const visual = d.image_url 
     ? `<div class="dish-visual"><img src="${d.image_url}" class="dish-img" alt="${d.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="dish-emoji" style="display:none">${d.emoji || '🍽️'}</div></div>`
     : `<div class="dish-visual"><div class="dish-emoji">${d.emoji || '🍽️'}</div></div>`;
 
+  const typeColor = (d.is_veg === false || d.type === 'non-veg') ? '#ff4d4d' : 'var(--lime)';
+  const typeDot = `<span style="display:inline-block;flex-shrink:0;width:6px;height:6px;border-radius:50%;background:${typeColor};"></span>`;
+
   return `<div class="dish-card${!d.available ? ' unavailable' : ''}" id="card-${d.id}">
     ${visual}
     <div class="dish-body">
-      <div class="dish-name">${d.name}</div>
+      <div class="dish-title-row">
+        <div class="dish-name-wrap" title="${d.name}">
+          ${typeDot}
+          <div class="dish-name">${d.name}</div>
+        </div>
+        <div class="dish-price">₹${d.price}</div>
+      </div>
       <div class="dish-desc">${d.description || ''}</div>
       <div class="dish-bottom">
-        <div class="dish-price">₹${d.price}</div>
         ${ctrl}
       </div>
     </div>
@@ -1245,8 +1260,8 @@ function refreshCard(id) {
         <span class="qty-num">${qty}</span>
         <button class="qty-btn" onclick="changeQty('${id}',1)">+</button>
        </div>`
-    : `<button class="add-btn" onclick="addItem('${id}')">+ Add</button>`;
-  el.querySelector('.dish-bottom').innerHTML = `<div class="dish-price">₹${d.price}</div>${ctrl}`;
+    : `<button class="add-btn" onclick="addItem('${id}')">Add</button>`;
+  el.querySelector('.dish-bottom').innerHTML = ctrl;
 }
 
 async function updateCartBar() {
