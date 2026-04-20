@@ -1327,5 +1327,751 @@
     "name": "Double Loaded Cheese (Regular)",
     "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (56b3974b-f49c-4a93-9fbf-9243983d816b)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
     "timestamp": "2026-04-15T11:45:05.271Z"
+  },
+  {
+    "id": "f42cdca8-379e-40a0-adc9-cb618fd364e6",
+    "name": "Mushroom Roll",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/mushroom-roll.jpg",
+    "timestamp": "2026-04-20T21:33:22.308Z"
+  },
+  {
+    "id": "c5729f04-d5f3-474b-8180-d93ecbd4dd31",
+    "name": "Chilli Potato (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/chilli-potato--full-.jpg",
+    "timestamp": "2026-04-20T21:33:26.322Z"
+  },
+  {
+    "id": "8ae50db4-a2a7-4316-bf2b-8bf9dd501bc0",
+    "name": "Mango Shake",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/mango-shake.jpg",
+    "timestamp": "2026-04-20T21:33:30.673Z"
+  },
+  {
+    "id": "ba80dd58-150f-47b2-9040-e245b25e2376",
+    "name": "4 Pepper (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/4-pepper--medium-.jpg",
+    "timestamp": "2026-04-20T21:33:34.437Z"
+  },
+  {
+    "id": "4105f0dd-4209-4d23-a97a-c5a2665b0e4c",
+    "name": "Farm House - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/farm-house---medium.jpg",
+    "timestamp": "2026-04-20T21:33:38.723Z"
+  },
+  {
+    "id": "96a6a909-2e03-4b94-9f8e-7721302bda6e",
+    "name": "Mexicana - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/mexicana---medium.jpg",
+    "timestamp": "2026-04-20T21:33:42.547Z"
+  },
+  {
+    "id": "1d74b479-5579-4351-9e60-f464deb2c4e3",
+    "name": "Mexicana - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/mexicana---large.jpg",
+    "timestamp": "2026-04-20T21:33:46.365Z"
+  },
+  {
+    "id": "048a31d5-e2fd-4210-b914-d8a50a53e94d",
+    "name": "Crispy Corn (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/crispy-corn--half-.jpg",
+    "timestamp": "2026-04-20T21:33:50.138Z"
+  },
+  {
+    "id": "0a749c55-16fb-4fb5-807d-029731b100f9",
+    "name": "Cheese Paneer (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/cheese-paneer--medium-.jpg",
+    "timestamp": "2026-04-20T21:33:53.869Z"
+  },
+  {
+    "id": "73f69eab-f179-4b8b-9307-198ce68e1f13",
+    "name": "Butter Maggie",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/butter-maggie.jpg",
+    "timestamp": "2026-04-20T21:33:57.573Z"
+  },
+  {
+    "id": "85fe3df6-43d0-4c68-82b3-d4740340853e",
+    "name": "Deluxe (Medium)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/deluxe--medium-.jpg",
+    "timestamp": "2026-04-20T21:34:01.304Z"
+  },
+  {
+    "id": "37c4cdd9-3027-47f7-ae61-d4db199095ce",
+    "name": "Mexicana - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/mexicana---regular.jpg",
+    "timestamp": "2026-04-20T21:34:05.201Z"
+  },
+  {
+    "id": "37b4ebd6-8230-411f-acb9-e00250815065",
+    "name": "Cheese Burst Pizza - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/cheese-burst-pizza---large.jpg",
+    "timestamp": "2026-04-20T21:34:08.937Z"
+  },
+  {
+    "id": "88536981-4870-4c70-85e5-cc9019151694",
+    "name": "Farm House - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/farm-house---large.jpg",
+    "timestamp": "2026-04-20T21:34:12.759Z"
+  },
+  {
+    "id": "820164c4-64aa-490f-829e-47f6eb6484bf",
+    "name": "Country Side - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/country-side---regular.jpg",
+    "timestamp": "2026-04-20T21:34:16.668Z"
+  },
+  {
+    "id": "3eceaa20-42a7-46dd-a808-11f300459f21",
+    "name": "Country Side - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/country-side---large.jpg",
+    "timestamp": "2026-04-20T21:34:20.348Z"
+  },
+  {
+    "id": "91ab372e-fdae-4d9d-a4de-cb04e5b23113",
+    "name": "Spicy Delight - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/spicy-delight---regular.jpg",
+    "timestamp": "2026-04-20T21:34:24.605Z"
+  },
+  {
+    "id": "dd32e39a-562e-45d9-807c-4a0187ae55cd",
+    "name": "Spicy Delight - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/spicy-delight---large.jpg",
+    "timestamp": "2026-04-20T21:34:29.070Z"
+  },
+  {
+    "id": "0c134d77-3398-4dc4-a8cc-3643b4f8ecd9",
+    "name": "Deluxe Veggie - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/deluxe-veggie---regular.jpg",
+    "timestamp": "2026-04-20T21:34:33.489Z"
+  },
+  {
+    "id": "af89b47c-23c2-431f-8f3e-c0c5daaa6da6",
+    "name": "Deluxe Veggie - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/deluxe-veggie---medium.jpg",
+    "timestamp": "2026-04-20T21:34:37.799Z"
+  },
+  {
+    "id": "28c3c44a-1db1-4d29-ad7d-4d18a742d7bb",
+    "name": "Cheese Pasta Pizza - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/cheese-pasta-pizza---regular.jpg",
+    "timestamp": "2026-04-20T21:34:41.736Z"
+  },
+  {
+    "id": "2462651d-bd68-4840-a357-992335763d6e",
+    "name": "Cheese Pasta Pizza - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/cheese-pasta-pizza---medium.jpg",
+    "timestamp": "2026-04-20T21:34:45.990Z"
+  },
+  {
+    "id": "9a22f75b-2e72-4b42-8b9d-0ab0d60ca016",
+    "name": "Spicy Paneer - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/spicy-paneer---regular.jpg",
+    "timestamp": "2026-04-20T21:34:50.515Z"
+  },
+  {
+    "id": "ba8015f6-6943-4b67-aee6-459312683b21",
+    "name": "Spicy Paneer - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/spicy-paneer---large.jpg",
+    "timestamp": "2026-04-20T21:34:54.923Z"
+  },
+  {
+    "id": "020650f1-b85a-491c-a3e5-71bdcb52b155",
+    "name": "Indian Tandoori Paneer - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/indian-tandoori-paneer---regular.jpg",
+    "timestamp": "2026-04-20T21:34:59.197Z"
+  },
+  {
+    "id": "71889285-f5fb-4903-aa1a-618763778f14",
+    "name": "Cloud 7 - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/cloud-7---regular.jpg",
+    "timestamp": "2026-04-20T21:35:02.884Z"
+  },
+  {
+    "id": "9336f589-97d7-4362-a9cf-95157d7007aa",
+    "name": "Cloud 7 - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/cloud-7---medium.jpg",
+    "timestamp": "2026-04-20T21:35:07.137Z"
+  },
+  {
+    "id": "147dd689-8a8c-429e-ac5d-b1717f40f9f6",
+    "name": "Veg Extra Loaded - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/veg-extra-loaded---regular.jpg",
+    "timestamp": "2026-04-20T21:35:10.813Z"
+  },
+  {
+    "id": "f91021e2-f1d0-46cb-a91d-75bc19d1bf56",
+    "name": "Indian Tandoori Paneer - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/indian-tandoori-paneer---large.jpg",
+    "timestamp": "2026-04-20T21:35:14.462Z"
+  },
+  {
+    "id": "ce78ea38-83ed-468d-a16e-3109a1616ed5",
+    "name": "Onion Mania",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/onion-mania.jpg",
+    "timestamp": "2026-04-20T21:35:18.173Z"
+  },
+  {
+    "id": "557e54aa-b617-48ce-9002-d5bb24470e9a",
+    "name": "Golden Corn Mania",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/golden-corn-mania.jpg",
+    "timestamp": "2026-04-20T21:35:22.609Z"
+  },
+  {
+    "id": "cd425614-e94c-421a-a4f3-775cbed4d1e1",
+    "name": "Paneer Tikka Butter Masala - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/paneer-tikka-butter-masala---regular.jpg",
+    "timestamp": "2026-04-20T21:35:27.178Z"
+  },
+  {
+    "id": "7cc41253-c167-42b2-9bc8-632048518285",
+    "name": "Veg Extra Loaded - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/veg-extra-loaded---medium.jpg",
+    "timestamp": "2026-04-20T21:35:31.913Z"
+  },
+  {
+    "id": "9a484434-0d57-4fa1-8f24-e3850fb83f9d",
+    "name": "Jeera Fried Rice (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/jeera-fried-rice--full-.jpg",
+    "timestamp": "2026-04-20T21:35:35.741Z"
+  },
+  {
+    "id": "56c55a03-c033-4c07-8d6c-592550901ed0",
+    "name": "Manchurian Fried Rice (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/manchurian-fried-rice--half-.jpg",
+    "timestamp": "2026-04-20T21:35:39.571Z"
+  },
+  {
+    "id": "c0658f1d-deed-4629-8e33-3412fc6a1d86",
+    "name": "Mushroom Fried Rice (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/mushroom-fried-rice--half-.jpg",
+    "timestamp": "2026-04-20T21:35:43.592Z"
+  },
+  {
+    "id": "170a1d94-2650-4085-843f-fd59306fca14",
+    "name": "Paneer Fried Rice (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-fried-rice--full-.jpg",
+    "timestamp": "2026-04-20T21:35:47.551Z"
+  },
+  {
+    "id": "e823ddd0-c03e-4407-81ff-52ddbe1265e4",
+    "name": "Paneer Fried Rice (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-fried-rice--half-.jpg",
+    "timestamp": "2026-04-20T21:35:51.969Z"
+  },
+  {
+    "id": "4de8a0ac-52ae-4d44-81bd-421749645196",
+    "name": "Veg Fried Rice (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-fried-rice--full-.jpg",
+    "timestamp": "2026-04-20T21:35:55.868Z"
+  },
+  {
+    "id": "e679d370-edcd-4e04-b242-232efd390324",
+    "name": "Veg Fried Rice (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-fried-rice--half-.jpg",
+    "timestamp": "2026-04-20T21:35:59.573Z"
+  },
+  {
+    "id": "3327f269-ebf5-4402-a48e-3042910f4005",
+    "name": "Hakka Noodles (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/hakka-noodles--full-.jpg",
+    "timestamp": "2026-04-20T21:36:03.369Z"
+  },
+  {
+    "id": "a28fbd8b-8852-47bd-a7cc-4430eb81119d",
+    "name": "Veg Noodles (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-noodles--half-.jpg",
+    "timestamp": "2026-04-20T21:36:07.125Z"
+  },
+  {
+    "id": "6dc795e6-e27d-442e-9502-0f54d848f7af",
+    "name": "Veg Roll",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-roll.jpg",
+    "timestamp": "2026-04-20T21:36:11.065Z"
+  },
+  {
+    "id": "13ef1a80-4c83-40be-bfcc-c0c51f5dcc01",
+    "name": "Farm House - Regular",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/farm-house---regular.jpg",
+    "timestamp": "2026-04-20T21:36:14.920Z"
+  },
+  {
+    "id": "62857afd-e430-4e63-84e1-de7310cef94e",
+    "name": "Cheese Burst Pizza - Medium",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/cheese-burst-pizza---medium.jpg",
+    "timestamp": "2026-04-20T21:36:18.676Z"
+  },
+  {
+    "id": "2f425618-8e92-4618-928d-478df517b49f",
+    "name": "Premium Veg Pack of 4 + 1.25L Cold Drink",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/premium-veg-pack-of-4---1-25l-cold-drink.jpg",
+    "timestamp": "2026-04-20T21:36:22.514Z"
+  },
+  {
+    "id": "4d8c0681-ac3d-464b-af5e-87f8995caa0d",
+    "name": "Stuffed Garlic Bread - Onion/Corn",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/stuffed-garlic-bread---onion-corn.jpg",
+    "timestamp": "2026-04-20T21:36:26.766Z"
+  },
+  {
+    "id": "a3e0b095-f7ce-4669-94e5-77e48d70493a",
+    "name": "Garlic Bread",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/garlic-bread.jpg",
+    "timestamp": "2026-04-20T21:36:30.595Z"
+  },
+  {
+    "id": "945d53da-7baf-4a4c-b52f-eb9f14f6dce5",
+    "name": "Stuffed Garlic Bread - Paneer Tikka",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/stuffed-garlic-bread---paneer-tikka.jpg",
+    "timestamp": "2026-04-20T21:36:34.442Z"
+  },
+  {
+    "id": "b2b0a4fa-c9da-4d68-8bba-1304bc92236a",
+    "name": "Paneer Tikka Butter Masala - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/paneer-tikka-butter-masala---large.jpg",
+    "timestamp": "2026-04-20T21:36:38.134Z"
+  },
+  {
+    "id": "44eea011-0daa-49a3-ba34-dc20b7d62680",
+    "name": "Paneer & Onion Special",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/paneer---onion-special.jpg",
+    "timestamp": "2026-04-20T21:36:42.438Z"
+  },
+  {
+    "id": "96c0f492-1ca8-4cb0-ac3f-3922d0367d50",
+    "name": "Veg Afghani Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-afghani-momo--full-.jpg",
+    "timestamp": "2026-04-20T21:36:46.971Z"
+  },
+  {
+    "id": "2bc523cf-b988-4681-a9ef-af667462dc3c",
+    "name": "Paneer Chilli Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-chilli-momo--full-.jpg",
+    "timestamp": "2026-04-20T21:36:51.231Z"
+  },
+  {
+    "id": "788c18bf-e7ad-40b9-b0b7-aa99863fd0bd",
+    "name": "Paneer Chilli Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-chilli-momo--half-.jpg",
+    "timestamp": "2026-04-20T21:36:54.835Z"
+  },
+  {
+    "id": "bb877402-8461-45b8-b1b9-c77974cd7868",
+    "name": "Paneer Fried Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-fried-momo--full-.jpg",
+    "timestamp": "2026-04-20T21:36:58.793Z"
+  },
+  {
+    "id": "84b9a844-d130-4359-9d4c-fa9028f0a2fb",
+    "name": "Paneer Fried Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-fried-momo--half-.jpg",
+    "timestamp": "2026-04-20T21:37:02.925Z"
+  },
+  {
+    "id": "62850781-bb76-4305-bcf5-87791f27b943",
+    "name": "Paneer Kurkure Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-kurkure-momo--full-.jpg",
+    "timestamp": "2026-04-20T21:37:07.231Z"
+  },
+  {
+    "id": "e44e6d20-0383-40be-9d8c-f59ac42a1f2d",
+    "name": "Paneer Kurkure Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-kurkure-momo--half-.jpg",
+    "timestamp": "2026-04-20T21:37:11.474Z"
+  },
+  {
+    "id": "14bde4e6-965d-40d4-ba8b-94200becf871",
+    "name": "Coffee",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/coffee.jpg",
+    "timestamp": "2026-04-20T21:37:15.147Z"
+  },
+  {
+    "id": "36e33231-09b2-4077-a99d-4d1351adec8e",
+    "name": "Tea",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/tea.jpg",
+    "timestamp": "2026-04-20T21:37:19.231Z"
+  },
+  {
+    "id": "f0af8e0d-9863-4c60-a341-e454a604015d",
+    "name": "Red Sauce Pasta",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/red-sauce-pasta.jpg",
+    "timestamp": "2026-04-20T21:37:23.986Z"
+  },
+  {
+    "id": "c27faaad-0b34-4308-99d5-de5a54e83db7",
+    "name": "Paneer Roll",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-roll.jpg",
+    "timestamp": "2026-04-20T21:37:28.336Z"
+  },
+  {
+    "id": "c7be7382-d904-459d-963a-9e48367bbaa4",
+    "name": "Spring Roll",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/spring-roll.jpg",
+    "timestamp": "2026-04-20T21:37:32.049Z"
+  },
+  {
+    "id": "261942cd-8441-44ba-916b-a080a598ba42",
+    "name": "Cheese Sandwich",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/cheese-sandwich.jpg",
+    "timestamp": "2026-04-20T21:37:35.722Z"
+  },
+  {
+    "id": "0f9980c9-e54e-4f56-a722-6a3b5f3794b5",
+    "name": "Veg Sandwich",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-sandwich.jpg",
+    "timestamp": "2026-04-20T21:37:39.574Z"
+  },
+  {
+    "id": "08ee019c-b922-4d80-83b6-de5c564e760a",
+    "name": "French Fries (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/french-fries--half-.jpg",
+    "timestamp": "2026-04-20T21:37:43.367Z"
+  },
+  {
+    "id": "6232512e-acd0-4ed0-a43d-af495db92d19",
+    "name": "Honey Chilli Potato (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/honey-chilli-potato--half-.jpg",
+    "timestamp": "2026-04-20T21:37:47.110Z"
+  },
+  {
+    "id": "d43ccabc-0896-4a57-8d56-2259ff268d83",
+    "name": "Blueberry Shake",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/blueberry-shake.jpg",
+    "timestamp": "2026-04-20T21:37:50.781Z"
+  },
+  {
+    "id": "ed29d09b-981d-43e7-a64a-158b516b7aa8",
+    "name": "Creamy Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/creamy-momo--half-.jpg",
+    "timestamp": "2026-04-20T21:37:54.472Z"
+  },
+  {
+    "id": "a4d2c753-e426-48e9-a1b7-d9eb2cab37ed",
+    "name": "KitKat Shake",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/kitkat-shake.jpg",
+    "timestamp": "2026-04-20T21:37:58.122Z"
+  },
+  {
+    "id": "016f1183-e902-4bb5-9c20-88d7a8959abf",
+    "name": "Mojito Mocktail",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/mojito-mocktail.jpg",
+    "timestamp": "2026-04-20T21:38:02.389Z"
+  },
+  {
+    "id": "e39b3299-b085-4f5b-b87c-f39a0419b6d8",
+    "name": "Pineapple Shake",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/pineapple-shake.jpg",
+    "timestamp": "2026-04-20T21:38:06.027Z"
+  },
+  {
+    "id": "4dcc3c60-39d8-4c79-b570-5da1b1990868",
+    "name": "Strawberry Mocktail",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/strawberry-mocktail.jpg",
+    "timestamp": "2026-04-20T21:38:09.750Z"
+  },
+  {
+    "id": "01e691cc-2dc3-418e-b120-4d7e624764d0",
+    "name": "Strawberry Shake",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/strawberry-shake.jpg",
+    "timestamp": "2026-04-20T21:38:13.408Z"
+  },
+  {
+    "id": "5b646630-f3ae-4076-ad41-32695c542ddc",
+    "name": "Stuffed Garlic Bread",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/stuffed-garlic-bread.jpg",
+    "timestamp": "2026-04-20T21:38:17.437Z"
+  },
+  {
+    "id": "4393b09c-7d29-44f4-adc4-cbdc41801226",
+    "name": "Veg Pasta (Red/White)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/veg-pasta--red-white-.jpg",
+    "timestamp": "2026-04-20T21:38:21.104Z"
+  },
+  {
+    "id": "3a1c3d7b-af15-4b22-84e5-f013eaa0f9ed",
+    "name": "Butter Chicken",
+    "restaurant": "grand",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/grand/butter-chicken.jpg",
+    "timestamp": "2026-04-20T21:38:25.615Z"
+  },
+  {
+    "id": "5c7f33dc-7304-4284-8953-f2aed33ce9af",
+    "name": "Cloud 7 - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/cloud-7---large.jpg",
+    "timestamp": "2026-04-20T21:38:30.436Z"
+  },
+  {
+    "id": "75e4a541-61fc-40ad-a82f-c84190c7aaab",
+    "name": "Veg Extra Loaded - Large",
+    "restaurant": "pizzahouse",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizzahouse/veg-extra-loaded---large.jpg",
+    "timestamp": "2026-04-20T21:38:34.789Z"
+  },
+  {
+    "id": "139f128f-11c5-4615-8afb-c0b37900a00e",
+    "name": "Jeera Fried Rice (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/jeera-fried-rice--half-.jpg",
+    "timestamp": "2026-04-20T21:38:38.779Z"
+  },
+  {
+    "id": "99d70cbb-8e26-431c-bb3f-20b5f7b84db2",
+    "name": "Manchurian Fried Rice (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/manchurian-fried-rice--full-.jpg",
+    "timestamp": "2026-04-20T21:38:42.509Z"
+  },
+  {
+    "id": "8946c0a1-f30e-49d3-9bdb-7b6107bb84de",
+    "name": "Mushroom Fried Rice (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/mushroom-fried-rice--full-.jpg",
+    "timestamp": "2026-04-20T21:38:46.216Z"
+  },
+  {
+    "id": "d67cc581-f07e-45b3-976a-564464779a4c",
+    "name": "Plain Maggie",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/plain-maggie.jpg",
+    "timestamp": "2026-04-20T21:38:50.137Z"
+  },
+  {
+    "id": "d0f9f231-df49-4672-b7ee-79000a2835ef",
+    "name": "Veg Chilli Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-chilli-momo--half-.jpg",
+    "timestamp": "2026-04-20T21:38:54.088Z"
+  },
+  {
+    "id": "34034199-a5f1-45d6-8775-64156303610e",
+    "name": "Veg Tandoori Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-tandoori-momo--full-.jpg",
+    "timestamp": "2026-04-20T21:38:57.757Z"
+  },
+  {
+    "id": "d75e1996-78c5-47a5-8b81-7015e1b57c0c",
+    "name": "Veg Tandoori Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-tandoori-momo--half-.jpg",
+    "timestamp": "2026-04-20T21:39:01.420Z"
+  },
+  {
+    "id": "c99756e0-a1e7-4b84-9758-4bfcfc540a27",
+    "name": "Paneer Steamed Momo (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-steamed-momo--full-.jpg",
+    "timestamp": "2026-04-20T21:39:05.909Z"
+  },
+  {
+    "id": "fc22c936-f21b-4ee4-a073-2c5d65547571",
+    "name": "Paneer Steamed Momo (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-steamed-momo--half-.jpg",
+    "timestamp": "2026-04-20T21:39:09.616Z"
+  },
+  {
+    "id": "5847961f-1ca9-432f-992e-66ce18e2a185",
+    "name": "Chilli Garlic Noodles (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/chilli-garlic-noodles--half-.jpg",
+    "timestamp": "2026-04-20T21:39:13.543Z"
+  },
+  {
+    "id": "bba3cf23-2fd4-40bc-836c-39a1e276bbdd",
+    "name": "Garlic Noodles (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/garlic-noodles--full-.jpg",
+    "timestamp": "2026-04-20T21:39:17.232Z"
+  },
+  {
+    "id": "8d0c5a06-455e-492b-ba0a-1fd75975fd95",
+    "name": "Hakka Noodles (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/hakka-noodles--half-.jpg",
+    "timestamp": "2026-04-20T21:39:20.984Z"
+  },
+  {
+    "id": "9641c4cb-cd22-4b66-8a54-d9201b6ea164",
+    "name": "Veg Noodles (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/veg-noodles--full-.jpg",
+    "timestamp": "2026-04-20T21:39:25.307Z"
+  },
+  {
+    "id": "c66f5228-da79-4e3c-bab5-d980bcb8e36e",
+    "name": "Bun Makkhan",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/bun-makkhan.jpg",
+    "timestamp": "2026-04-20T21:39:29.091Z"
+  },
+  {
+    "id": "55a03d64-6444-4c59-80c9-82e13c996cb1",
+    "name": "White Sauce Pasta",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/white-sauce-pasta.jpg",
+    "timestamp": "2026-04-20T21:39:33.495Z"
+  },
+  {
+    "id": "1b0e2b3d-d7d1-4d1c-b07f-79003363477c",
+    "name": "Manchurian (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/manchurian--full-.jpg",
+    "timestamp": "2026-04-20T21:39:37.913Z"
+  },
+  {
+    "id": "08a3982f-b74d-4741-81e8-f5a72ef7dd6f",
+    "name": "Paneer Manchurian (Half)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/paneer-manchurian--half-.jpg",
+    "timestamp": "2026-04-20T21:39:41.612Z"
+  },
+  {
+    "id": "5592072a-3165-4811-ad62-f4eee57f6d83",
+    "name": "Crispy Corn (Full)",
+    "restaurant": "hideout-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/hideout-cafe/crispy-corn--full-.jpg",
+    "timestamp": "2026-04-20T21:39:45.360Z"
+  },
+  {
+    "id": "5df86e8f-dd33-463d-9f09-c6a70dd06eb1",
+    "name": "Country Feast (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/country-feast--regular-.jpg",
+    "timestamp": "2026-04-20T21:39:49.246Z"
+  },
+  {
+    "id": "d09c16b3-08b4-458b-8a80-4a60fa08c232",
+    "name": "Double Loaded Cheese (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/double-loaded-cheese--regular-.jpg",
+    "timestamp": "2026-04-20T21:39:52.969Z"
+  },
+  {
+    "id": "d8f18d0a-fde4-46d4-ab5b-df040f95e0ca",
+    "name": "Farmfresh (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/farmfresh--regular-.jpg",
+    "timestamp": "2026-04-20T21:39:57.182Z"
+  },
+  {
+    "id": "c1c9c81b-2d80-4212-9abd-7bd2d02ebdee",
+    "name": "Spicy Delight (Regular)",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/spicy-delight--regular-.jpg",
+    "timestamp": "2026-04-20T21:40:01.114Z"
+  },
+  {
+    "id": "85c42fb6-1da0-4119-9bad-7322249ed422",
+    "name": "Hot Lava Cake",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/hot-lava-cake.jpg",
+    "timestamp": "2026-04-20T21:40:04.847Z"
+  },
+  {
+    "id": "42ded907-eb64-444d-a8f1-e3f8c7e1b7f3",
+    "name": "Mexican Paneer Roll",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/mexican-paneer-roll.jpg",
+    "timestamp": "2026-04-20T21:40:08.541Z"
+  },
+  {
+    "id": "d119a14e-83ee-479f-82bc-1a4921467d28",
+    "name": "Garlic Combo",
+    "restaurant": "pizza-cafe",
+    "url": "https://qqnrucnsvupfywyzlofa.supabase.co/storage/v1/object/public/dish-images/pizza-cafe/garlic-combo.jpg",
+    "timestamp": "2026-04-20T21:40:12.417Z"
+  },
+  {
+    "id": "f79bd64e-fe86-4d7c-b7fd-42c39b82512b",
+    "name": "Veg Singles Combo",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (59e14cfb-9654-4122-9be3-ed4b789b9164)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-20T21:40:14.014Z"
+  },
+  {
+    "id": "5fcc351d-e8b7-487e-ae2f-7f179723e2a1",
+    "name": "Meal For 1",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (768ba851-8e0c-4b4f-add0-123b156029be)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-20T21:40:15.600Z"
+  },
+  {
+    "id": "b58345cb-2036-4b5c-afa3-53a8076c6eb7",
+    "name": "Meal For 3",
+    "error": "Cloudflare AI Error: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (6e3a4549-91c3-47e1-b796-bd7e1ccd551e)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}",
+    "timestamp": "2026-04-20T21:40:17.182Z"
   }
 ]

@@ -27,6 +27,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" type="text/css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="config.js"></script>
 <style>
@@ -1034,19 +1035,108 @@ function checkSubscription() {
   const diffDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
   
   banner.style.display = 'block';
+  banner.style.display = 'flex';
+  banner.style.justifyContent = 'space-between';
+  banner.style.alignItems = 'center';
+  banner.style.padding = '12px 16px';
+  banner.style.borderRadius = '8px';
+  banner.style.marginBottom = '16px';
+
   const typeStr = restaurant.is_trial ? 'Trial' : 'Subscription';
   
   if (diffDays <= 0) {
     banner.className = 'sub-banner expired';
-    banner.innerHTML = `⚠️ Your ${typeStr} has expired. Please contact the platform administrators.`;
+    banner.style.background = 'var(--red2)';
+    banner.style.border = '1px solid var(--red)';
+    banner.innerHTML = `<div>⚠️ Your ${typeStr} has expired. Please renew to continue accepting orders.</div> <button class="btn-lime btn-sm" id="rzp-renew-btn" onclick="openRazorpayRenewal()">Renew Now (₹249/mo)</button>`;
+    
+    // Block dashboard content mostly
+    const stats = document.querySelector('.stats-row');
+    if (stats) stats.style.opacity = '0.3';
+    if (stats) stats.style.pointerEvents = 'none';
   } else if (diffDays <= 7) {
     banner.className = 'sub-banner warning';
-    banner.innerHTML = `⏳ Your ${typeStr} ends in ${diffDays} day${diffDays > 1 ? 's' : ''}. Please renew soon.`;
+    banner.style.background = 'var(--amber2)';
+    banner.style.border = '1px solid var(--amber)';
+    banner.innerHTML = `<div>⏳ Your ${typeStr} ends in ${diffDays} day${diffDays > 1 ? 's' : ''}. Please renew soon.</div> <button class="btn-ghost btn-sm" id="rzp-renew-btn" onclick="openRazorpayRenewal()" style="border:1px solid var(--amber)">Renew Early</button>`;
   } else {
     banner.className = 'sub-banner active';
-    banner.innerHTML = `✅ ${typeStr} Active: ${diffDays} day${diffDays > 1 ? 's' : ''} remaining (Until ${endDate.toLocaleDateString()}).`;
+    banner.style.background = 'var(--green2)';
+    banner.style.border = '1px solid var(--green3)';
+    banner.innerHTML = `<div>✅ ${typeStr} Active: ${diffDays} day${diffDays > 1 ? 's' : ''} remaining.</div> <button class="btn-ghost btn-sm" id="rzp-renew-btn" onclick="openRazorpayRenewal()" style="border:1px solid var(--green3)">Upgrade Plan</button>`;
   }
 }
+
+async function openRazorpayRenewal() {
+  const btn = document.getElementById('rzp-renew-btn');
+  const ogText = btn.innerText;
+  btn.innerText = 'Connecting...';
+  btn.disabled = true;
+
+  try {
+    const amount = 24900; // Hardcoded default Pro plan for renewals for now
+    const selectedPlanId = 2; 
+
+    const orderRes = await fetch(`${CONFIG.supabaseUrl}/functions/v1/create-razorpay-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, plan: selectedPlanId })
+    });
+    const orderData = await orderRes.json();
+
+    if (!orderRes.ok) throw new Error(orderData.error || "Failed to create order");
+
+    const options = {
+      key: CONFIG.razorpayKeyId,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: "Go Dine",
+      description: "Subscription Renewal",
+      order_id: orderData.id,
+      handler: async function (response) {
+        toast('Verifying payment... Please wait.');
+        
+        try {
+          const verifyRes = await fetch(`${CONFIG.supabaseUrl}/functions/v1/verify-razorpay-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              restaurant_id: restaurant.id,
+              plan_id: selectedPlanId
+            })
+          });
+          const verifyData = await verifyRes.json();
+          if (!verifyRes.ok) throw new Error(verifyData.error || "Verification failed");
+          
+          toast('✅ Payment successful & subscription extended!');
+          setTimeout(() => location.reload(), 2000);
+        } catch (verr) {
+          toast('⚠️ ' + verr.message);
+          btn.innerText = ogText;
+          btn.disabled = false;
+        }
+      },
+      prefill: {
+        email: restaurant.owner_email || ''
+      },
+      theme: { color: "#b6ff2a" }
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.on('payment.failed', function (res) {
+      toast('Payment failed: ' + res.error.description);
+      btn.innerText = ogText;
+      btn.disabled = false;
+    });
+    rzp.open();
+
+  } catch(e) {
+    toast('⚠️ Error: ' + e.message);
+    btn.innerText = ogText;
+    btn.disabled = false;
+  }
 
 /* ── ADMIN LOGIC ── */
 let allRestaurantsData = [];

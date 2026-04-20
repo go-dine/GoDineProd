@@ -8,4 +8,5 @@
 const CONFIG = {
   supabaseUrl: 'https://qqnrucnsvupfywyzlofa.supabase.co',
   supabaseKey: 'sb_publishable_v0HfrI2OaKkBXJhqrU9EOA_05uRuFYx',
+  razorpayKeyId: 'rzp_test_Sftzc4oWuOEUPH'
 };

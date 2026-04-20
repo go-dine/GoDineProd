@@ -13,6 +13,8 @@
 <!-- Google Search Console & Bing Webmaster Verification -->
 <meta name="google-site-verification" content="ENTER_YOUR_GOOGLE_VERIFICATION_CODE_HERE" />
 <meta name="msvalidate.01" content="ENTER_YOUR_BING_VERIFICATION_CODE_HERE" />
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 
 <!-- Open Graph Tags -->
 <meta property="og:title" content="Go Dine — The Future of Smart Dining" />
@@ -1212,8 +1214,80 @@ async function handleComplete() {
 
     if (restErr) throw restErr;
     localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
-    showToast('Registration successful! Redirecting to your dashboard...', 'success');
-    window.location.href = "dashboard.html";
+
+    // Skip Razorpay if Basic (selectedPlanId = 1)
+    if (selectedPlanId === 1) {
+      showToast('Registration successful! Redirecting to your dashboard...', 'success');
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    // Trigger Razorpay for Paid Plans
+    btn.innerHTML = '<span>Initializing Payment...</span>';
+    
+    let amount = 24900; // Pro
+    if (selectedPlanId === 3) amount = 34900;
+    else if (selectedPlanId === 4) amount = 350000;
+
+    const orderRes = await fetch(`${CONFIG.supabaseUrl}/functions/v1/create-razorpay-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, plan: selectedPlanId })
+    });
+    const orderData = await orderRes.json();
+
+    if (!orderRes.ok) throw new Error(orderData.error || "Failed to create order");
+
+    const options = {
+      key: CONFIG.razorpayKeyId,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: "Go Dine",
+      description: "Plan Subcsription",
+      order_id: orderData.id,
+      handler: async function (response) {
+        showToast('Verifying payment...', 'info');
+        btn.innerHTML = '<span>Verifying...</span>';
+        
+        try {
+          const verifyRes = await fetch(`${CONFIG.supabaseUrl}/functions/v1/verify-razorpay-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              restaurant_id: rest.id,
+              plan_id: selectedPlanId
+            })
+          });
+          const verifyData = await verifyRes.json();
+          if (!verifyRes.ok) throw new Error(verifyData.error || "Verification failed");
+          
+          showToast('Payment successful! Welcome to Go Dine.', 'success');
+          window.location.href = "dashboard.html";
+        } catch (verr) {
+          showToast(verr.message, 'error');
+          window.location.href = "dashboard.html"; // Redirect anyway so they don't get stuck, can pay later
+        }
+      },
+      prefill: {
+        email: emailVal
+      },
+      theme: { color: "#b6ff2a" },
+      modal: {
+        ondismiss: function() {
+          showToast('Payment cancelled, but account was created. You can upgrade later.', 'info');
+          window.location.href = "dashboard.html"; 
+        }
+      }
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.on('payment.failed', function (res) {
+      showToast('Payment failed: ' + res.error.description, 'error');
+    });
+    rzp.open();
+
   } catch(e) {
     showToast('Error: ' + e.message, 'error');
     if (btn) {
