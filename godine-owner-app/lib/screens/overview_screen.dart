@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shimmer/shimmer.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../theme.dart';
@@ -27,6 +28,7 @@ class OverviewScreen extends StatefulWidget {
 }
 
 class _OverviewScreenState extends State<OverviewScreen> {
+  late Restaurant _restaurant;
   int _orderCount = 0;
   double _revenue = 0;
   int _pending = 0;
@@ -35,6 +37,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   RealtimeChannel? _channel;
   late Razorpay _razorpay;
   bool _isProcessingPayment = false;
+  bool _isLoading = true;
   int _selectedPlanId = 2;
 
   static const String _supabaseUrl = 'https://qqnrucnsvupfywyzlofa.supabase.co';
@@ -42,10 +45,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
   @override
   void initState() {
     super.initState();
+    _restaurant = widget.restaurant;
     _load();
     _channel = SupabaseService.subscribeToOrders(
-      'owner-overview-${widget.restaurant.id}', 
-      widget.restaurant.id, 
+      'owner-overview-${_restaurant.id}', 
+      _restaurant.id, 
       (payload) => _load(),
     );
 
@@ -63,19 +67,25 @@ class _OverviewScreenState extends State<OverviewScreen> {
   }
 
   Future<void> _load() async {
+    setState(() => _isLoading = true);
     try {
-      final orders = await SupabaseService.fetchTodayAllOrders(widget.restaurant.id);
-      final dishes = await SupabaseService.fetchDishes(widget.restaurant.id);
+      final updatedRestaurant = await SupabaseService.fetchCurrentRestaurant();
+      final orders = await SupabaseService.fetchTodayAllOrders(_restaurant.id);
+      final dishes = await SupabaseService.fetchDishes(_restaurant.id);
       if (!mounted) return;
       setState(() {
+        if (updatedRestaurant != null) _restaurant = updatedRestaurant;
         final activeOrders = orders.where((o) => o.status != 'cancelled').toList();
         _orderCount = activeOrders.length;
         _revenue = activeOrders.fold(0, (sum, o) => sum + o.total);
         _pending = activeOrders.where((o) => o.status == 'pending').length;
         _activeDishes = dishes.where((d) => d.available).length;
         _recentOrders = orders.reversed.take(5).toList();
+        _isLoading = false;
       });
-    } catch (_) {}
+    } catch (_) {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   String _timeAgo(String iso) {
@@ -185,7 +195,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
           'razorpay_payment_id': response.paymentId,
           'razorpay_order_id': response.orderId,
           'razorpay_signature': response.signature,
-          'restaurant_id': widget.restaurant.id,
+          'restaurant_id': _restaurant.id,
           'plan_id': _selectedPlanId,
         }),
       );
@@ -240,12 +250,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
   }
 
   Widget? _buildSubscriptionBanner() {
-    final subEnd = widget.restaurant.subscriptionEnd;
+    final subEnd = _restaurant.subscriptionEnd;
     if (subEnd == null) return null;
 
     final diffDays = subEnd.difference(DateTime.now()).inDays;
-    final isTrial = widget.restaurant.isTrial;
+    final isTrial = _restaurant.isTrial;
     final typeStr = isTrial ? 'Trial' : 'Subscription';
+    final renewDateStr = DateFormat('dd MMM yyyy').format(subEnd);
 
     Color bgColor;
     Color borderColor;
@@ -257,19 +268,19 @@ class _OverviewScreenState extends State<OverviewScreen> {
       bgColor = const Color(0xFF450A0A);
       borderColor = const Color(0xFF7F1D1D);
       textColor = const Color(0xFFFCA5A5);
-      text = 'Your $typeStr has expired. Renew to continue.';
+      text = 'Your $typeStr has expired (Renew Date: $renewDateStr). Renew to continue.';
       icon = Icons.warning_amber_rounded;
     } else if (diffDays <= 7) {
       bgColor = const Color(0xFF451A03);
       borderColor = const Color(0xFF78350F);
       textColor = const Color(0xFFFCD34D);
-      text = 'Your $typeStr ends in $diffDays day${diffDays > 1 ? 's' : ''}. Renew soon.';
+      text = 'Your $typeStr ends in $diffDays day${diffDays > 1 ? 's' : ''} (Renew Date: $renewDateStr). Renew soon.';
       icon = Icons.hourglass_bottom_rounded;
     } else {
       bgColor = const Color(0xFF064E3B);
       borderColor = const Color(0xFF065F46);
       textColor = const Color(0xFF6EE7B7);
-      text = '$typeStr Active: $diffDays day${diffDays > 1 ? 's' : ''} remaining.';
+      text = '$typeStr Active: $diffDays day${diffDays > 1 ? 's' : ''} remaining (Renew Date: $renewDateStr).';
       icon = Icons.check_circle_outline_rounded;
     }
 
@@ -317,16 +328,105 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
-    final revenueStr = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0).format(_revenue);
+    final width = MediaQuery.of(context).size.width;
+    final isDesktop = width > 900;
+    final isTablet = width > 600;
+    
+    int statColumns = isDesktop ? 4 : (isTablet ? 2 : 2);
+    int toolColumns = isDesktop ? 4 : (isTablet ? 3 : 2);
+    double horizontalPadding = isDesktop ? (width - 1000) / 2 : 20;
+    if (horizontalPadding < 20) horizontalPadding = 20;
+
+    final dateStr = DateFormat('EEEE, dd MMM').format(DateTime.now());
+    final revenueStr = '₹${_revenue.toStringAsFixed(0)}';
 
     return RefreshIndicator(
       color: AppColors.lime,
       backgroundColor: AppColors.surface1,
       onRefresh: _load,
+      child: _isLoading 
+        ? _buildSkeleton(statColumns, toolColumns, horizontalPadding) 
+        : _buildContent(dateStr, revenueStr, statColumns, toolColumns, horizontalPadding),
+    );
+  }
+
+  Widget _buildSkeleton(int statCols, int toolCols, double px) {
+    return Shimmer.fromColors(
+      baseColor: AppColors.surface1,
+      highlightColor: AppColors.surface2,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+        padding: EdgeInsets.fromLTRB(px, 16, px, 40),
         children: [
+          Container(width: 150, height: 30, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4))),
+          const SizedBox(height: 8),
+          Container(width: 200, height: 16, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4))),
+          const SizedBox(height: 22),
+          
+          // Stats grid skeleton
+          GridView.count(
+            crossAxisCount: statCols,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 2.0,
+            children: List.generate(4, (index) => Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)))),
+          ),
+          const SizedBox(height: 32),
+          
+          Container(width: 120, height: 20, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4))),
+          const SizedBox(height: 12),
+          
+          // Grid skeleton
+          GridView.count(
+            crossAxisCount: toolCols,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 1.5,
+            children: List.generate(4, (index) => Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)))),
+          ),
+          const SizedBox(height: 32),
+          
+          // Orders list skeleton
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.surface1,
+              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(AppRadius.md),
+            ),
+            child: Column(
+              children: List.generate(3, (index) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(width: 100, height: 14, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4))),
+                          const SizedBox(height: 4),
+                          Container(width: 150, height: 10, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4))),
+                        ],
+                      ),
+                    ),
+                    Container(width: 60, height: 20, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10))),
+                  ],
+                ),
+              )),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(String dateStr, String revenueStr, int statCols, int toolCols, double px) {
+    return ListView(
+      padding: EdgeInsets.fromLTRB(px, 16, px, 40),
+      children: [
           const Text('Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.white)),
           const SizedBox(height: 4),
           Text(dateStr, style: const TextStyle(fontSize: 13, color: AppColors.muted)),
@@ -371,25 +471,25 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 title: 'Timings',
                 icon: Icons.access_time_filled_rounded,
                 color: Colors.orangeAccent,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ActiveHoursScreen(restaurant: widget.restaurant))),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ActiveHoursScreen(restaurant: _restaurant))),
               ),
               _ManagementCard(
                 title: 'Announce',
                 icon: Icons.campaign_rounded,
                 color: Colors.pinkAccent,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnnouncementScreen(restaurant: widget.restaurant))),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnnouncementScreen(restaurant: _restaurant))),
               ),
               _ManagementCard(
                 title: 'Analytics',
                 icon: Icons.analytics_rounded,
                 color: Colors.blueAccent,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnalyticsScreen(restaurant: widget.restaurant))),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnalyticsScreen(restaurant: _restaurant))),
               ),
               _ManagementCard(
                 title: 'AI Insights',
                 icon: Icons.auto_awesome_rounded,
                 color: AppColors.lime,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SuggestionsScreen(restaurant: widget.restaurant))),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SuggestionsScreen(restaurant: _restaurant))),
               ),
             ],
           ),

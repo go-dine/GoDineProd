@@ -105,7 +105,7 @@ class SupabaseService {
     return restaurant;
   }
 
-  static Future<Restaurant?> autoLogin() async {
+  static Future<Restaurant?> fetchCurrentRestaurant() async {
     final id = await getSavedAuthId();
     if (id == null) return null;
     final res = await client
@@ -114,7 +114,12 @@ class SupabaseService {
         .eq('id', id)
         .maybeSingle();
     if (res == null) return null;
-    final restaurant = Restaurant.fromJson(res);
+    return Restaurant.fromJson(res);
+  }
+
+  static Future<Restaurant?> autoLogin() async {
+    final restaurant = await fetchCurrentRestaurant();
+    if (restaurant == null) return null;
     if (!restaurant.isActive) {
       await clearAuth();
       return null;

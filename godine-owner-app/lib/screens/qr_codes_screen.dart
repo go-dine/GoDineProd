@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme.dart';
 import '../models/restaurant.dart';
 import '../app_config.dart';
@@ -99,6 +100,14 @@ class _QrCardState extends State<_QrCard> {
     );
   }
 
+  Future<void> _printTopper() async {
+    final slug = widget.url.split('r=').last.split('&').first;
+    final printUrl = Uri.parse('${AppConfig.webBaseUrl}/table-topper.html?r=$slug&table=${widget.tableNumber}&print=true');
+    if (await canLaunchUrl(printUrl)) {
+      await launchUrl(printUrl, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -153,22 +162,43 @@ class _QrCardState extends State<_QrCard> {
           ),
           const Spacer(),
 
-          // Share button
+          // Action buttons
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _shareQr,
-                icon: const Icon(Icons.share, size: 14),
-                label: const Text('Share', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.lime,
-                  side: const BorderSide(color: AppColors.border),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: _shareQr,
+                    icon: const Icon(Icons.share, size: 14),
+                    label: const Text('Share', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.lime,
+                      side: const BorderSide(color: AppColors.border),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _printTopper,
+                    icon: const Icon(Icons.print_rounded, size: 14),
+                    label: const Text('Print Topper', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.surface2,
+                      foregroundColor: AppColors.white,
+                      elevation: 0,
+                      side: const BorderSide(color: AppColors.border),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

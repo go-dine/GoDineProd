@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    ============================================================
+    GoDine — Table Topper Card
+    ============================================================
+    INTEGRATION NOTES:
+    ------------------
+    1. URL PARAM: Pass ?table=N to set the table number.
+       e.g., /table-topper.html?table=3
+       Defaults to table 1 if no param found.
+
+    2. QR IMAGE: Place each table's QR code image in the root as:
+       /qr-table-1.png, /qr-table-2.png, ... /qr-table-N.png
+       If a specific table QR doesn't exist, falls back to /qr.png
+
+    3. THEME COLORS: Each table gets a distinct accent color.
+       Edit TABLE_THEMES below to customize per table.
+
+    4. QUOTES: Hinglish quotes cycle differently per table.
+       Edit QUOTES array below to add/modify quotes.
+
+    5. FONTS: Uses Google Fonts (Space Grotesk + Bebas Neue).
+       For offline/local, host fonts yourself and update @import.
+    ============================================================
+  -->
+
+  <title>GoDine — Table Topper</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Bebas+Neue&family=Manrope:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ── CSS Variables ───────────────────────────────────────────
+       --accent: primary glow/highlight color (changes per table)
+       --accent-dim: muted version for subtle tints
+    ─────────────────────────────────────────────────────────── */
+    :root {
+      --accent: #00e5ff;           /* default: cyan (Table 2) */
+      --accent-dim: rgba(0, 229, 255, 0.15);
+      --accent-glow: rgba(0, 229, 255, 0.35);
+      --bg: #0a0a0a;
+      --card-bg: #111111;
+      --text-primary: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.45);
+      --logo-green: #39ff14;       /* GoDine brand green */
+      --radius: 20px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Space Grotesk', sans-serif;
+      /* Subtle noise texture for depth */
+      background-image: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%);
+    }
+
+    /* ── Card Container ──────────────────────────────────────── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius);
+      width: 360px;
+      min-height: 560px;
+      padding: 28px 32px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+      /* Subtle top glow matching accent */
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 40px 80px rgba(0,0,0,0.6);
+    }
+
+    /* Top ambient glow (changes color with accent) */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 120px;
+      background: var(--accent);
+      opacity: 0.06;
+      filter: blur(50px);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* ── Header Row ──────────────────────────────────────────── */
+    .header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+
+    /* GoDine Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    /* Logo icon box */
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--logo-green);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* "G" lettermark inside icon */
+    .logo-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .logo-wordmark {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+    }
+
+    /* Table badge — top right */
+    .table-badge {
+      border: 1.5px solid var(--accent);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.8px;
+      color: var(--accent);
+      /* Dynamic label set by JS */
+    }
+
+    /* ── Headline ────────────────────────────────────────────── */
+    .headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 1.2;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
+    }
+
+    /* ── Tagline / Hinglish Quote ────────────────────────────── */
+    .tagline {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--accent);
+      text-align: center;
+      letter-spacing: 0.5px;
+      margin-bottom: 36px;
+      min-height: 20px; /* prevents layout shift while quote loads */
+      transition: opacity 0.4s ease;
+    }
+
+    /* ── QR Section ──────────────────────────────────────────── */
+    .qr-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    /* Outer glow ring */
+    .qr-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 22px;
+      background: transparent;
+      box-shadow: 0 0 28px 6px var(--accent-glow);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .qr-box {
+      position: relative;
+      z-index: 1;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 14px;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* ── QR Image ────────────────────────────────────────────────
+       INTEGRATION: src is set dynamically by JS to:
+       /qr-table-{N}.png → fallback to /qr.png
+    ─────────────────────────────────────────────────────────── */
+    .qr-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Scan to order label */
+    .scan-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    .footer {
+      margin-top: auto;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    /* Subtle separator line above footer */
+    .footer::before {
+      content: '';
+      display: block;
+      width: 160px;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 0 auto 12px;
+    }
+
+    /* ── Print / A6 styles (for actual printing) ─────────────── */
+    @media print {
+      body {
+        background: #000;
+        min-height: unset;
+      }
+      .card {
+        width: 105mm;   /* A6 short side */
+        min-height: 148mm; /* A6 long side */
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="topper-card">
+
+    <!-- ── Header: Logo + Table Badge ────────────────────────── -->
+    <div class="header">
+
+      <!-- GoDine Logo -->
+      <a class="logo" href="https://godine.in" target="_blank" rel="noopener">
+        <div class="logo-icon" aria-hidden="true">
+          <!-- Inline SVG "G" lettermark -->
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M19 12H13V14H17C16.5 15.7 14.9 17 13 17C10.8 17 9 15.2 9 13C9 10.8 10.8 9 13 9C14 9 14.9 9.4 15.6 10L17 8.6C15.9 7.6 14.5 7 13 7C9.7 7 7 9.7 7 13C7 16.3 9.7 19 13 19C16.3 19 19 16.3 19 13V12Z"
+              fill="#0a0a0a"
+            />
+          </svg>
+        </div>
+        <span class="logo-wordmark">GODine</span>
+      </a>
+
+      <!-- Table Number Badge — populated by JS -->
+      <div class="table-badge" id="table-badge">TABLE —</div>
+    </div>
+
+    <!-- ── Main Headline — set by JS from quote bank ─────────── -->
+    <h1 class="headline" id="headline">Scan now, thank yourself later.</h1>
+
+    <!-- ── Hinglish Tagline — set by JS ──────────────────────── -->
+    <p class="tagline" id="tagline">Scan. Select. Savor.</p>
+
+    <!-- ── QR Code ───────────────────────────────────────────────
+         INTEGRATION:
+         - JS sets src to /qr-table-{N}.png
+         - If that 404s, onerror falls back to /qr.png
+         - Replace with your actual QR image path if structure differs
+    ─────────────────────────────────────────────────────────── -->
+    <div class="qr-wrapper">
+      <div class="qr-box">
+        <!-- We use a div here for QR placeholder or generated QR -->
+        <div id="qr-container"></div>
+      </div>
+    </div>
+
+    <p class="scan-label">Scan to Order</p>
+
+    <!-- ── Footer ────────────────────────────────────────────── -->
+    <footer class="footer">
+      godine.in &bull; POWERED BY GODINE
+    </footer>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script>
+    /* ===========================================================
+       CONFIGURATION — Edit these to customize GoDine table toppers
+    =========================================================== */
+
+    const TABLE_THEMES = {
+      1:  { accent: '#39ff14', glow: 'rgba(57,255,20,0.35)',   dim: 'rgba(57,255,20,0.15)'    }, 
+      2:  { accent: '#00e5ff', glow: 'rgba(0,229,255,0.35)',   dim: 'rgba(0,229,255,0.15)'    }, 
+      3:  { accent: '#b94fff', glow: 'rgba(185,79,255,0.35)',  dim: 'rgba(185,79,255,0.15)'   }, 
+      4:  { accent: '#ff6b35', glow: 'rgba(255,107,53,0.35)',  dim: 'rgba(255,107,53,0.15)'   }, 
+      5:  { accent: '#ff3d9a', glow: 'rgba(255,61,154,0.35)',  dim: 'rgba(255,61,154,0.15)'   }, 
+      6:  { accent: '#ffd600', glow: 'rgba(255,214,0,0.35)',   dim: 'rgba(255,214,0,0.15)'    }, 
+      7:  { accent: '#00ffb3', glow: 'rgba(0,255,179,0.35)',   dim: 'rgba(0,255,179,0.15)'    }, 
+      8:  { accent: '#ff4444', glow: 'rgba(255,68,68,0.35)',   dim: 'rgba(255,68,68,0.15)'    }, 
+      DEFAULT: { accent: '#00e5ff', glow: 'rgba(0,229,255,0.35)', dim: 'rgba(0,229,255,0.15)' },
+    };
+
+    const QUOTES = [
+      { headline: "Scan karo, relax karo.",              tagline: "Order aao, tension nahi."           },
+      { headline: "Scan now, thank yourself later.",     tagline: "Scan. Select. Savor."               },
+      { headline: "Bhookh lagi? Bas ek scan.",           tagline: "Waiter ka intezaar khatam."         },
+      { headline: "Menu haath mein, order dil mein.",    tagline: "Apni speed pe order karo."          },
+      { headline: "Baith jao, hum sambhal lete hain.",   tagline: "Table se hi order, seedha kitchen." },
+      { headline: "Ek scan, poora menu hazir.",          tagline: "No waiting. Just eating."           },
+      { headline: "Ghar jaisi feeling, bahar ka khana.", tagline: "Scan. Smile. Satisfy."              },
+      { headline: "Order karo apni marzi se.",           tagline: "Your table, your rules."            },
+    ];
+
+    /* ===========================================================
+       RUNTIME — reads URL param and wires up the card
+    =========================================================== */
+
+    (function init() {
+      const params      = new URLSearchParams(window.location.search);
+      const tableNum    = parseInt(params.get('table'), 10) || 1;
+      const slug        = params.get('r') || 'demo';
+      
+      // Construct the URL exactly like the app does
+      const url = `https://godine.in/menu.html?r=${slug}&table=${tableNum}`;
+
+      const theme = TABLE_THEMES[tableNum] || TABLE_THEMES.DEFAULT;
+      const quoteIdx = Math.floor(Math.random() * QUOTES.length);
+      const quote    = QUOTES[quoteIdx];
+
+      const root = document.documentElement;
+      root.style.setProperty('--accent',     theme.accent);
+      root.style.setProperty('--accent-glow', theme.glow);
+      root.style.setProperty('--accent-dim',  theme.dim);
+
+      document.getElementById('table-badge').textContent = `TABLE ${tableNum}`;
+      document.getElementById('headline').textContent    = quote.headline;
+      document.getElementById('tagline').textContent     = quote.tagline;
+
+      // Generate QR Code dynamically using qrcode.js
+      new QRCode(document.getElementById("qr-container"), {
+        text: url,
+        width: 172,
+        height: 172,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+
+      document.title = `GoDine — Table ${tableNum}`;
+      
+      // Auto-trigger print if requested
+      if (params.get('print') === 'true') {
+        setTimeout(() => window.print(), 800);
+      }
+    })();
+  </script>
+
+</body>
+</html>

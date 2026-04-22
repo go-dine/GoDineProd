@@ -58,20 +58,54 @@ Deno.serve(async (req) => {
     let plan = 'starter';
     const numPlanId = parseInt(String(plan_id), 10);
     let amountMonths = 1;
-    if (numPlanId === 2) plan = 'pro';
-    else if (numPlanId === 3) plan = 'advanced';
-    else if (numPlanId === 4) { plan = 'lifetime'; amountMonths = 1200; }
-
-    const futureDate = new Date();
-    futureDate.setMonth(futureDate.getMonth() + amountMonths);
+    
+    // Align with Flutter App Plan IDs: 2 = Pro (Monthly), 3 = Lifetime
+    if (numPlanId === 2) {
+      plan = 'pro';
+      amountMonths = 1;
+    } else if (numPlanId === 3) {
+      plan = 'lifetime';
+      amountMonths = 1200; // 100 years
+    }
 
     if (restaurant_id) {
-      const { error } = await adminClient.from('restaurants').update({
+      // 1. Fetch current subscription end to calculate extension
+      const { data: restaurant, error: fetchError } = await adminClient
+        .from('restaurants')
+        .select('subscription_end')
+        .eq('id', restaurant_id)
+        .single();
+      
+      if (fetchError) throw fetchError;
+
+      const currentEnd = restaurant.subscription_end ? new Date(restaurant.subscription_end) : new Date();
+      const baseDate = currentEnd > new Date() ? currentEnd : new Date();
+      
+      const futureDate = new Date(baseDate);
+      futureDate.setMonth(futureDate.getMonth() + amountMonths);
+
+      // 2. Update restaurant subscription
+      const { error: updateError } = await adminClient.from('restaurants').update({
         plan: plan,
         subscription_end: futureDate.toISOString(),
         is_trial: false,
       }).eq('id', restaurant_id);
-      if (error) throw error;
+      
+      if (updateError) throw updateError;
+
+      // 3. Log payment with the new "Renew Date" (subscription_end)
+      const { error: logError } = await adminClient.from('payments').insert({
+        restaurant_id: restaurant_id,
+        amount: 0, // Should ideally be passed from request, but keep as 0 if unknown
+        status: 'successful',
+        method: 'razorpay',
+        razorpay_order_id: razorpay_order_id,
+        razorpay_payment_id: razorpay_payment_id,
+        plan_id: String(plan_id),
+        renew_date: futureDate.toISOString(),
+      });
+
+      if (logError) console.error('Error logging payment:', logError);
     }
 
     return new Response(JSON.stringify({ success: true, message: 'Payment verified successfully!' }), {
