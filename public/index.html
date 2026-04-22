@@ -1206,15 +1206,28 @@ async function handleComplete() {
     if (typeof supabase === 'undefined' || !CONFIG.supabaseUrl) throw new Error("Database configuration missing.");
     const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
 
-    const { data: rest, error: restErr } = await sbClient.from('restaurants').insert({
-      name: nameVal,
-      slug: slugVal,
-      owner_email: emailVal,
-      owner_password: passwordVal,
-      total_tables: 10
-    }).select().single();
-
-    if (restErr) throw restErr;
+    // Check if restaurant already exists for this email (e.g. retry after failed payment)
+    const { data: existing } = await sbClient.from('restaurants').select('*').eq('owner_email', emailVal).single();
+    let rest;
+    if (existing) {
+      const { data: updated, error: upErr } = await sbClient.from('restaurants').update({
+        name: nameVal,
+        slug: slugVal,
+        owner_password: passwordVal
+      }).eq('id', existing.id).select().single();
+      if (upErr) throw upErr;
+      rest = updated;
+    } else {
+      const { data: inserted, error: insErr } = await sbClient.from('restaurants').insert({
+        name: nameVal,
+        slug: slugVal,
+        owner_email: emailVal,
+        owner_password: passwordVal,
+        total_tables: 10
+      }).select().single();
+      if (insErr) throw insErr;
+      rest = inserted;
+    }
     localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
 
     // Skip Razorpay if Basic (selectedPlanId = 1)
@@ -1325,15 +1338,28 @@ async function handleQuickRegister() {
     if (typeof supabase === 'undefined' || !CONFIG.supabaseUrl) throw new Error('Database not configured.');
     const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
 
-    const { data: rest, error: restErr } = await sbClient.from('restaurants').insert({
-      name: nameVal,
-      slug: slugVal,
-      owner_email: emailVal,
-      owner_password: passwordVal,
-      total_tables: 10
-    }).select().single();
-
-    if (restErr) throw restErr;
+    // Check if restaurant already exists for this email (e.g. retry after failed payment)
+    const { data: existing } = await sbClient.from('restaurants').select('*').eq('owner_email', emailVal).single();
+    let rest;
+    if (existing) {
+      const { data: updated, error: upErr } = await sbClient.from('restaurants').update({
+        name: nameVal,
+        slug: slugVal,
+        owner_password: passwordVal
+      }).eq('id', existing.id).select().single();
+      if (upErr) throw upErr;
+      rest = updated;
+    } else {
+      const { data: inserted, error: insErr } = await sbClient.from('restaurants').insert({
+        name: nameVal,
+        slug: slugVal,
+        owner_email: emailVal,
+        owner_password: passwordVal,
+        total_tables: 10
+      }).select().single();
+      if (insErr) throw insErr;
+      rest = inserted;
+    }
     localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
 
     // Show success state
