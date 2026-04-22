@@ -830,8 +830,9 @@ a:focus-visible, button:focus-visible, input:focus-visible {
       <div id="reg-form">
         <div style="margin-bottom: 16px;">
           <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; display: block; margin-bottom: 6px;">Restaurant Name</label>
-          <input type="text" id="reg-name" placeholder="e.g. The Grand Bistro" oninput="document.getElementById('reg-slug-preview').textContent = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'your-slug'" style="width: 100%; background: var(--s2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 16px; font-size: 14px; color: var(--white); font-family: inherit; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='rgba(182,255,42,0.3)'" onblur="this.style.borderColor='var(--border)'">
-          <small style="display: block; margin-top: 6px; color: var(--dimmed); font-size: 11px;">URL: godine.in/m/<span id="reg-slug-preview" style="color: var(--lime);">your-slug</span></small>
+          <input type="text" id="reg-name" placeholder="e.g. The Grand Bistro" style="width: 100%; background: var(--s2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 16px; font-size: 14px; color: var(--white); font-family: inherit; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='rgba(182,255,42,0.3)'" onblur="this.style.borderColor='var(--border)'">
+          <small id="reg-slug-feedback" style="display: block; margin-top: 6px; font-weight: 600; font-size: 11px;"></small>
+          <small style="display: block; margin-top: 6px; color: var(--dimmed); font-size: 11px;">URL: godine.in/m/<span id="reg-slug-preview" style="color: var(--lime);">your-username</span></small>
         </div>
         <div style="margin-bottom: 16px;">
           <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; display: block; margin-bottom: 6px;">Owner Email</label>
@@ -959,9 +960,10 @@ a:focus-visible, button:focus-visible, input:focus-visible {
           <input type="text" id="ob-currency" class="ob-input" value="INR (₹)" placeholder="e.g. INR (₹)">
         </div>
         <div class="ob-field">
-          <label class="ob-label">Unique Slug (URL)</label>
+          <label class="ob-label">Username (URL)</label>
           <input type="text" id="ob-slug" class="ob-input" placeholder="e.g. grand-bistro">
-          <small style="color:#888; font-size:11px; margin-top:4px; display:block;">Your menu will be at: godine.in/m/your-slug</small>
+          <small id="ob-slug-feedback" style="font-size:11px; margin-top:6px; display:block; font-weight: 600;"></small>
+          <small style="color:#888; font-size:11px; margin-top:4px; display:block;">Your menu will be at: godine.in/m/<span id="ob-slug-preview">your-username</span></small>
         </div>
       </div>
 
@@ -1406,6 +1408,51 @@ async function handleGoogleSignIn(mode) {
 })();
 
 lucide.createIcons();
+
+/* ── REALTIME SLUG AVAILABILITY CHECK ── */
+let slugCheckTimer;
+async function checkSlugAvailability(slug, feedbackElId) {
+  const el = document.getElementById(feedbackElId);
+  if (!slug) { el.textContent = ''; return; }
+  el.style.color = 'var(--muted)';
+  el.textContent = 'Checking availability...';
+  try {
+    if (typeof supabase === 'undefined' || !CONFIG.supabaseUrl) return;
+    const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+    const { data, error } = await sbClient.from('restaurants').select('slug').eq('slug', slug).limit(1);
+    if (error) throw error;
+    if (data && data.length > 0) {
+      el.style.color = '#ff4d4d';
+      el.textContent = '✕ Username is already taken';
+    } else {
+      el.style.color = 'var(--lime)';
+      el.textContent = '✓ Username is available';
+    }
+  } catch (e) {
+    el.textContent = '';
+    console.error('Slug check error:', e);
+  }
+}
+
+const regNameEl = document.getElementById('reg-name');
+if (regNameEl) {
+  regNameEl.addEventListener('input', (e) => {
+    clearTimeout(slugCheckTimer);
+    const val = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    document.getElementById('reg-slug-preview').textContent = val || 'your-username';
+    slugCheckTimer = setTimeout(() => { checkSlugAvailability(val, 'reg-slug-feedback'); }, 500);
+  });
+}
+
+const obSlugEl = document.getElementById('ob-slug');
+if (obSlugEl) {
+  obSlugEl.addEventListener('input', (e) => {
+    clearTimeout(slugCheckTimer);
+    const val = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    document.getElementById('ob-slug-preview').textContent = val || 'your-username';
+    slugCheckTimer = setTimeout(() => { checkSlugAvailability(val, 'ob-slug-feedback'); }, 500);
+  });
+}
 
 /* ── ADD 1 & 2: SCROLL PROGRESS + NAV SCROLL ── */
 window.addEventListener('scroll', () => {
