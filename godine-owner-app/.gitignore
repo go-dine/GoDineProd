@@ -46,3 +46,11 @@ app.*.map.json
 android/app/google-services.json
 .firebase/
 firebase-debug.log
+
+# React Native / Expo leftovers
+node_modules/
+.expo/
+dist/
+Apks/
+flutter_application_1/
+build_log.txt
