@@ -259,8 +259,8 @@ section{position:relative;z-index:1;padding:120px 5%}
 .ob-content {
   padding: 48px 40px;
   min-height: 300px;
-  overflow-y: auto;
-  max-height: 50vh;
+  overflow-y: visible;
+  max-height: none;
 }
 .ob-body { display: none; }
 .ob-body.active { display: block; }
@@ -1289,7 +1289,11 @@ async function handleComplete() {
     rzp.open();
 
   } catch(e) {
-    showToast('Error: ' + e.message, 'error');
+    let msg = e.message;
+    if (msg.includes('restaurants_slug_key') || msg.includes('duplicate key')) {
+      msg = 'This restaurant URL is already taken. Please go back to step 2 and choose a different slug.';
+    }
+    showToast('Error: ' + msg, 'error');
     if (btn) {
       btn.disabled = false;
       btn.innerHTML = '<span>Complete Setup</span> <i data-lucide="chevron-right" style="width:18px;height:18px"></i>';
@@ -1335,7 +1339,11 @@ async function handleQuickRegister() {
     document.getElementById('reg-success').style.display = 'block';
     setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
   } catch (e) {
-    showToast('Registration failed: ' + e.message, 'error');
+    let msg = e.message;
+    if (msg.includes('restaurants_slug_key') || msg.includes('duplicate key')) {
+      msg = 'This restaurant name/slug is already taken. Please choose a different name.';
+    }
+    showToast('Registration failed: ' + msg, 'error');
     btn.disabled = false;
     btn.innerHTML = 'Create My Restaurant →';
   }
