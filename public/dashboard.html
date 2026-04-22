@@ -1537,6 +1537,12 @@ function renderOrders() {
           <div style="flex:1;"><b>${i.qty}×</b> ${i.name} — ₹${i.price * i.qty}</div>
         </div>`).join('')}</div>
         ${o.note ? `<div class="order-note">📝 ${o.note}</div>` : ''}
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:12px;">
+          <span style="color:var(--muted)">Payment:</span>
+          <span style="color:${o.payment_status === 'paid' ? 'var(--lime)' : 'var(--red)'}; font-weight:700;">
+            ${o.payment_status === 'paid' ? '✅ PAID (' + (o.payment_method || 'UPI') + ')' : '⏳ UNPAID'}
+          </span>
+        </div>
         <div class="order-foot"><div class="order-total">₹${o.total}</div><div class="status-actions">
           ${o.status === 'completed' ? '' : `<button class="btn-red btn-sm" onclick="cancelOrder('${o.id}')">🗑 Cancel</button>`}
           ${nextStatus ? `<button class="btn-lime btn-sm" onclick="updateStatus('${o.id}','${nextStatus}')">${nextLabel}</button>` : ''}
@@ -1554,6 +1560,7 @@ function renderOrders() {
         ${ordersHtml}
         <div style="display:flex;gap:8px;margin-top:8px;">
           <button class="btn-ghost" style="flex:1;text-align:center;" onclick="previewTableBill('${table}')">👁️ View Bill (₹${tableTotal})</button>
+          ${hasCompletedOrReady ? `<button class="btn-lime" style="flex:1;" onclick="markTablePaid('${table}')">💰 Mark Paid</button>` : ''}
           ${hasCompletedOrReady ? `<button class="btn-lime" style="flex:1;" onclick="sendTableBill('${table}')">📋 Send Bill</button>` : ''}
         </div>
       </div>
@@ -1684,6 +1691,36 @@ async function sendTableBill(table) {
   } catch(e) {
     console.error(e);
     toast('⚠️ Failed to send bill');
+  }
+}
+
+async function markTablePaid(table) {
+  if (isDemo || !confirm(`Mark all orders for Table ${table} as Paid?`)) return;
+  try {
+    const tableOrders = orders.filter(o => o.table_number == table && o.payment_status !== 'paid');
+    const ids = tableOrders.map(o => o.id);
+    const total = tableOrders.reduce((s, o) => s + o.total, 0);
+    
+    const { error } = await sb.from('orders')
+      .update({ payment_status: 'paid', payment_method: 'cash' })
+      .in('id', ids);
+      
+    if (error) throw error;
+
+    // Log to payments table
+    await sb.from('payments').insert({
+      restaurant_id: restaurant.id,
+      amount: total,
+      status: 'successful',
+      method: 'cash_manual'
+    });
+    
+    toast(`💰 Table ${table} marked as Paid`);
+    loadOrders();
+    loadOverview();
+  } catch(e) {
+    console.error(e);
+    toast('⚠️ Failed to update payment status');
   }
 }
 

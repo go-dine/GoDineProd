@@ -199,6 +199,48 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
     );
   }
 
+  void _handleMarkPaid(String tableNumber, List<Order> groupOrders, double total) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+        title: const Text('💰 Mark as Paid', style: TextStyle(color: AppColors.white)),
+        content: Text('Mark Table $tableNumber bill of ₹${total.toStringAsFixed(0)} as Paid?', style: const TextStyle(color: AppColors.muted)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.muted)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                final unpaidIds = groupOrders.where((o) => o.paymentStatus != 'paid').map((o) => o.id).toList();
+                if (unpaidIds.isEmpty) return;
+                
+                await SupabaseService.markTablePaid(widget.restaurant.id, unpaidIds, total);
+                _load();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('💰 Table $tableNumber marked as Paid')),
+                  );
+                }
+              } catch (_) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Failed to update payment status')),
+                  );
+                }
+              }
+            },
+            child: const Text('Mark Paid', style: TextStyle(color: AppColors.lime, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _handleSendBill(String tableNumber, List<String> ids) {
     showDialog(
       context: context,
@@ -513,30 +555,50 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
                 if (hasActiveAction)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: Row(
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              side: const BorderSide(color: AppColors.muted),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  side: const BorderSide(color: AppColors.muted),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                                ),
+                                onPressed: () => _handleViewBill(table, groupOrders),
+                                child: Text('👁️ View Bill (₹${groupTotal.toStringAsFixed(0)})', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.muted)),
+                              ),
                             ),
-                            onPressed: () => _handleViewBill(table, groupOrders),
-                            child: Text('👁️ View Bill (₹${groupTotal.toStringAsFixed(0)})', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.muted)),
-                          ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.lime,
+                                  foregroundColor: const Color(0xFF050505),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                                ),
+                                onPressed: () => _handleSendBill(table, orderIds),
+                                child: const Text('📋 Send Bill', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: ElevatedButton(
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.account_balance_wallet_rounded, size: 18),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.lime,
-                              foregroundColor: const Color(0xFF050505),
+                              backgroundColor: AppColors.limeAlpha08,
+                              foregroundColor: AppColors.lime,
                               padding: const EdgeInsets.symmetric(vertical: 14),
+                              side: const BorderSide(color: AppColors.limeAlpha18),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
                             ),
-                            onPressed: () => _handleSendBill(table, orderIds),
-                            child: const Text('📋 Send Bill', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                            onPressed: () => _handleMarkPaid(table, groupOrders, groupTotal),
+                            label: const Text('💰 Mark as Paid', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
                           ),
                         ),
                       ],

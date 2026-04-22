@@ -16,6 +16,8 @@ import 'active_hours_screen.dart';
 import 'analytics_screen.dart';
 import 'announcement_screen.dart';
 import 'suggestions_screen.dart';
+import '../app_config.dart';
+
 class OverviewScreen extends StatefulWidget {
   final Restaurant restaurant;
   const OverviewScreen({super.key, required this.restaurant});
@@ -33,8 +35,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
   RealtimeChannel? _channel;
   late Razorpay _razorpay;
   bool _isProcessingPayment = false;
+  int _selectedPlanId = 2;
 
-  static const String _razorpayKeyId = 'rzp_test_Sftzc4oWuOEUPH';
   static const String _supabaseUrl = 'https://qqnrucnsvupfywyzlofa.supabase.co';
 
   @override
@@ -85,16 +87,63 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
   // ── Razorpay Payment Flow ──
 
-  Future<void> _startRazorpayCheckout() async {
+  void _showPlanSelectionDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface1,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Choose Your Plan', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text('Select a subscription tier to upgrade your experience.', style: TextStyle(color: AppColors.muted, fontSize: 13)),
+            const SizedBox(height: 24),
+            
+            _PlanOption(
+              title: 'Advanced Pro',
+              price: '₹249',
+              subtitle: 'Monthly • All premium features',
+              onTap: () {
+                Navigator.pop(ctx);
+                _selectedPlanId = 2;
+                _startRazorpayCheckout(24900);
+              },
+            ),
+            const SizedBox(height: 12),
+            
+            _PlanOption(
+              title: 'Lifetime Access',
+              price: '₹3,500',
+              subtitle: 'One-time • Never pay again',
+              isBestValue: true,
+              onTap: () {
+                Navigator.pop(ctx);
+                _selectedPlanId = 3;
+                _startRazorpayCheckout(350000);
+              },
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _startRazorpayCheckout(int amountInPaise) async {
     if (_isProcessingPayment) return;
     setState(() => _isProcessingPayment = true);
 
     try {
-      // 1. Create order via Edge Function
       final res = await http.post(
         Uri.parse('$_supabaseUrl/functions/v1/create-razorpay-order'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'amount': 24900, 'currency': 'INR'}),
+        body: jsonEncode({'amount': amountInPaise, 'currency': 'INR'}),
       );
 
       if (res.statusCode != 200) {
@@ -104,13 +153,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
       final orderData = jsonDecode(res.body);
 
-      // 2. Open Razorpay native checkout
       final options = {
-        'key': _razorpayKeyId,
+        'key': AppConfig.razorpayKeyId,
         'amount': orderData['amount'],
         'currency': orderData['currency'],
         'name': 'Go Dine',
-        'description': 'Subscription Renewal',
+        'description': 'Plan Upgrade',
         'order_id': orderData['id'],
         'theme': {'color': '#b6ff2a'},
       };
@@ -138,7 +186,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
           'razorpay_order_id': response.orderId,
           'razorpay_signature': response.signature,
           'restaurant_id': widget.restaurant.id,
-          'plan_id': 2,
+          'plan_id': _selectedPlanId,
         }),
       );
 
@@ -155,7 +203,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
           ),
         );
       }
-      _load(); // Reload data
+      _load();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -225,11 +273,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
       icon = Icons.check_circle_outline_rounded;
     }
 
-    final String btnLabel = diffDays <= 0
-        ? 'Renew Now'
-        : diffDays <= 7
-            ? 'Renew Early'
-            : 'Upgrade';
+    final String btnLabel = diffDays <= 0 ? 'Renew Now' : diffDays <= 7 ? 'Renew Early' : 'Upgrade';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -253,7 +297,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
           SizedBox(
             height: 32,
             child: ElevatedButton(
-              onPressed: _isProcessingPayment ? null : _startRazorpayCheckout,
+              onPressed: _isProcessingPayment ? null : _showPlanSelectionDialog,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.lime,
                 foregroundColor: AppColors.bg,
@@ -290,7 +334,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
           if (_buildSubscriptionBanner() != null) _buildSubscriptionBanner()!,
 
-          // Stats row 1
           Row(
             children: [
               StatCard(label: "Today's Orders", value: '$_orderCount', sub: 'Total orders today', accent: true),
@@ -352,7 +395,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
           ),
           const SizedBox(height: 32),
 
-          // Recent orders
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -405,7 +447,21 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                 ],
                               ),
                             ),
-                            StatusBadge(status: o.status, small: true),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  o.paymentStatus == 'paid' ? 'PAID' : 'UNPAID',
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w800,
+                                    color: o.paymentStatus == 'paid' ? AppColors.lime : Color(0xFFFF4444),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                StatusBadge(status: o.status, small: true),
+                              ],
+                            ),
                           ],
                         ),
                       ))),
@@ -413,6 +469,64 @@ class _OverviewScreenState extends State<OverviewScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PlanOption extends StatelessWidget {
+  final String title;
+  final String price;
+  final String subtitle;
+  final bool isBestValue;
+  final VoidCallback onTap;
+
+  const _PlanOption({
+    required this.title,
+    required this.price,
+    required this.subtitle,
+    this.isBestValue = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface2,
+          border: Border.all(color: isBestValue ? AppColors.limeAlpha30 : AppColors.border),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                      if (isBestValue) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(color: AppColors.lime, borderRadius: BorderRadius.circular(4)),
+                          child: const Text('BEST VALUE', style: TextStyle(color: AppColors.bg, fontSize: 9, fontWeight: FontWeight.w900)),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(subtitle, style: const TextStyle(color: AppColors.muted, fontSize: 12)),
+                ],
+              ),
+            ),
+            Text(price, style: const TextStyle(color: AppColors.lime, fontWeight: FontWeight.bold, fontSize: 16)),
+          ],
+        ),
       ),
     );
   }

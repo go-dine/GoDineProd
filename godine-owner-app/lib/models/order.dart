@@ -39,6 +39,8 @@ class Order {
   final String? estimatedTime;
   final String createdAt;
   final bool billSent;
+  final String paymentStatus; // paid | unpaid
+  final String? paymentMethod; // cash | upi | card
 
   Order({
     required this.id,
@@ -55,6 +57,8 @@ class Order {
     this.estimatedTime,
     required this.createdAt,
     this.billSent = false,
+    this.paymentStatus = 'unpaid',
+    this.paymentMethod,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -74,6 +78,8 @@ class Order {
       estimatedTime: json['estimated_time'] as String?,
       createdAt: json['created_at'] as String? ?? '',
       billSent: json['bill_sent'] == true,
+      paymentStatus: json['payment_status'] as String? ?? 'unpaid',
+      paymentMethod: json['payment_method'] as String?,
     );
   }
 
@@ -93,6 +99,8 @@ class Order {
       estimatedTime: estimatedTime ?? this.estimatedTime,
       createdAt: createdAt,
       billSent: billSent ?? this.billSent,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
     );
   }
 }

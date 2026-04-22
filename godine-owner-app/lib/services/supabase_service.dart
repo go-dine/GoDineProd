@@ -315,6 +315,24 @@ class SupabaseService {
     }).inFilter('id', orderIds);
   }
 
+  static Future<void> markTablePaid(String restaurantId, List<String> orderIds, double total) async {
+    if (orderIds.isEmpty) return;
+    
+    // 1. Update orders to paid
+    await client.from('orders').update({
+      'payment_status': 'paid',
+      'payment_method': 'cash',
+    }).inFilter('id', orderIds);
+
+    // 2. Log to platform payments
+    await client.from('payments').insert({
+      'restaurant_id': restaurantId,
+      'amount': total,
+      'status': 'successful',
+      'method': 'cash_manual',
+    });
+  }
+
   // ───── Realtime ─────
 
   static RealtimeChannel subscribeToOrders(String channelName, String restaurantId, void Function(PostgresChangePayload payload) onEvent) {
@@ -408,6 +426,14 @@ class SupabaseService {
   static Future<List<Map<String, dynamic>>> fetchAllFeedback() async {
     final res = await client
         .from('feedback')
+        .select('*, restaurants(name)')
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(res as List);
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchPlatformPayments() async {
+    final res = await client
+        .from('payments')
         .select('*, restaurants(name)')
         .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(res as List);

@@ -24,4 +24,7 @@ class AppConfig {
 
   /// App download link (set to Play Store / App Store URL when published).
   static const String appDownloadUrl = '#';
+
+  /// Razorpay Live Key ID
+  static const String razorpayKeyId = 'rzp_live_SgWyCv725a4fC3';
 }

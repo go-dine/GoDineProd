@@ -1173,8 +1173,8 @@ function backStep() { if (currentStep > 1) showStep(currentStep - 1); }
 
 function selectPlan(id, el) {
   selectedPlanId = id;
+  document.querySelectorAll('.price-card').forEach(c => c.classList.remove('selected'));
   if (el) {
-    document.querySelectorAll('.price-card').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
   }
 }
@@ -1184,6 +1184,22 @@ function updatePlanUI() {
     if (index + 1 === selectedPlanId) c.classList.add('selected');
     else c.classList.remove('selected');
   });
+  // If lifetime, no card in the grid is selected, which is handled above
+}
+
+function clearOnboardingSlug() {
+  const obSlug = document.getElementById('ob-slug');
+  const regSlug = document.getElementById('reg-name'); // In quick reg it's derived from name
+  if (obSlug) {
+    obSlug.value = '';
+    document.getElementById('ob-slug-preview').textContent = 'your-username';
+    document.getElementById('ob-slug-feedback').textContent = '';
+  }
+  if (regSlug) {
+    regSlug.value = '';
+    document.getElementById('reg-slug-preview').textContent = 'your-username';
+    document.getElementById('reg-slug-feedback').textContent = '';
+  }
 }
 
 async function handleComplete() {
@@ -1292,14 +1308,19 @@ async function handleComplete() {
       theme: { color: "#b6ff2a" },
       modal: {
         ondismiss: function() {
-          showToast('Payment cancelled, but account was created. You can upgrade later.', 'info');
-          window.location.href = "dashboard.html"; 
+          showToast('Payment cancelled. Account creation pending payment.', 'info');
+          clearOnboardingSlug();
+          // Stay on onboarding so they can retry or change details
+          btn.disabled = false;
+          btn.innerHTML = '<span>Complete Setup</span> <i data-lucide="chevron-right" style="width:18px;height:18px"></i>';
+          lucide.createIcons();
         }
       }
     };
     const rzp = new window.Razorpay(options);
     rzp.on('payment.failed', function (res) {
       showToast('Payment failed: ' + res.error.description, 'error');
+      clearOnboardingSlug(); // Clear slug so they don't get duplicate error on retry
     });
     rzp.open();
 

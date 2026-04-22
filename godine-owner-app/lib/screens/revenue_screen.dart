@@ -288,6 +288,15 @@ class _RevenueScreenState extends State<RevenueScreen> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text('₹${o.total.toStringAsFixed(0)}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.lime)),
+                                const SizedBox(height: 2),
+                                Text(
+                                  o.paymentStatus == 'paid' ? 'PAID' : 'UNPAID',
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w800,
+                                    color: o.paymentStatus == 'paid' ? AppColors.lime : Color(0xFFFF4444),
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
                                 StatusBadge(status: o.status, small: true),
                               ],

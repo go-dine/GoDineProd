@@ -103,9 +103,22 @@ class OrderCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      _timeAgo(order.createdAt),
-                      style: const TextStyle(fontSize: 11, color: AppColors.muted),
+                    Row(
+                      children: [
+                        Text(
+                          _timeAgo(order.createdAt),
+                          style: const TextStyle(fontSize: 11, color: AppColors.muted),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          order.paymentStatus == 'paid' ? '• PAID' : '• UNPAID',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: order.paymentStatus == 'paid' ? AppColors.lime : Color(0xFFFF4444),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
