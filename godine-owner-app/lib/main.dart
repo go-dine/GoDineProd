@@ -36,13 +36,15 @@ Future<void> main() async {
 class GoDineApp extends StatelessWidget {
   const GoDineApp({super.key});
 
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Go Dine Owner',
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
-      // The app now starts with a beautiful 2-second boot animation
       home: const SplashScreen(),
     );
   }

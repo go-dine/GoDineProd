@@ -1,7 +1,10 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../models/order.dart';
+import '../main.dart';
+import '../screens/orders_screen.dart';
+import '../services/supabase_service.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
@@ -11,7 +14,22 @@ class NotificationService {
     const iosInit = DarwinInitializationSettings();
     const initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
     
-    await _notifications.initialize(settings: initSettings);
+    
+    await _notifications.initialize(
+      settings: initSettings,
+      onDidReceiveNotificationResponse: (details) async {
+        final payload = details.payload;
+        if (payload != null && GoDineApp.navigatorKey.currentState != null) {
+          // If payload is an order ID, try to navigate to OrdersScreen
+          final restaurant = await SupabaseService.fetchCurrentRestaurant();
+          if (restaurant != null) {
+            GoDineApp.navigatorKey.currentState!.push(
+              MaterialPageRoute(builder: (_) => OrdersScreen(restaurant: restaurant))
+            );
+          }
+        }
+      },
+    );
     
     // Create dedicated notification channels
     await _createNotificationChannels();
@@ -91,6 +109,14 @@ class NotificationService {
   static void setupForegroundHandler() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Foreground FCM: ${message.notification?.title}');
+      
+      final type = message.data['type'];
+      // Skip manual local notification for types already handled by Realtime listeners in screens
+      if (type == 'new_order' || type == 'waiter_call') {
+        debugPrint('Skipping local notification for $type (handled by Realtime)');
+        return;
+      }
+
       final notification = message.notification;
       if (notification != null) {
         showLocalNotification(
@@ -98,7 +124,7 @@ class NotificationService {
           title: notification.title ?? 'GoDine',
           body: notification.body ?? 'New notification',
           data: message.data,
-          isOrder: message.data['type'] == 'new_order',
+          isOrder: type == 'new_order',
         );
       }
     });

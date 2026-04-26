@@ -106,7 +106,55 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
     opacity: 0; pointer-events: none; white-space: nowrap;
   }
   #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-</style>
+
+  /* Bill Summary Refined */
+  #bill-summary {
+    background: linear-gradient(145deg, #1a1a1a, #121212);
+    border: 1px solid rgba(193,255,0,0.15);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+    padding: 28px;
+    border-radius: 24px;
+    margin-top: 32px;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .bill-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #c1ff00;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .feedback-solicitation {
+    background: rgba(193,255,0,0.05);
+    padding: 20px;
+    border-radius: 18px;
+    margin: 24px 0;
+    border: 1px dashed rgba(193,255,0,0.2);
+    text-align: center;
+  }
+  .feedback-solicitation p {
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .bill-feedback-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #c1ff00;
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .bill-feedback-btn:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(193,255,0,0.3); }
 </style>
 </head>
 <body id="top" style="position: relative;">
@@ -146,19 +194,24 @@ body{font-family:'Manrope',sans-serif;background-color:#121212;color:#ffffff;min
   <div id="orders-container"></div>
 
   <!-- BILL SUMMARY SECTION -->
-  <div id="bill-summary" style="display:none; margin-top:32px; background:#1e1e1e; border-radius:16px; padding:24px; border:1px solid var(--lime); box-shadow:0 8px 32px rgba(0,0,0,0.4);">
-    <div style="font-family:'Space Grotesk',sans-serif; font-size:1.2rem; font-weight:700; margin-bottom:16px; color:var(--lime);">Bill Summary</div>
-    <div id="bill-items" style="margin-bottom:16px;"></div>
-    <div style="display:flex; justify-content:space-between; padding-top:16px; border-top:1px solid rgba(255,255,255,0.1); font-family:'Space Grotesk',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:24px;">
-      <span>Grand Total</span>
-      <span id="grand-total">₹0</span>
+  <div id="bill-summary" style="display:none;">
+      <div class="bill-title">🧾 Final Bill Summary</div>
+      <div id="bill-items" style="margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:16px;"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="color:#aaa; font-size:1rem; font-weight:600;">Grand Total</span>
+        <span id="grand-total" style="color:#c1ff00; font-size:1.6rem; font-weight:800; font-family:'Space Grotesk';">₹0</span>
+      </div>
+      
+      <div class="feedback-solicitation" id="feedback-solicitation">
+        <p>How was your meal? We'd love to hear your thoughts! 🙏</p>
+        <a href="#" id="bill-feedback-btn" class="bill-feedback-btn">⭐ Rate & Review</a>
+      </div>
+      
+      <div class="pay-options" style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <button onclick="payViaUPI()" class="pay-btn upi-btn" style="background:#fff; color:#000; border:none; padding:14px; border-radius:12px; font-weight:700; cursor:pointer;">Pay via UPI</button>
+        <button onclick="payViaRazorpay()" class="pay-btn card-btn" style="background:#c1ff00; color:#000; border:none; padding:14px; border-radius:12px; font-weight:700; cursor:pointer;">Card/Netbanking</button>
+      </div>
     </div>
-    <div style="background:rgba(182,255,42,0.1); border:1px dashed var(--lime); border-radius:12px; padding:20px; text-align:center;">
-       <div style="font-size:1.5rem; margin-bottom:8px;">🏪</div>
-       <div style="font-weight:800; font-family:'Space Grotesk'; color:var(--lime); margin-bottom:4px;">Pay at Counter</div>
-       <div style="font-size:0.8rem; color:#aaa;">Please visit the billing counter to settle your bill.</div>
-    </div>
-  </div>
 </main>
 
 <script>
@@ -334,12 +387,13 @@ function renderOrders(list) {
 }
 
 function updateBillSummary(list) {
-  const activeUnpaid = list.filter(o => o.status !== 'cancelled' && o.payment_status !== 'paid');
+  // Show bill only if 'bill_sent' is true OR at least one order is 'completed'
+  const billableOrders = list.filter(o => (o.bill_sent === true || o.status === 'completed') && o.status !== 'cancelled' && o.payment_status !== 'paid');
   const summaryEl = document.getElementById('bill-summary');
   const itemsEl = document.getElementById('bill-items');
   const totalEl = document.getElementById('grand-total');
 
-  if (!activeUnpaid.length) {
+  if (!billableOrders.length) {
     summaryEl.style.display = 'none';
     return;
   }
@@ -348,12 +402,12 @@ function updateBillSummary(list) {
   let total = 0;
   let itemsHtml = '';
   
-  activeUnpaid.forEach(o => {
+  billableOrders.forEach(o => {
     total += parseFloat(o.total);
     itemsHtml += `
-      <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.9rem; color:#aaa;">
-        <span>Order #${o.id.split('-').pop().toUpperCase().substring(0,4)}</span>
-        <span>₹${o.total}</span>
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.95rem;">
+        <span style="color:#eee; font-weight:600;">Order #${o.id.split('-').pop().toUpperCase().substring(0,4)}</span>
+        <span style="color:#c1ff00; font-weight:700; font-family:'Space Grotesk';">₹${o.total}</span>
       </div>
     `;
   });
@@ -361,6 +415,18 @@ function updateBillSummary(list) {
   itemsEl.innerHTML = itemsHtml;
   totalEl.textContent = `₹${total}`;
   window.currentBillTotal = total;
+  
+  // Link the feedback button to the latest billable order
+  const latestOrder = billableOrders[0];
+  const fbBtn = document.getElementById('bill-feedback-btn');
+  if (fbBtn && latestOrder) {
+    fbBtn.href = `feedback?r=${restaurantSlug}&order=${latestOrder.id}`;
+    if (feedbackGiven.includes(latestOrder.id)) {
+      document.getElementById('feedback-solicitation').style.display = 'none';
+    } else {
+      document.getElementById('feedback-solicitation').style.display = 'block';
+    }
+  }
 }
 
 async function payViaUPI() {
@@ -441,6 +507,11 @@ async function payViaRazorpay() {
   }
 }
 
+function safeEmoji(e) {
+  if (!e || e === 'null' || e === 'NULL') return '🍽️';
+  return e;
+}
+
 function createOrderCard(o) {
   const idShort = ('#' + o.id.split('-').pop()).substring(0, 8).toUpperCase();
   const date = new Date(o.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -491,8 +562,8 @@ function createOrderCard(o) {
             <div class="ci-visual">
               ${i.image_url 
                 ? `<img src="${i.image_url}" class="ci-img" alt="${i.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                   <div class="ci-emoji" style="display:none">${i.emoji || '🍽️'}</div>` 
-                : `<div class="ci-emoji">${i.emoji || '🍽️'}</div>`}
+                   <div class="ci-emoji" style="display:none">${safeEmoji(i.emoji)}</div>` 
+                : `<div class="ci-emoji">${safeEmoji(i.emoji)}</div>`}
             </div>
             <div class="ci-info">
               <div class="ci-name-row">

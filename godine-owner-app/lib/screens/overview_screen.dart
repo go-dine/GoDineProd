@@ -86,6 +86,26 @@ class _OverviewScreenState extends State<OverviewScreen> {
     } catch (_) {
       if (mounted) setState(() => _isLoading = false);
     }
+    _checkSubscriptionStatus();
+  }
+
+  void _checkSubscriptionStatus() {
+    if (_restaurant.plan == 'lifetime') return;
+    final subEnd = _restaurant.subscriptionEnd;
+    if (subEnd == null) return;
+
+    final diffDays = subEnd.difference(DateTime.now()).inDays;
+    if (diffDays <= 7) {
+      final msg = diffDays <= 0 
+          ? 'Your GoDine subscription has expired. Please renew to continue accepting orders.'
+          : 'Your GoDine subscription expires in $diffDays days. Renew now to avoid interruption.';
+      
+      NotificationService.showLocalNotification(
+        id: 999, // Unique ID for subscription alerts
+        title: '💳 Payment Due',
+        body: msg,
+      );
+    }
   }
 
   String _timeAgo(String iso) {

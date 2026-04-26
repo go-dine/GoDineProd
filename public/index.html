@@ -419,6 +419,24 @@ section{position:relative;z-index:1;padding:120px 5%}
 @media(max-width:640px){
   .nav-links{display:none}
   .feat-grid{grid-template-columns:1fr}
+  /* Hide direct nav buttons on mobile — they exist in #mobile-menu */
+  .nav-signin, .nav-right > .nav-btn { display:none !important; }
+  /* Tighter spacing on mobile for premium look */
+  section { padding: 60px 5% !important; }
+  .hero { padding: 80px 5% 48px !important; min-height: auto !important; }
+  h1 { font-size: clamp(38px,10vw,64px) !important; letter-spacing: -2px !important; line-height: 1.0 !important; }
+  .hero-sub { font-size: 15px !important; margin: 20px auto 32px !important; line-height: 1.6 !important; }
+  .s-title { font-size: clamp(28px,7vw,40px) !important; }
+  .how-left { padding: 32px 24px !important; }
+  .how-right { padding: 32px 24px !important; }
+}
+/* ── SMOOTH PAGE / SECTION TRANSITIONS ── */
+section, .how, .strip {
+  animation: sectionFadeIn 0.6s ease both;
+}
+@keyframes sectionFadeIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── ADD 1: SCROLL PROGRESS BAR ── */

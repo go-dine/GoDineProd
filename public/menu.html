@@ -46,8 +46,15 @@ a{color:inherit;text-decoration:none}
   background:rgba(5,5,5,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
   padding:0 16px;
+  transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.header-top{display:flex;align-items:center;justify-content:space-between;height:56px}
+.header.scrolled { padding-top:0; padding-bottom:0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: rgba(5,5,5,0.98); }
+.header-top{
+  display:flex;align-items:center;justify-content:space-between;height:56px;
+  transition:all 0.4s ease;
+  overflow:hidden;
+}
+.header.scrolled .header-top { height:0; opacity:0; pointer-events:none; }
 .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px}
 .logo b{color:var(--lime)}
 .table-badge{
@@ -55,7 +62,12 @@ a{color:inherit;text-decoration:none}
   border-radius:8px;padding:5px 12px;
   font-size:11px;font-weight:700;color:var(--lime);letter-spacing:0.5px;
 }
-.rest-info{padding:10px 0 14px}
+.rest-info{
+  padding:10px 0 14px;
+  max-height:80px;overflow:hidden;
+  transition:all 0.4s ease;
+}
+.header.scrolled .rest-info { max-height:0; opacity:0; padding:0; pointer-events:none; }
 .rest-name{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;margin-bottom:2px}
 .rest-meta{font-size:12px;color:var(--muted)}
 .search-wrap{padding:10px 0 14px;position:relative}
@@ -864,20 +876,22 @@ a{color:inherit;text-decoration:none}
   <div class="qr-wrap" id="qr-wrap" style="margin-bottom: 24px;"></div>
 
   <!-- FEEDBACK BOX -->
-  <div id="feedback-section" class="feedback-box" style="display:none; width: 100%; max-width: 320px; margin-bottom: 24px;">
-    <h3 style="font-size:16px;text-align:center">How's the food? 🍽️</h3>
-    <div class="stars">
-      <span class="star-btn" data-v="1" onclick="rate(1)">⭐</span>
-      <span class="star-btn" data-v="2" onclick="rate(2)">⭐</span>
-      <span class="star-btn" data-v="3" onclick="rate(3)">⭐</span>
-      <span class="star-btn" data-v="4" onclick="rate(4)">⭐</span>
-      <span class="star-btn" data-v="5" onclick="rate(5)">⭐</span>
+  <div id="feedback-section" class="feedback-box" style="display:none; width: 100%; max-width: 320px; margin-bottom: 24px; background: linear-gradient(160deg, var(--s2), rgba(182,255,42,0.04)); border: 1px solid rgba(182,255,42,0.15); border-radius: 20px; padding: 28px 24px;">
+    <div style="font-size:28px; text-align:center; margin-bottom:8px;">🍽️</div>
+    <h3 style="font-size:17px; text-align:center; font-family:'Space Grotesk',sans-serif; font-weight:700; margin-bottom:4px;">How was your experience?</h3>
+    <p style="font-size:12px; text-align:center; color:var(--muted); margin-bottom:16px;">We'd love to hear your feedback</p>
+    <div class="stars" style="display:flex; gap:12px; justify-content:center; margin-bottom:20px;">
+      <span class="star-btn" data-v="1" onclick="rate(1)" style="font-size:28px; cursor:pointer; filter:grayscale(1); transition:all 0.2s;">⭐</span>
+      <span class="star-btn" data-v="2" onclick="rate(2)" style="font-size:28px; cursor:pointer; filter:grayscale(1); transition:all 0.2s;">⭐</span>
+      <span class="star-btn" data-v="3" onclick="rate(3)" style="font-size:28px; cursor:pointer; filter:grayscale(1); transition:all 0.2s;">⭐</span>
+      <span class="star-btn" data-v="4" onclick="rate(4)" style="font-size:28px; cursor:pointer; filter:grayscale(1); transition:all 0.2s;">⭐</span>
+      <span class="star-btn" data-v="5" onclick="rate(5)" style="font-size:28px; cursor:pointer; filter:grayscale(1); transition:all 0.2s;">⭐</span>
     </div>
-    <button class="add-btn" style="width:100%;padding:10px;font-size:12px;" id="feedback-submit-btn" onclick="submitFeedback()">Submit Rating</button>
+    <button id="feedback-submit-btn" onclick="submitFeedback()" style="width:100%; padding:14px; background:var(--lime); color:#050505; border:none; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer; font-family:'Manrope',sans-serif; transition:all 0.2s;">Submit Feedback →</button>
   </div>
 
   <div style="margin-top: 40px; width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 12px;">
-    <button class="place-order-btn" onclick="location.reload()">Order More Items</button>
+    <button class="place-order-btn" onclick="resetOrder()">Order More Items</button>
     <div style="font-size: 11px; color: var(--muted);">Order ID: <span id="order-id-success" style="color: var(--lime); font-weight: 600;">—</span></div>
   </div>
 </div>
@@ -931,6 +945,9 @@ let cart = {};             // id -> {dish, qty}
 let activeCategory = 'All';
 let restaurantOpen = true; 
 let paymentMethod = 'cash';
+
+/* Helper: safely get emoji (handles null, 'null', undefined) */
+function safeEmoji(e) { return (e && e !== 'null') ? e : '🍽️'; }
 
 
 
@@ -1206,8 +1223,8 @@ function dishCard(d) {
       : `<span class="unavail-tag">Off</span>`;
 
   const visual = d.image_url 
-    ? `<div class="dish-visual"><img src="${d.image_url}" class="dish-img" alt="${d.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="dish-emoji" style="display:none">${d.emoji || '🍽️'}</div></div>`
-    : `<div class="dish-visual"><div class="dish-emoji">${d.emoji || '🍽️'}</div></div>`;
+    ? `<div class="dish-visual"><img src="${d.image_url}" class="dish-img" alt="${d.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="dish-emoji" style="display:none">${safeEmoji(d.emoji)}</div></div>`
+    : `<div class="dish-visual"><div class="dish-emoji">${safeEmoji(d.emoji)}</div></div>`;
 
   const typeColor = (d.is_veg === false || d.type === 'non-veg') ? '#ff4d4d' : 'var(--lime)';
   const typeDot = `<span style="display:inline-block;flex-shrink:0;width:6px;height:6px;border-radius:50%;background:${typeColor};"></span>`;
@@ -1237,7 +1254,7 @@ function addItem(id) {
   cart[id] = { dish, qty: 1 };
   refreshCard(id);
   updateCartBar();
-  showToast(`${dish.emoji} ${dish.name} added`);
+  showToast(`${safeEmoji(dish.emoji)} ${dish.name} added`);
 }
 
 function changeQty(id, delta) {
@@ -1327,8 +1344,8 @@ function renderSheet() {
         <div class="ci-visual" style="width:48px; height:48px; flex-shrink:0; border-radius:12px; overflow:hidden; background:rgba(255,255,255,0.05); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;">
           ${dish.image_url 
             ? `<img src="${dish.image_url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-               <div class="ci-emoji" style="display:none; font-size:24px;">${dish.emoji || '🍽️'}</div>` 
-            : `<div class="ci-emoji" style="font-size:24px;">${dish.emoji || '🍽️'}</div>`}
+               <div class="ci-emoji" style="display:none; font-size:24px;">${safeEmoji(dish.emoji)}</div>` 
+            : `<div class="ci-emoji" style="font-size:24px;">${safeEmoji(dish.emoji)}</div>`}
         </div>
         <div class="ci-left" style="flex-grow:1;">
           <div class="ci-name" style="font-weight:700; font-size:15px; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
@@ -1582,8 +1599,8 @@ function renderFeatured() {
   document.getElementById('feat-row').innerHTML = featured.map(d => `
     <div class="feat-card" onclick="addItem('${d.id}')">
       ${d.image_url 
-        ? `<img src="${d.image_url}" class="feat-img" alt="${d.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="feat-emoji" style="display:none">${d.emoji || '🍽️'}</div>` 
-        : `<div class="feat-emoji">${d.emoji || '🍽️'}</div>`}
+        ? `<img src="${d.image_url}" class="feat-img" alt="${d.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="feat-emoji" style="display:none">${safeEmoji(d.emoji)}</div>` 
+        : `<div class="feat-emoji">${safeEmoji(d.emoji)}</div>`}
       <div class="feat-info">
         <div class="feat-details">
           <div class="feat-name">${d.name}</div>
@@ -1596,14 +1613,50 @@ function renderFeatured() {
 }
 
 function resetOrder() {
-  cart = {};
-  updateCartBar();
-  localStorage.removeItem('godine_active_order_id');
-  document.getElementById('success-screen').classList.remove('show');
-  document.getElementById('place-btn').disabled = false;
-  document.getElementById('place-btn').textContent = 'Place Order →';
-  document.getElementById('order-note').value = '';
-  renderMenu();
+  console.log('Resetting order and returning to menu...');
+  try {
+    cart = {};
+    updateCartBar();
+    localStorage.removeItem('godine_active_order_id');
+    currentOrderId = null;
+    
+    if (orderSubscription) {
+      console.log('Unsubscribing from order channel...');
+      try {
+        orderSubscription.unsubscribe();
+      } catch (subErr) {
+        console.warn('Unsubscribe failed (ignoring):', subErr);
+      }
+      orderSubscription = null;
+    }
+
+    // Explicitly hide success screen
+    const successScreen = document.getElementById('success-screen');
+    if (successScreen) {
+      successScreen.classList.remove('show');
+      successScreen.style.display = 'none'; // Force hide as fallback
+    }
+
+    const placeBtn = document.getElementById('place-btn');
+    if (placeBtn) {
+      placeBtn.disabled = false;
+      placeBtn.textContent = 'Place Order →';
+    }
+    
+    document.getElementById('order-note').value = '';
+    
+    // Restore menu FAB
+    const menuFab = document.getElementById('menu-fab');
+    if (menuFab) menuFab.style.display = '';
+    
+    renderMenu();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    console.log('Order reset complete.');
+  } catch (err) {
+    console.error('Critical error in resetOrder:', err);
+    // Absolute fallback: reload if everything fails
+    location.reload();
+  }
 }
 
 /* ── TOAST ── */
@@ -1667,8 +1720,8 @@ async function loadFavorites() {
           <div class="fav-visual" style="height:60px; border-radius:10px; overflow:hidden; margin-bottom:8px; background:var(--s3); display:flex; align-items:center; justify-content:center; border:1px solid var(--border);">
             ${d.image_url 
               ? `<img src="${d.image_url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                 <div class="fav-emoji" style="display:none;font-size:24px;">${d.emoji || '🍽️'}</div>` 
-              : `<div class="fav-emoji" style="font-size:24px;">${d.emoji || '🍽️'}</div>`}
+                 <div class="fav-emoji" style="display:none;font-size:24px;">${safeEmoji(d.emoji)}</div>` 
+              : `<div class="fav-emoji" style="font-size:24px;">${safeEmoji(d.emoji)}</div>`}
           </div>
           <div class="fav-name">${d.name}</div>
           <div class="fav-meta">₹${d.price}</div>
@@ -1759,8 +1812,8 @@ function renderAISuggestions() {
           <div class="ai-visual" style="height:70px; border-radius:10px; overflow:hidden; margin-bottom:8px; background:var(--s3); display:flex; align-items:center; justify-content:center; border:1px solid var(--border);">
             ${d.image_url 
               ? `<img src="${d.image_url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                 <div class="ai-card-emoji" style="display:none;font-size:24px;">${d.emoji || '🍽️'}</div>` 
-              : `<div class="ai-card-emoji" style="font-size:24px;">${d.emoji || '🍽️'}</div>`}
+                 <div class="ai-card-emoji" style="display:none;font-size:24px;">${safeEmoji(d.emoji)}</div>` 
+              : `<div class="ai-card-emoji" style="font-size:24px;">${safeEmoji(d.emoji)}</div>`}
           </div>
           <div class="ai-card-name">${d.name}</div>
           <div class="ai-card-price">₹${d.price}</div>
@@ -1838,8 +1891,14 @@ function closeCatDrawer() {
   document.getElementById('cat-drawer').classList.remove('open');
 }
 
-/* ── SCROLL SPY FOR CATEGORIES ── */
+/* ── SCROLL SPY FOR CATEGORIES + HEADER SHRINK ── */
 window.addEventListener('scroll', () => {
+  // Header shrink: collapse restaurant info on scroll, keep search visible
+  const header = document.getElementById('header');
+  if (header) {
+    header.classList.toggle('scrolled', window.scrollY > 60);
+  }
+
   if (activeCategory !== 'All' || document.getElementById('search-input').value) return;
   
   const sections = document.querySelectorAll('.section-head');

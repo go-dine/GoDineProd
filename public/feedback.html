@@ -54,20 +54,20 @@ a{color:inherit;text-decoration:none}
 .rating-label .rl-icon{font-size:18px}
 .stars{display:flex;gap:8px;justify-content:center}
 .star{
-  width:48px;height:48px;border-radius:14px;
+  width:52px;height:52px;border-radius:16px;
   background:var(--s2);border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
-  font-size:24px;cursor:pointer;
-  transition:all 0.2s ease;user-select:none;
+  font-size:28px;cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  user-select:none;
 }
-.star:hover{transform:scale(1.1);border-color:rgba(255,255,255,0.15)}
+.star:hover{transform:scale(1.15);border-color:rgba(255,255,255,0.2)}
 .star.active{
-  background:var(--lime2);border-color:var(--lime3);
-  transform:scale(1.1);
+  background:var(--lime2);border-color:var(--lime);
+  transform:scale(1.1); box-shadow:0 0 15px rgba(182,255,42,0.15);
 }
-.star.active .star-icon{filter:none}
-.star .star-icon{filter:grayscale(1) opacity(0.4);transition:filter 0.2s}
-.star.active .star-icon{filter:none}
+.star .star-icon{filter:grayscale(1) opacity(0.3); transition:all 0.3s}
+.star.active .star-icon{filter:none; transform:scale(1.1)}
 
 /* ── COMMENT ── */
 .comment-card{
@@ -105,12 +105,12 @@ a{color:inherit;text-decoration:none}
 .success-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px}
 .success-sub{font-size:14px;color:var(--muted);margin-bottom:32px;max-width:300px}
 .back-btn{
-  background:var(--s2);border:1px solid var(--border);border-radius:12px;
-  padding:12px 28px;color:var(--white);font-size:14px;font-weight:600;
-  cursor:pointer;font-family:'Manrope',sans-serif;transition:border-color .2s;
+  background:var(--lime);border:none;border-radius:14px;
+  padding:14px 32px;color:#050505;font-size:15px;font-weight:800;
+  cursor:pointer;font-family:'Manrope',sans-serif;transition:all .3s;
   text-decoration:none;display:inline-block;
 }
-.back-btn:hover{border-color:rgba(255,255,255,0.2)}
+.back-btn:hover{transform:translateY(-2px); box-shadow:0 8px 24px rgba(182,255,42,0.3)}
 
 /* ── TOAST ── */
 #toast{
