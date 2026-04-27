@@ -2252,10 +2252,31 @@ function setupCallsRealtime() {
       filter: `restaurant_id=eq.${restaurant.id}` 
     }, payload => {
       if (payload.eventType === 'INSERT' && !payload.new.is_completed) {
-        orderSound.play().catch(() => {});
+        if (soundEnabled) orderSound.play().catch(() => {});
         toast('🔔 New Waiter Call: Table ' + payload.new.table_number);
       }
       loadCalls();
+    }).subscribe();
+}
+
+let ordersChannel;
+function setupOrdersRealtime() {
+  if (isDemo || !restaurant || ordersChannel) return;
+  ordersChannel = sb.channel('public:orders:' + restaurant.id)
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'orders',
+      filter: `restaurant_id=eq.${restaurant.id}`
+    }, payload => {
+      console.log('Order Event:', payload.eventType, payload.new);
+      if (payload.eventType === 'INSERT') {
+        if (soundEnabled) orderSound.play().catch(() => {});
+        toast('🔔 New Order: Table ' + payload.new.table_number);
+      }
+      // Refresh local data
+      loadOrders();
+      loadOverview();
     }).subscribe();
 }
 

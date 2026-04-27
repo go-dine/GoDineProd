@@ -8,6 +8,16 @@ import '../services/supabase_service.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  static final Set<String> _recentlyShownIds = {};
+
+  static bool _shouldNotify(String? id) {
+    if (id == null) return true;
+    if (_recentlyShownIds.contains(id)) return false;
+    _recentlyShownIds.add(id);
+    // Remove after 30 seconds to allow for future notifications (e.g. status updates)
+    Future.delayed(const Duration(seconds: 30), () => _recentlyShownIds.remove(id));
+    return true;
+  }
 
   static Future<void> init() async {
     const androidInit = AndroidInitializationSettings('@mipmap/launcher_icon');
@@ -132,6 +142,7 @@ class NotificationService {
 
   /// Show a new order notification with high-priority channel
   static Future<void> showNewOrderNotification(Order order) async {
+    if (!_shouldNotify('order_${order.id}')) return;
     const androidDetails = AndroidNotificationDetails(
       'godine_new_orders',
       'New Orders',
@@ -170,6 +181,9 @@ class NotificationService {
     Map<String, dynamic>? data,
     bool isOrder = false,
   }) async {
+    final dedupId = data?['order_id'] ?? data?['call_id'] ?? data?['request_id'] ?? id.toString();
+    if (!_shouldNotify('local_$dedupId')) return;
+    
     final channelId = isOrder ? 'godine_new_orders' : 'godine_general';
     final channelName = isOrder ? 'New Orders' : 'General Notifications';
 
@@ -208,6 +222,7 @@ class NotificationService {
     required String tableNumber,
     String? callId,
   }) async {
+    if (!_shouldNotify('call_$callId')) return;
     const androidDetails = AndroidNotificationDetails(
       'godine_waiter_calls',
       'Waiter Calls',
@@ -243,6 +258,7 @@ class NotificationService {
     required String tableNumber,
     String? requestId,
   }) async {
+    if (!_shouldNotify('bill_$requestId')) return;
     const androidDetails = AndroidNotificationDetails(
       'godine_waiter_calls',
       'Waiter Calls',

@@ -78,11 +78,15 @@ Deno.serve(async (req) => {
     })
     
     const authTokens = await jwtClient.authorize()
+    const tokensSet = new Set<string>()
+    if (restaurant?.fcm_token) tokensSet.add(restaurant.fcm_token)
+    if (tokenRows) tokenRows.forEach(t => tokensSet.add(t.token))
+
     const accessToken = authTokens.access_token
 
     // Send Notification to all tokens
     const results = []
-    for (const token of tokens) {
+    for (const token of tokensSet) {
       try {
         const fcmRes = await fetch(
           `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,

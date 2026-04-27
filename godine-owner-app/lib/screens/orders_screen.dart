@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shimmer/shimmer.dart';
@@ -38,16 +39,15 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
       widget.restaurant.id,
       (payload) {
         if (!mounted) return;
-        _load();
         
         // Handle new order UI (Banners/Haptics)
         if (payload.eventType == PostgresChangeEvent.insert) {
           final newOrder = Order.fromJson(payload.newRecord);
-          // NOTE: System-level local notification is handled by MainScaffold 
-          // to avoid duplicates and ensure global awareness.
           HapticFeedback.heavyImpact();
           if (mounted) {
             setState(() {
+              // Add to live orders locally for immediate update
+              _liveOrders.insert(0, newOrder);
               _showNewOrderBanner = true;
               _newOrderTable = newOrder.tableNumber;
             });
@@ -55,16 +55,45 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
               if (mounted) setState(() => _showNewOrderBanner = false);
             });
           }
+          _load(); // Still re-load to ensure correct ordering/sync
         } else if (payload.eventType == PostgresChangeEvent.update) {
+          final updatedOrder = Order.fromJson(payload.newRecord);
           HapticFeedback.mediumImpact();
+          if (mounted) {
+            setState(() {
+              // Update existing order in local state for "self-updating" feel
+              int idx = _liveOrders.indexWhere((o) => o.id == updatedOrder.id);
+              if (idx != -1) {
+                _liveOrders[idx] = updatedOrder;
+                // If it moved to completed/cancelled, it will disappear on next full _load
+              } else {
+                // Check history
+                int hIdx = _historyOrders.indexWhere((o) => o.id == updatedOrder.id);
+                if (hIdx != -1) _historyOrders[hIdx] = updatedOrder;
+              }
+            });
+            
+            // If status changed to something that moves it between tabs, trigger full load
+            if (updatedOrder.status == 'completed' || updatedOrder.status == 'cancelled' || updatedOrder.billSent) {
+              _load();
+            }
+          }
+        } else if (payload.eventType == PostgresChangeEvent.delete) {
+          _load();
         }
       },
     );
+
+    // Periodic refresh fallback (every 30 seconds)
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) => _load());
   }
+
+  late Timer _refreshTimer;
 
   @override
   void dispose() {
     _tabController.dispose();
+    _refreshTimer.cancel();
     if (_channel != null) SupabaseService.unsubscribe(_channel!);
     super.dispose();
   }
@@ -541,6 +570,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
                 ),
                 const SizedBox(height: 16),
                 ...groupOrders.map((o) => OrderCard(
+                      key: ValueKey(o.id),
                       order: o,
                       onAdvanceStatus: _advanceStatus,
                       onComplete: _handleComplete,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -174,6 +175,10 @@ class _MainScaffoldState extends State<MainScaffold> {
   int _waiterCallCount = 0;
   RealtimeChannel? _adminChannel;
   RealtimeChannel? _waiterChannel;
+  StreamSubscription? _ordersSubscription;
+  StreamSubscription? _waiterCallsSubscription;
+  StreamSubscription? _billRequestsSubscription;
+  StreamSubscription? _paymentsSubscription;
 
   @override
   void initState() {
@@ -197,7 +202,7 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
 
     // 3. Listen for Waiter Calls
-    _waiterCallsSubscription = supabase
+    _waiterCallsSubscription = Supabase.instance.client
         .from('waiter_calls')
         .stream(primaryKey: ['id'])
         .eq('restaurant_id', widget.restaurant.id)
@@ -222,7 +227,7 @@ class _MainScaffoldState extends State<MainScaffold> {
         });
 
     // 4. Listen for Bill Requests
-    _billRequestsSubscription = supabase
+    _billRequestsSubscription = Supabase.instance.client
         .from('bill_requests')
         .stream(primaryKey: ['id'])
         .eq('restaurant_id', widget.restaurant.id)
@@ -243,7 +248,7 @@ class _MainScaffoldState extends State<MainScaffold> {
         });
 
     // 5. Listen for Payments
-    _paymentsSubscription = supabase
+    _paymentsSubscription = Supabase.instance.client
         .from('payments')
         .stream(primaryKey: ['id'])
         .eq('restaurant_id', widget.restaurant.id)

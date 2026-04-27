@@ -619,10 +619,22 @@ async function cancelCustomerOrder(id) {
 }
 
 function setupRealtime() {
-  sb.channel('customer-orders')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `customer_phone=eq.${currentUser.phone}` }, payload => {
+  if (isDemo || !currentUser) return;
+  
+  // 1. Listen for ALL changes to orders for this customer
+  sb.channel('customer-orders-' + currentUser.phone)
+    .on('postgres_changes', { 
+      event: '*', 
+      schema: 'public', 
+      table: 'orders', 
+      filter: `customer_phone=eq.${currentUser.phone}` 
+    }, payload => {
+      console.log('Order Change Received:', payload);
       fetchOrders();
     }).subscribe();
+
+  // 2. Periodic Refresh fallback (every 20 seconds)
+  setInterval(fetchOrders, 20000);
 }
 
 function showToast(msg) {
