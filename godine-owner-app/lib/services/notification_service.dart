@@ -112,7 +112,7 @@ class NotificationService {
       
       final type = message.data['type'];
       // Skip manual local notification for types already handled by Realtime listeners in screens
-      if (type == 'new_order' || type == 'waiter_call') {
+      if (type == 'new_order' || type == 'waiter_call' || type == 'bill_request') {
         debugPrint('Skipping local notification for $type (handled by Realtime)');
         return;
       }
@@ -235,6 +235,54 @@ class NotificationService {
       body: 'A customer is requesting assistance at Table $tableNumber',
       notificationDetails: platformDetails,
       payload: callId,
+    );
+  }
+
+  /// Show a bill request notification (uses waiter call channel for max priority)
+  static Future<void> showBillRequestNotification({
+    required String tableNumber,
+    String? requestId,
+  }) async {
+    const androidDetails = AndroidNotificationDetails(
+      'godine_waiter_calls',
+      'Waiter Calls',
+      channelDescription: 'High-priority alerts when a customer calls the waiter',
+      importance: Importance.max,
+      priority: Priority.high,
+      icon: '@mipmap/launcher_icon',
+      playSound: true,
+      enableVibration: true,
+      enableLights: true,
+      fullScreenIntent: true,
+    );
+    const platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
+    );
+
+    await _notifications.show(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: '🧾 Bill Requested — Table $tableNumber',
+      body: 'Customer is ready to pay. Tap to view orders.',
+      notificationDetails: platformDetails,
+      payload: requestId,
+    );
+  }
+
+  /// Show a payment notification
+  static Future<void> showPaymentNotification({
+    required String tableNumber,
+    required String amount,
+  }) async {
+    await showLocalNotification(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: '💰 Payment Received — Table $tableNumber',
+      body: 'Payment of ₹$amount confirmed.',
+      isOrder: true, // Use high priority channel
     );
   }
 

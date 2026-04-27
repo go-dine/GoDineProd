@@ -182,36 +182,95 @@ class _MainScaffoldState extends State<MainScaffold> {
       'owner-notifications-${widget.restaurant.id}',
       widget.restaurant.id,
       (payload) {
-        // Badge counts are updated via OrdersScreen's own subscription.
-        // We only need this channel for global awareness (e.g., pending count in bottom nav).
-        // Notification is handled by OrdersScreen to avoid duplicates.
-      },
-    );
-
-    // Subscribe to waiter calls for notifications
-    _waiterChannel = SupabaseService.subscribeToWaiterCalls(
-      'waiter-notif-${widget.restaurant.id}',
-      widget.restaurant.id,
-      (payload) {
         if (payload.eventType == PostgresChangeEvent.insert) {
           final nr = payload.newRecord;
           if (nr != null) {
-            NotificationService.showWaiterCallNotification(
-              tableNumber: nr['table_number']?.toString() ?? '?',
-              callId: nr['id']?.toString(),
-            );
+            final order = Order.fromJson(nr);
+            // Only show system notification if NOT on Orders tab (index 1)
+            // If on Orders tab, the screen itself shows a banner.
+            if (_currentIndex != 1) {
+              NotificationService.showNewOrderNotification(order);
+            }
           }
         }
-        // Reload badge count on any change
-        _loadWaiterCallCount();
       },
     );
+
+    // 3. Listen for Waiter Calls
+    _waiterCallsSubscription = supabase
+        .from('waiter_calls')
+        .stream(primaryKey: ['id'])
+        .eq('restaurant_id', widget.restaurant.id)
+        .listen((data) {
+          if (data.isNotEmpty) {
+            final latest = data.last;
+            final isCompleted = latest['is_completed'] ?? false;
+            final calledAt = DateTime.parse(latest['created_at']);
+            
+            // Only notify if it's very recent (within last 30s) and not completed
+            if (!isCompleted && DateTime.now().difference(calledAt).inSeconds < 30) {
+              // Only show system notification if NOT on the calls tab
+              if (_currentIndex != 2) {
+                NotificationService.showWaiterCallNotification(
+                  tableNumber: latest['table_number'].toString(),
+                  callId: latest['id'],
+                );
+              }
+              HapticFeedback.heavyImpact();
+            }
+          }
+        });
+
+    // 4. Listen for Bill Requests
+    _billRequestsSubscription = supabase
+        .from('bill_requests')
+        .stream(primaryKey: ['id'])
+        .eq('restaurant_id', widget.restaurant.id)
+        .listen((data) {
+          if (data.isNotEmpty) {
+            final latest = data.last;
+            final isCompleted = latest['is_completed'] ?? false;
+            final requestedAt = DateTime.parse(latest['created_at']);
+            
+            if (!isCompleted && DateTime.now().difference(requestedAt).inSeconds < 30) {
+              NotificationService.showBillRequestNotification(
+                tableNumber: latest['table_number'].toString(),
+                requestId: latest['id'],
+              );
+              HapticFeedback.vibrate();
+            }
+          }
+        });
+
+    // 5. Listen for Payments
+    _paymentsSubscription = supabase
+        .from('payments')
+        .stream(primaryKey: ['id'])
+        .eq('restaurant_id', widget.restaurant.id)
+        .listen((data) {
+          if (data.isNotEmpty) {
+            final latest = data.last;
+            final status = latest['status'];
+            final createdAt = DateTime.parse(latest['created_at']);
+            
+            if (status == 'successful' && DateTime.now().difference(createdAt).inSeconds < 30) {
+              NotificationService.showPaymentNotification(
+                tableNumber: 'Unknown', // Payment table doesn't have table_number, might need to link via order_id
+                amount: latest['amount'].toString(),
+              );
+            }
+          }
+        });
 
     _loadWaiterCallCount();
   }
 
   @override
   void dispose() {
+    _ordersSubscription?.cancel();
+    _waiterCallsSubscription?.cancel();
+    _billRequestsSubscription?.cancel();
+    _paymentsSubscription?.cancel();
     if (_adminChannel != null) {
       SupabaseService.unsubscribe(_adminChannel!);
     }

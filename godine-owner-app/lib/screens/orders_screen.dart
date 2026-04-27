@@ -40,10 +40,11 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
         if (!mounted) return;
         _load();
         
-        // Trigger notification on new order
+        // Handle new order UI (Banners/Haptics)
         if (payload.eventType == PostgresChangeEvent.insert) {
           final newOrder = Order.fromJson(payload.newRecord);
-          NotificationService.showNewOrderNotification(newOrder);
+          // NOTE: System-level local notification is handled by MainScaffold 
+          // to avoid duplicates and ensure global awareness.
           HapticFeedback.heavyImpact();
           if (mounted) {
             setState(() {
@@ -55,14 +56,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
             });
           }
         } else if (payload.eventType == PostgresChangeEvent.update) {
-          final updatedOrder = Order.fromJson(payload.newRecord);
-          final oldOrder = payload.oldRecord.isNotEmpty ? Order.fromJson(payload.oldRecord) : null;
-          
-          // Only notify if status actually changed
-          if (oldOrder == null || oldOrder.status != updatedOrder.status) {
-            NotificationService.showStatusUpdateNotification(updatedOrder);
-            HapticFeedback.mediumImpact();
-          }
+          HapticFeedback.mediumImpact();
         }
       },
     );
