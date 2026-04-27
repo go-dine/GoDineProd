@@ -22,20 +22,22 @@
 - [x] Add "Politly ask for feedback" UI component beneath the bill summary
 - [x] Enhance Customer bill summary and feedback request (`customer.html`)
 - [x] Improve Feedback page aesthetics (`feedback.html`)
+- [x] Implement 20s auto-refresh fallback for live tracking
 
 ## Mobile App (Flutter)
-- [x] Disable foreground FCM notification for `new_order` to prevent duplicate alerts
-- [x] Add notification routing to `OrdersScreen` on tap
-- [x] Add "Payment Due" banner for non-Lifetime plans
-- [x] Fix Flutter App notification issues:
-    - [x] Add `navigatorKey` to `main.dart`
-    - [x] Implement tap-to-navigate in `notification_service.dart`
-    - [x] Suppress duplicate notifications in `notification_service.dart`
-    - [x] Add "Payment Due" notification check in `overview_screen.dart`
+- [x] Implement smart real-time updates (update local list on `UPDATE`)
+- [x] Add 30s periodic refresh fallback in `OrdersScreen`
+- [x] Add `ValueKey` to order cards for UI stability
+- [x] Implement notification deduplication (prevent Realtime vs FCM overlap)
+- [x] Fix missing stream subscription variables in `AuthGate.dart`
+- [x] Standardize Supabase client access across the app
 
-## General / Service Worker
-- [ ] Ensure Service Worker notification click routes correctly
-- [ ] Link payment plan (Razorpay integration link)
-- [/] Bulk generate AI images for Yaarana Cafe
-- [x] Delete irrelevant files and clean up repository
-- [ ] Push all changes to GitHub
+## Owner Dashboard (Web)
+- [x] Implement 30s background sync for orders/overview
+- [x] Consolidate real-time listeners for orders and waiter calls
+
+## General / Infrastructure
+- [x] Deduplicate FCM tokens in `send-order-notification` Edge Function
+- [x] Fix status update triggers causing multiple customer notifications
+- [x] Push all changes to GitHub
+- [x] Generate production APK for distribution
