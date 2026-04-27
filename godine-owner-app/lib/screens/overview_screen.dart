@@ -18,6 +18,7 @@ import 'analytics_screen.dart';
 import 'announcement_screen.dart';
 import 'suggestions_screen.dart';
 import '../app_config.dart';
+import '../services/notification_service.dart';
 
 class OverviewScreen extends StatefulWidget {
   final Restaurant restaurant;
@@ -447,149 +448,148 @@ class _OverviewScreenState extends State<OverviewScreen> {
     return ListView(
       padding: EdgeInsets.fromLTRB(px, 16, px, 40),
       children: [
-          const Text('Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.white)),
-          const SizedBox(height: 4),
-          Text(dateStr, style: const TextStyle(fontSize: 13, color: AppColors.muted)),
-          const SizedBox(height: 22),
+        const Text('Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.white)),
+        const SizedBox(height: 4),
+        Text(dateStr, style: const TextStyle(fontSize: 13, color: AppColors.muted)),
+        const SizedBox(height: 22),
 
-          if (_buildSubscriptionBanner() != null) _buildSubscriptionBanner()!,
+        if (_buildSubscriptionBanner() != null) _buildSubscriptionBanner()!,
 
-          Row(
-            children: [
-              StatCard(label: "Today's Orders", value: '$_orderCount', sub: 'Total orders today', accent: true),
-              const SizedBox(width: 12),
-              StatCard(label: 'Revenue', value: revenueStr, sub: "Today's earnings", accent: true),
-            ],
-          )
-          .animate()
-          .fadeIn(duration: 400.ms)
-          .slideY(begin: 0.15, end: 0, duration: 400.ms, curve: Curves.easeOutCubic),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              StatCard(label: 'Pending', value: '$_pending', sub: 'Awaiting action'),
-              const SizedBox(width: 12),
-              StatCard(label: 'Menu Items', value: '$_activeDishes', sub: 'Active dishes'),
-            ],
-          )
-          .animate()
-          .fadeIn(duration: 400.ms, delay: 100.ms)
-          .slideY(begin: 0.15, end: 0, duration: 400.ms, delay: 100.ms, curve: Curves.easeOutCubic),
-          const SizedBox(height: 32),
+        Row(
+          children: [
+            StatCard(label: "Today's Orders", value: '$_orderCount', sub: 'Total orders today', accent: true),
+            const SizedBox(width: 12),
+            StatCard(label: 'Revenue', value: revenueStr, sub: "Today's earnings", accent: true),
+          ],
+        )
+        .animate()
+        .fadeIn(duration: 400.ms)
+        .slideY(begin: 0.15, end: 0, duration: 400.ms, curve: Curves.easeOutCubic),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            StatCard(label: 'Pending', value: '$_pending', sub: 'Awaiting action'),
+            const SizedBox(width: 12),
+            StatCard(label: 'Menu Items', value: '$_activeDishes', sub: 'Active dishes'),
+          ],
+        )
+        .animate()
+        .fadeIn(duration: 400.ms, delay: 100.ms)
+        .slideY(begin: 0.15, end: 0, duration: 400.ms, delay: 100.ms, curve: Curves.easeOutCubic),
+        const SizedBox(height: 32),
 
-          const Text('Store Management', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.white)),
-          const SizedBox(height: 12),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.5,
-            children: [
-              _ManagementCard(
-                title: 'Timings',
-                icon: Icons.access_time_filled_rounded,
-                color: Colors.orangeAccent,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ActiveHoursScreen(restaurant: _restaurant))),
-              ),
-              _ManagementCard(
-                title: 'Announce',
-                icon: Icons.campaign_rounded,
-                color: Colors.pinkAccent,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnnouncementScreen(restaurant: _restaurant))),
-              ),
-              _ManagementCard(
-                title: 'Analytics',
-                icon: Icons.analytics_rounded,
-                color: Colors.blueAccent,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnalyticsScreen(restaurant: _restaurant))),
-              ),
-              _ManagementCard(
-                title: 'AI Insights',
-                icon: Icons.auto_awesome_rounded,
-                color: AppColors.lime,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SuggestionsScreen(restaurant: _restaurant))),
-              ),
-            ],
-          ),
-          const SizedBox(height: 32),
-
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppColors.surface1,
-              border: Border.all(color: AppColors.border),
-              borderRadius: BorderRadius.circular(AppRadius.md),
+        const Text('Store Management', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.white)),
+        const SizedBox(height: 12),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+          childAspectRatio: 1.5,
+          children: [
+            _ManagementCard(
+              title: 'Timings',
+              icon: Icons.access_time_filled_rounded,
+              color: Colors.orangeAccent,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ActiveHoursScreen(restaurant: _restaurant))),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Recent Orders',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.white),
-                ),
-                const SizedBox(height: 16),
-                if (_recentOrders.isEmpty)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 30),
-                      child: Column(
-                        children: [
-                          Text('🕐', style: TextStyle(fontSize: 32)),
-                          SizedBox(height: 8),
-                          Text('No orders yet today', style: TextStyle(fontSize: 14, color: AppColors.muted)),
-                        ],
-                      ),
+            _ManagementCard(
+              title: 'Announce',
+              icon: Icons.campaign_rounded,
+              color: Colors.pinkAccent,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnnouncementScreen(restaurant: _restaurant))),
+            ),
+            _ManagementCard(
+              title: 'Analytics',
+              icon: Icons.analytics_rounded,
+              color: Colors.blueAccent,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnalyticsScreen(restaurant: _restaurant))),
+            ),
+            _ManagementCard(
+              title: 'AI Insights',
+              icon: Icons.auto_awesome_rounded,
+              color: AppColors.lime,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SuggestionsScreen(restaurant: _restaurant))),
+            ),
+          ],
+        ),
+        const SizedBox(height: 32),
+
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppColors.surface1,
+            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Recent Orders',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.white),
+              ),
+              const SizedBox(height: 16),
+              if (_recentOrders.isEmpty)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 30),
+                    child: Column(
+                      children: [
+                        Text('🕐', style: TextStyle(fontSize: 32)),
+                        SizedBox(height: 8),
+                        Text('No orders yet today', style: TextStyle(fontSize: 14, color: AppColors.muted)),
+                      ],
                     ),
-                  )
-                else
-                  ...(_recentOrders.map((o) => Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: const BoxDecoration(
-                          border: Border(bottom: BorderSide(color: AppColors.border)),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Table ${o.tableNumber} · ₹${o.total.toStringAsFixed(0)}',
-                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.white),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '${_timeAgo(o.createdAt)} · ${o.items.length} item(s)',
-                                    style: const TextStyle(fontSize: 11, color: AppColors.muted),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                  ),
+                )
+              else
+                ..._recentOrders.map((o) => Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: const BoxDecoration(
+                        border: Border(bottom: BorderSide(color: AppColors.border)),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  o.paymentStatus == 'paid' ? 'PAID' : 'UNPAID',
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w800,
-                                    color: o.paymentStatus == 'paid' ? AppColors.lime : Color(0xFFFF4444),
-                                  ),
+                                  'Table ${o.tableNumber} · ₹${o.total.toStringAsFixed(0)}',
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.white),
                                 ),
-                                const SizedBox(height: 4),
-                                StatusBadge(status: o.status, small: true),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${_timeAgo(o.createdAt)} · ${o.items.length} item(s)',
+                                  style: const TextStyle(fontSize: 11, color: AppColors.muted),
+                                ),
                               ],
                             ),
-                          ],
-                        ),
-                      ))),
-              ],
-            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                o.paymentStatus == 'paid' ? 'PAID' : 'UNPAID',
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w800,
+                                  color: o.paymentStatus == 'paid' ? AppColors.lime : const Color(0xFFFF4444),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              StatusBadge(status: o.status, small: true),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

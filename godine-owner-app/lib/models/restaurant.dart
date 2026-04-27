@@ -10,6 +10,7 @@ class Restaurant {
   final bool isTrial;
   final DateTime? subscriptionEnd;
   final String? announcement;
+  final String plan;
 
   Restaurant({
     required this.id,
@@ -23,6 +24,7 @@ class Restaurant {
     this.isTrial = true,
     this.subscriptionEnd,
     this.announcement,
+    this.plan = 'starter',
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class Restaurant {
           ? DateTime.tryParse(json['subscription_end'] as String) 
           : null,
       announcement: json['announcement'] as String?,
+      plan: (json['plan'] ?? 'starter') as String,
     );
   }
 
@@ -54,5 +57,6 @@ class Restaurant {
         'is_trial': isTrial,
         'subscription_end': subscriptionEnd?.toIso8601String(),
         'announcement': announcement,
+        'plan': plan,
       };
 }
