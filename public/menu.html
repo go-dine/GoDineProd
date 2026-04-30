@@ -1915,14 +1915,21 @@ function renderAnnouncement() {
 <script>
 /* ── ZOMATO DRAWER LOGIC ── */
 function openCatDrawer() {
-  const items = Object.entries(allDishes.reduce((acc, d) => {
+  const itemsObj = allDishes.reduce((acc, d) => {
     acc[d.category] = (acc[d.category] || 0) + 1;
     return acc;
-  }, {}));
+  }, {});
+
+  const mostOrderedCount = allDishes.filter(d => d.is_featured).length;
+  let items = Object.entries(itemsObj);
+  
+  if (mostOrderedCount > 0) {
+    items.unshift(['Most Ordered', mostOrderedCount]);
+  }
 
   document.getElementById('cat-list-items').innerHTML = items.map(([name, count]) => `
     <div class="cat-list-item" onclick="scrollToCat('${name}')">
-      <span class="cat-list-name">${name}</span>
+      <span class="cat-list-name">${name === 'Most Ordered' ? '🔥 Most Ordered' : name}</span>
       <span class="cat-list-count">${count} items</span>
     </div>
   `).join('');
@@ -1943,7 +1950,9 @@ window.addEventListener('scroll', () => {
   
   sections.forEach(s => {
     const top = s.getBoundingClientRect().top;
-    if (top < 150) current = s.textContent;
+    // Strip emoji and trim so it matches the cat-btn text content perfectly
+    const textContent = s.textContent.replace('🔥', '').trim();
+    if (top < 150) current = textContent;
   });
   
   document.querySelectorAll('.cat-btn').forEach(b => {
