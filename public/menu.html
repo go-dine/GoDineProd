@@ -1160,7 +1160,9 @@ async function callWaiter() {
 
 /* ── CATEGORIES ── */
 function getCategories() {
-  return ['All', ...new Set(allDishes.map(d => d.category))];
+  const cats = ['All'];
+  if (allDishes.some(d => d.is_featured)) cats.push('Most Ordered');
+  return [...cats, ...new Set(allDishes.map(d => d.category))];
 }
 
 function renderCategories() {
@@ -1213,7 +1215,9 @@ function scrollToCat(cat) {
 function renderMenu(search = '') {
   const q = search.toLowerCase();
   const filtered = allDishes.filter(d => {
-    const matchCat = activeCategory === 'All' || d.category === activeCategory;
+    const matchCat = activeCategory === 'All' || 
+                     (activeCategory === 'Most Ordered' && d.is_featured) || 
+                     d.category === activeCategory;
     const matchSearch = !q || d.name.toLowerCase().includes(q) || (d.description || '').toLowerCase().includes(q);
     return matchCat && matchSearch;
   });
@@ -1227,10 +1231,20 @@ function renderMenu(search = '') {
   if (activeCategory === 'All' && !q) {
     const groups = {};
     filtered.forEach(d => { (groups[d.category] = groups[d.category] || []).push(d); });
-    el.innerHTML = Object.entries(groups).map(([cat, dishes]) =>
+    
+    let html = '';
+    const mostOrdered = filtered.filter(d => d.is_featured);
+    if (mostOrdered.length > 0) {
+      html += `<div class="section-head" id="cat-Most-Ordered"><span style="color:var(--lime); margin-right:6px">🔥</span> Most Ordered</div>` + 
+              `<div class="dish-list">${mostOrdered.map(dishCard).join('')}</div>`;
+    }
+
+    html += Object.entries(groups).map(([cat, dishes]) =>
       `<div class="section-head" id="cat-${cat.replace(/\s+/g,'-')}">${cat}</div>` + 
       `<div class="dish-list">${dishes.map(dishCard).join('')}</div>`
     ).join('');
+    
+    el.innerHTML = html;
   } else {
     el.innerHTML = `<div class="dish-list">${filtered.map(dishCard).join('')}</div>`;
   }
