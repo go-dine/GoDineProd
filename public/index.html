@@ -738,7 +738,8 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   <div class="dark-price-grid">
     <div class="dark-price-card">
       <div class="dp-plan">Basic</div>
-      <div class="dp-price">₹199<sub>/mo</sub></div>
+      <div class="dp-price">₹200<sub>/mo</sub></div>
+      <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Billed: Monthly<br>Save: —</div>
       <ul class="dp-features">
         <li><i data-lucide="check" style="width:16px;height:16px"></i> 5 Tables</li>
         <li><i data-lucide="check" style="width:16px;height:16px"></i> Digital QR Menu</li>
@@ -750,7 +751,8 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     
     <div class="dark-price-card" style="border-color: rgba(182,255,42,0.3);">
       <div class="dp-plan">Pro <span class="pro-badge">Popular</span></div>
-      <div class="dp-price">₹249<sub>/mo</sub></div>
+      <div class="dp-price">₹300<sub>/mo</sub></div>
+      <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Billed: Monthly<br>Save: —</div>
       <ul class="dp-features">
         <li><i data-lucide="check" style="width:16px;height:16px"></i> 20 Tables</li>
         <li><i data-lucide="check" style="width:16px;height:16px"></i> Real-time Orders</li>
@@ -762,7 +764,8 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 
     <div class="dark-price-card">
       <div class="dp-plan">Advanced</div>
-      <div class="dp-price">₹349<sub>/mo</sub></div>
+      <div class="dp-price">₹400<sub>/mo</sub></div>
+      <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Billed: Monthly<br>Save: —</div>
       <ul class="dp-features">
         <li><i data-lucide="check" style="width:16px;height:16px"></i> Unlimited Tables</li>
         <li><i data-lucide="check" style="width:16px;height:16px"></i> AI Suggestions</li>
@@ -773,10 +776,11 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     </div>
 
     <div class="dark-price-card">
-      <div class="dp-plan">Lifetime</div>
-      <div class="dp-price">₹3500<sub>/once</sub></div>
+      <div class="dp-plan">Annual <span class="pro-badge">Best Value — Save 30%</span></div>
+      <div class="dp-price">₹3500<sub>/yr</sub></div>
+      <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Billed: Annually<br>Save: ₹1100/year saved</div>
       <ul class="dp-features">
-        <li><i data-lucide="check" style="width:16px;height:16px"></i> Full Access Forever</li>
+        <li><i data-lucide="check" style="width:16px;height:16px"></i> Full Access for 1 Year</li>
         <li><i data-lucide="check" style="width:16px;height:16px"></i> All Future Features</li>
         <li><i data-lucide="check" style="width:16px;height:16px"></i> Premium Branding</li>
         <li><i data-lucide="check" style="width:16px;height:16px"></i> Dedicated Manager</li>
@@ -803,7 +807,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
         <div class="faq-a"><p>Under 5 minutes. Register, add your dishes, download QR codes, place them on tables. Done.</p></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">What happens after the 10-day free trial?<span class="faq-chevron">+</span></button>
+        <button class="faq-q">What happens after the 7-day free trial?<span class="faq-chevron">+</span></button>
         <div class="faq-a"><p>You choose a plan. If you don't upgrade, ordering pauses but your digital menu stays visible. Your data is never deleted.</p></div>
       </div>
       <div class="faq-item">
@@ -910,7 +914,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
         </div>
       </div>
       <div style="margin-top: 28px; padding: 16px; background: rgba(182,255,42,0.04); border: 1px solid rgba(182,255,42,0.1); border-radius: var(--r-md);">
-        <div style="font-size: 13px; color: var(--lime); font-weight: 700;">🎁 Free 10-Day Trial</div>
+        <div style="font-size: 13px; color: var(--lime); font-weight: 700;">🎁 Free 7-Day Trial</div>
         <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">No credit card needed. Full access to all features.</div>
       </div>
     </div>
@@ -1005,26 +1009,65 @@ a:focus-visible, button:focus-visible, input:focus-visible {
         <div class="pricing-grid">
           <div class="price-card" onclick="selectPlan(1, this)">
             <p class="pc-name">Basic</p>
-            <p class="pc-price">₹199<span>/mo</span></p>
+            <p class="pc-price">₹200<span>/mo</span></p>
             <ul class="pc-features"><li>5 Tables</li><li>QR Menu</li></ul>
             <button class="pc-btn">Select</button>
           </div>
           <div class="price-card selected" onclick="selectPlan(2, this)">
             <p class="pc-name">Pro</p>
-            <p class="pc-price">₹249<span>/mo</span></p>
+            <p class="pc-price">₹300<span>/mo</span></p>
             <ul class="pc-features"><li>20 Tables</li><li>Real-time Orders</li></ul>
             <button class="pc-btn">Select</button>
           </div>
           <div class="price-card" onclick="selectPlan(3, this)">
             <p class="pc-name">Advanced</p>
-            <p class="pc-price">₹349<span>/mo</span></p>
+            <p class="pc-price">₹400<span>/mo</span></p>
             <ul class="pc-features"><li>Unlimited Tables</li><li>AI Insights</li></ul>
             <button class="pc-btn">Select</button>
           </div>
         </div>
         <div style="text-align:center; margin-top:16px;">
-          <a href="#" style="font-size:12px; color:#666; text-decoration:underline;" onclick="selectPlan(4, null); return false;">Or Lifetime for ₹3500</a>
+          <a href="#" style="font-size:12px; color:#666; text-decoration:underline;" onclick="selectPlan(4, null); return false;">Or Annual for ₹3500/year</a>
         </div>
+      </div>
+
+      <!-- Step 5: Physical QR Code Setup -->
+      <div class="ob-body" id="step-5">
+        <p style="font-size:14px; margin-bottom:12px; color:var(--white);">Would you like premium physical acrylic QR stands shipped to your restaurant?</p>
+        <div class="ob-field">
+          <label class="ob-label">Physical QR Stands (₹100 each)</label>
+          <select id="ob-qr-count" class="ob-input" onchange="document.getElementById('qr-shipping-fields').style.display = this.value === '0' ? 'none' : 'block'">
+            <option value="0">No, I'll print my own (Free)</option>
+            <option value="5">5 Stands (₹500)</option>
+            <option value="10">10 Stands (₹1000)</option>
+            <option value="20">20 Stands (₹2000)</option>
+          </select>
+        </div>
+        <div id="qr-shipping-fields" style="display:none; margin-top:16px;">
+          <div class="ob-field">
+            <label class="ob-label">Delivery Address</label>
+            <textarea id="ob-address" class="ob-input" rows="2" placeholder="Full street address"></textarea>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <div class="ob-field" style="flex:1;">
+              <label class="ob-label">Pincode</label>
+              <input type="text" id="ob-pincode" class="ob-input" placeholder="e.g. 400001">
+            </div>
+            <div class="ob-field" style="flex:1;">
+              <label class="ob-label">Phone</label>
+              <input type="tel" id="ob-phone" class="ob-input" placeholder="10-digit number">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6: Payment Summary -->
+      <div class="ob-body" id="step-6">
+        <h3 style="margin-bottom:16px; font-family:'Space Grotesk',sans-serif; font-size:18px;">Order Summary</h3>
+        <div id="summary-details" style="background:var(--s2); padding:16px; border-radius:8px; border:1px solid var(--border); margin-bottom:16px; font-size:14px; line-height:1.6;">
+           <!-- JS will populate -->
+        </div>
+        <p style="font-size:12px; color:var(--muted); text-align:center;">You will be redirected to our secure payment gateway to complete registration.</p>
       </div>
     </div>
       <div class="ob-footer">
@@ -1163,8 +1206,8 @@ function showStep(s) {
   const stepEl = document.getElementById('step-' + s);
   if (stepEl) stepEl.classList.add('active');
   
-  const titles = ["Restaurant Profile", "Menu Settings", "Security", "Select Plan"];
-  const descs = ["Basic info to set up your store.", "How your customers will see your menu.", "Your admin login credentials.", "Choose a plan to grow your business."];
+  const titles = ["Restaurant Profile", "Menu Settings", "Security", "Select Plan", "Physical QR Stands", "Payment Summary"];
+  const descs = ["Basic info to set up your store.", "How your customers will see your menu.", "Your admin login credentials.", "Choose a plan to grow your business.", "Get ready-to-use acrylic QR stands.", "Review and complete registration."];
   
   const sn = document.getElementById('step-num');
   const st = document.getElementById('step-title');
@@ -1176,15 +1219,38 @@ function showStep(s) {
   if(st) st.textContent = titles[s-1];
   if(sd) sd.textContent = descs[s-1];
   if(backBtn) backBtn.style.display = s === 1 ? 'none' : 'block';
-  if(nextTxt) nextTxt.textContent = s === 4 ? 'Complete Setup' : 'Continue';
+  if(nextTxt) nextTxt.textContent = s === 6 ? 'Pay & Complete' : 'Continue';
+  
   if(s === 4) updatePlanUI();
+  if(s === 6) {
+    const plans = { 1: {n:'Basic', p:200}, 2: {n:'Pro', p:300}, 3: {n:'Advanced', p:400}, 4: {n:'Annual', p:3500} };
+    const plan = plans[selectedPlanId];
+    const qrCount = parseInt(document.getElementById('ob-qr-count').value) || 0;
+    const qrPrice = qrCount * 100;
+    const total = plan.p + qrPrice;
+    
+    document.getElementById('summary-details').innerHTML = `
+      <div style="display:flex; justify-content:space-between;"><span>${plan.n} Plan (7-Day Free Trial included)</span><b>₹${plan.p}</b></div>
+      ${qrCount > 0 ? `<div style="display:flex; justify-content:space-between; margin-top:8px;"><span>${qrCount}× Physical QR Stands</span><b>₹${qrPrice}</b></div>` : ''}
+      <hr style="border:0; border-top:1px solid var(--border); margin:12px 0;">
+      <div style="display:flex; justify-content:space-between; color:var(--lime); font-weight:700;"><span>Total Due Today</span><b>₹${total}</b></div>
+    `;
+  }
 }
 
 function nextStep() {
-  if (currentStep < 4) {
+  if (currentStep < 6) {
     if (currentStep === 1 && !document.getElementById('ob-name').value) { showToast('Please enter restaurant name.', 'error'); return; }
     if (currentStep === 3 && (!document.getElementById('ob-email').value || document.getElementById('ob-password').value.length < 6)) {
       showToast('Please enter a valid email and password (min 6 chars).', 'error'); return;
+    }
+    if (currentStep === 5) {
+      const count = parseInt(document.getElementById('ob-qr-count').value);
+      if (count > 0) {
+        if (!document.getElementById('ob-address').value || !document.getElementById('ob-pincode').value || !document.getElementById('ob-phone').value) {
+          showToast('Please fill all delivery details for the QR stands.', 'error'); return;
+        }
+      }
     }
     showStep(currentStep + 1);
   } else { handleComplete(); }
@@ -1230,18 +1296,27 @@ async function handleComplete() {
   const slugVal = (document.getElementById('ob-slug').value || nameVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')).trim();
   const emailVal = document.getElementById('ob-email').value;
   const passwordVal = document.getElementById('ob-password').value;
+  
+  const qrCount = parseInt(document.getElementById('ob-qr-count').value) || 0;
+  const qrRequested = qrCount > 0;
+  const deliveryAddress = document.getElementById('ob-address').value;
+  const deliveryPincode = document.getElementById('ob-pincode').value;
+  const deliveryPhone = document.getElementById('ob-phone').value;
 
   if (!slugVal) { showToast('Please enter a unique slug/URL.', 'error'); return; }
 
   const btn = document.getElementById('ob-next');
   if(btn) {
     btn.disabled = true;
-    btn.innerHTML = '<span>Setting up...</span>';
+    btn.innerHTML = '<span>Processing...</span>';
   }
 
   try {
     if (typeof supabase === 'undefined' || !CONFIG.supabaseUrl) throw new Error("Database configuration missing.");
     const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+
+    const planNames = { 1: 'basic', 2: 'pro', 3: 'advanced', 4: 'annual' };
+    const planName = planNames[selectedPlanId] || 'pro';
 
     // Check if restaurant already exists for this email (e.g. retry after failed payment)
     const { data: existing } = await sbClient.from('restaurants').select('*').eq('owner_email', emailVal).single();
@@ -1250,7 +1325,16 @@ async function handleComplete() {
       const { data: updated, error: upErr } = await sbClient.from('restaurants').update({
         name: nameVal,
         slug: slugVal,
-        owner_password: passwordVal
+        owner_password: passwordVal,
+        plan: planName,
+        is_verified: false,
+        is_trial: true,
+        trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        physical_qr_requested: qrRequested,
+        physical_qr_count: qrCount,
+        delivery_address: deliveryAddress,
+        delivery_pincode: deliveryPincode,
+        delivery_phone: deliveryPhone
       }).eq('id', existing.id).select().single();
       if (upErr) throw upErr;
       rest = updated;
@@ -1260,31 +1344,36 @@ async function handleComplete() {
         slug: slugVal,
         owner_email: emailVal,
         owner_password: passwordVal,
-        total_tables: 10
+        total_tables: 10,
+        plan: planName,
+        is_verified: false,
+        is_trial: true,
+        trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        physical_qr_requested: qrRequested,
+        physical_qr_count: qrCount,
+        delivery_address: deliveryAddress,
+        delivery_pincode: deliveryPincode,
+        delivery_phone: deliveryPhone
       }).select().single();
       if (insErr) throw insErr;
       rest = inserted;
     }
     localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
 
-    // Skip Razorpay if Basic (selectedPlanId = 1)
-    if (selectedPlanId === 1) {
-      showToast('Registration successful! Redirecting to your dashboard...', 'success');
-      window.location.href = "dashboard.html";
-      return;
-    }
-
-    // Trigger Razorpay for Paid Plans
+    // Phase 2: Trigger Razorpay for Paid Plans
     btn.innerHTML = '<span>Initializing Payment...</span>';
     
-    let amount = 24900; // Pro
-    if (selectedPlanId === 3) amount = 34900;
-    else if (selectedPlanId === 4) amount = 350000;
+    let baseAmount = 20000; 
+    if (selectedPlanId === 2) baseAmount = 30000;
+    else if (selectedPlanId === 3) baseAmount = 40000;
+    else if (selectedPlanId === 4) baseAmount = 350000;
+    
+    const amount = baseAmount + (qrCount * 10000); // add QR price in paise
 
     const orderRes = await fetch(`${CONFIG.supabaseUrl}/functions/v1/create-razorpay-order`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, plan: selectedPlanId })
+      body: JSON.stringify({ amount, plan: selectedPlanId, restaurant_id: rest.id })
     });
     const orderData = await orderRes.json();
 
@@ -1372,51 +1461,14 @@ async function handleQuickRegister() {
   if (passwordVal.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
   if (!slugVal) { showToast('Could not generate a URL from your name. Try a different name.', 'error'); return; }
 
-  const btn = document.getElementById('reg-submit-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span>Setting up...</span>';
-
-  try {
-    if (typeof supabase === 'undefined' || !CONFIG.supabaseUrl) throw new Error('Database not configured.');
-    const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
-
-    // Check if restaurant already exists for this email (e.g. retry after failed payment)
-    const { data: existing } = await sbClient.from('restaurants').select('*').eq('owner_email', emailVal).single();
-    let rest;
-    if (existing) {
-      const { data: updated, error: upErr } = await sbClient.from('restaurants').update({
-        name: nameVal,
-        slug: slugVal,
-        owner_password: passwordVal
-      }).eq('id', existing.id).select().single();
-      if (upErr) throw upErr;
-      rest = updated;
-    } else {
-      const { data: inserted, error: insErr } = await sbClient.from('restaurants').insert({
-        name: nameVal,
-        slug: slugVal,
-        owner_email: emailVal,
-        owner_password: passwordVal,
-        total_tables: 10
-      }).select().single();
-      if (insErr) throw insErr;
-      rest = inserted;
-    }
-    localStorage.setItem('gd_auth', JSON.stringify({ id: rest.id, slug: rest.slug, name: rest.name }));
-
-    // Show success state
-    document.getElementById('reg-form').style.display = 'none';
-    document.getElementById('reg-success').style.display = 'block';
-    setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
-  } catch (e) {
-    let msg = e.message;
-    if (msg.includes('restaurants_slug_key') || msg.includes('duplicate key')) {
-      msg = 'This restaurant name/slug is already taken. Please choose a different name.';
-    }
-    showToast('Registration failed: ' + msg, 'error');
-    btn.disabled = false;
-    btn.innerHTML = 'Create My Restaurant →';
-  }
+  // Quick Register acts as Step 1 of onboarding. Pre-fill and open modal to Step 4 to force Plan selection and payment.
+  document.getElementById('ob-name').value = nameVal;
+  document.getElementById('ob-email').value = emailVal;
+  document.getElementById('ob-password').value = passwordVal;
+  document.getElementById('ob-slug').value = slugVal;
+  
+  openOnboarding(2); // Open Pro plan by default
+  showStep(4);       // Skip directly to Plan Selection
 }
 
 async function handleGoogleSignIn(mode) {

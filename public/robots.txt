@@ -1,6 +1,10 @@
 User-agent: *
 Allow: /
 Disallow: /dashboard
+Disallow: /login
+Disallow: /menu
+Disallow: /customer
+Disallow: /feedback
 Disallow: /config.js
 
 Sitemap: https://godine.in/sitemap.xml

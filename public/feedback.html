@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" href="assets/favicon.png"/>
 <link rel="apple-touch-icon" href="assets/icon.png"/>
 <meta name="description" content="Share your dining experience. Rate the food and service at your restaurant."/>
+<meta name="robots" content="noindex, nofollow"/>
 <link rel="canonical" href="https://godine.in/feedback" />
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -200,8 +201,8 @@ let restaurantId = null;
 let ratings = { food: 0, service: 0 };
 
 // Set back links
-document.getElementById('back-link').href = `customer.html?r=${restaurantSlug}`;
-document.getElementById('success-back-link').href = `menu.html?r=${restaurantSlug}`;
+document.getElementById('back-link').href = `customer?r=${restaurantSlug}`;
+document.getElementById('success-back-link').href = `menu?r=${restaurantSlug}`;
 
 // Fetch restaurant ID
 async function boot() {

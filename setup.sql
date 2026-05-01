@@ -98,3 +98,32 @@ BEGIN
         create policy "Service Role Access" on storage.objects for all using (bucket_id = 'dish-images') with check (bucket_id = 'dish-images');
     END IF;
 END $$;
+
+-- ─────────────────────────────────────────────────────────
+-- Registration & Subscription Overhaul Migration
+-- ─────────────────────────────────────────────────────────
+
+ALTER TABLE restaurants
+  ADD COLUMN IF NOT EXISTS trial_ends_at       TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS is_trial            BOOLEAN DEFAULT TRUE,
+  ADD COLUMN IF NOT EXISTS plan                TEXT DEFAULT 'trial',
+  ADD COLUMN IF NOT EXISTS plan_status         TEXT DEFAULT 'active',
+  ADD COLUMN IF NOT EXISTS is_verified         BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS razorpay_payment_id TEXT,
+  ADD COLUMN IF NOT EXISTS physical_qr_requested BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS physical_qr_count   INT DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS delivery_address    TEXT,
+  ADD COLUMN IF NOT EXISTS delivery_pincode    TEXT,
+  ADD COLUMN IF NOT EXISTS delivery_phone      TEXT;
+
+-- Enable pg_cron extension (run once, ignore error if permission denied locally):
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+-- Schedule cleanup daily at 2am IST (UTC+5:30 = 20:30 UTC previous day):
+SELECT cron.schedule(
+  'cleanup-unverified-restaurants',
+  '30 20 * * *',
+  $$DELETE FROM restaurants
+    WHERE is_verified = FALSE
+      AND created_at < NOW() - INTERVAL '24 hours'$$
+);

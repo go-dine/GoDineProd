@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../models/restaurant.dart';
 import '../services/supabase_service.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final void Function(Restaurant restaurant) onLogin;
@@ -61,6 +62,11 @@ class _LoginScreenState extends State<LoginScreen> {
       if (restaurant == null) {
         setState(() => _error = 'Invalid username or password');
       } else {
+        if (!restaurant.isVerified) {
+          setState(() => _error = 'Registration incomplete. Please register your restaurant.');
+          // Future enhancement: Redirect directly to RegisterScreen with pre-filled details or payment UI.
+          return;
+        }
         widget.onLogin(restaurant);
       }
     } catch (e) {
@@ -167,6 +173,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 const SizedBox(height: 18),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                    );
+                  },
+                  child: const Text(
+                    'New here? Register your restaurant →',
+                    style: TextStyle(fontSize: 14, color: AppColors.lime, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 const Center(
                   child: Text(
                     'Contact platform admin to join',

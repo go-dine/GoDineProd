@@ -10,7 +10,15 @@ class Restaurant {
   final bool isTrial;
   final DateTime? subscriptionEnd;
   final String? announcement;
+  final DateTime? trialEndsAt;
+  final bool isVerified;
   final String plan;
+  final String planStatus;
+  final int physicalQrCount;
+  final String? razorpayPaymentId;
+  final String? deliveryAddress;
+  final String? deliveryPincode;
+  final String? deliveryPhone;
 
   Restaurant({
     required this.id,
@@ -24,7 +32,15 @@ class Restaurant {
     this.isTrial = true,
     this.subscriptionEnd,
     this.announcement,
-    this.plan = 'starter',
+    this.trialEndsAt,
+    this.isVerified = false,
+    this.plan = 'trial',
+    this.planStatus = 'active',
+    this.physicalQrCount = 0,
+    this.razorpayPaymentId,
+    this.deliveryAddress,
+    this.deliveryPincode,
+    this.deliveryPhone,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -42,7 +58,17 @@ class Restaurant {
           ? DateTime.tryParse(json['subscription_end'] as String) 
           : null,
       announcement: json['announcement'] as String?,
-      plan: (json['plan'] ?? 'starter') as String,
+      trialEndsAt: json['trial_ends_at'] != null 
+          ? DateTime.tryParse(json['trial_ends_at'] as String) 
+          : null,
+      isVerified: json['is_verified'] as bool? ?? false,
+      plan: json['plan'] as String? ?? 'trial',
+      planStatus: json['plan_status'] as String? ?? 'active',
+      physicalQrCount: (json['physical_qr_count'] as num?)?.toInt() ?? 0,
+      razorpayPaymentId: json['razorpay_payment_id'] as String?,
+      deliveryAddress: json['delivery_address'] as String?,
+      deliveryPincode: json['delivery_pincode'] as String?,
+      deliveryPhone: json['delivery_phone'] as String?,
     );
   }
 
@@ -57,6 +83,14 @@ class Restaurant {
         'is_trial': isTrial,
         'subscription_end': subscriptionEnd?.toIso8601String(),
         'announcement': announcement,
+        'trial_ends_at': trialEndsAt?.toIso8601String(),
+        'is_verified': isVerified,
         'plan': plan,
+        'plan_status': planStatus,
+        'physical_qr_count': physicalQrCount,
+        'razorpay_payment_id': razorpayPaymentId,
+        'delivery_address': deliveryAddress,
+        'delivery_pincode': deliveryPincode,
+        'delivery_phone': deliveryPhone,
       };
 }

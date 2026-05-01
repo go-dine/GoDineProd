@@ -106,8 +106,7 @@ async function run() {
 
   for (const dish of dishes) {
     const restSlug = dish.restaurants.slug || 'generic';
-    const dishSlug = dish.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-    const filename = `${dishSlug}.jpg`;
+    const filename = `${dish.id}.jpg`;
     const localDir = path.join(__dirname, `../public/dish-images/${restSlug}`);
     const localPath = path.join(localDir, filename);
     const storagePath = `${restSlug}/${filename}`;

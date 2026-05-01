@@ -34,3 +34,4 @@ yarn-error.*
 .vscode/
 *.tsbuildinfo
 /godine-owner-app/Apks/*.apk
+supabase/.temp/

@@ -904,6 +904,12 @@ async function doLogin() {
       return; 
     }
 
+    if (data.is_verified === false) {
+      const planId = data.plan === 'annual' ? 4 : (data.plan === 'advanced' ? 3 : (data.plan === 'basic' ? 1 : 2));
+      showAuthError('login', `Registration incomplete. <br><button onclick="resumeRegistration('${data.id}', ${planId}, ${data.physical_qr_count || 0})" style="margin-top:12px; padding:8px 16px; background:var(--lime); color:#000; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Complete Payment</button>`);
+      return;
+    }
+
     restaurant = data;
     enterDashboard();
   } catch(e) {
@@ -915,8 +921,64 @@ async function doLogin() {
 function showAuthError(prefix, msg) {
   const el = document.getElementById(prefix + '-err');
   if (el) {
-    el.textContent = msg;
+    el.innerHTML = msg;
     el.style.display = 'block';
+  }
+}
+
+async function resumeRegistration(restId, planId, qrCount) {
+  try {
+    let baseAmount = 20000; 
+    if (planId === 2) baseAmount = 30000;
+    else if (planId === 3) baseAmount = 40000;
+    else if (planId === 4) baseAmount = 350000;
+    
+    const amount = baseAmount + (qrCount * 10000);
+
+    const orderRes = await fetch(`${CONFIG.supabaseUrl}/functions/v1/create-razorpay-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, plan: planId, restaurant_id: restId })
+    });
+    const orderData = await orderRes.json();
+    if (!orderRes.ok) throw new Error(orderData.error || "Failed to create order");
+
+    const options = {
+      key: CONFIG.razorpayKeyId,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: "Go Dine",
+      description: "Complete Registration",
+      order_id: orderData.id,
+      handler: async function (response) {
+        showAuthError('login', 'Verifying payment...');
+        try {
+          const verifyRes = await fetch(`${CONFIG.supabaseUrl}/functions/v1/verify-razorpay-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              restaurant_id: restId,
+              plan_id: planId
+            })
+          });
+          const verifyData = await verifyRes.json();
+          if (!verifyRes.ok) throw new Error(verifyData.error || "Verification failed");
+          
+          showAuthError('login', '<span style="color:var(--lime)">Payment successful! You can now log in.</span>');
+        } catch (verr) {
+          showAuthError('login', verr.message);
+        }
+      },
+      theme: { color: "#b6ff2a" }
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.on('payment.failed', function (res) { showAuthError('login', 'Payment failed: ' + res.error.description); });
+    rzp.open();
+  } catch(e) {
+    showAuthError('login', 'Error: ' + e.message);
   }
 }
 
@@ -1170,13 +1232,15 @@ function setupCallsRealtime() {
 
 function checkSubscription() {
   const banner = document.getElementById('sub-warning-banner');
-  if (!banner || !restaurant || !restaurant.subscription_end) return;
+  if (!banner || !restaurant) return;
   
-  const endDate = new Date(restaurant.subscription_end);
+  const endStr = restaurant.is_trial ? restaurant.trial_ends_at : restaurant.subscription_end;
+  if (!endStr) return;
+  
+  const endDate = new Date(endStr);
   const now = new Date();
   const diffDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
   
-  banner.style.display = 'block';
   banner.style.display = 'flex';
   banner.style.justifyContent = 'space-between';
   banner.style.alignItems = 'center';
@@ -1184,13 +1248,13 @@ function checkSubscription() {
   banner.style.borderRadius = '8px';
   banner.style.marginBottom = '16px';
 
-  const typeStr = restaurant.is_trial ? 'Trial' : 'Subscription';
+  const typeStr = restaurant.is_trial ? '7-Day Trial' : 'Subscription';
   
   if (diffDays <= 0) {
     banner.className = 'sub-banner expired';
     banner.style.background = 'var(--red2)';
     banner.style.border = '1px solid var(--red)';
-    banner.innerHTML = `<div>⚠️ Your ${typeStr} has expired. Please renew to continue accepting orders.</div> <button class="btn-lime btn-sm" id="rzp-renew-btn" onclick="openRazorpayRenewal()">Renew Now (₹249/mo)</button>`;
+    banner.innerHTML = `<div>⚠️ Your ${typeStr} has expired. Please upgrade to continue accepting orders.</div> <button class="btn-lime btn-sm" id="rzp-renew-btn" onclick="openRazorpayRenewal()">Upgrade Plan</button>`;
     
     // Block dashboard content mostly
     const stats = document.querySelector('.stats-row');
@@ -1200,7 +1264,7 @@ function checkSubscription() {
     banner.className = 'sub-banner warning';
     banner.style.background = 'var(--amber2)';
     banner.style.border = '1px solid var(--amber)';
-    banner.innerHTML = `<div>⏳ Your ${typeStr} ends in ${diffDays} day${diffDays > 1 ? 's' : ''}. Please renew soon.</div> <button class="btn-ghost btn-sm" id="rzp-renew-btn" onclick="openRazorpayRenewal()" style="border:1px solid var(--amber)">Renew Early</button>`;
+    banner.innerHTML = `<div>⏳ Your ${typeStr} ends in ${diffDays} day${diffDays > 1 ? 's' : ''}.</div> <button class="btn-ghost btn-sm" id="rzp-renew-btn" onclick="openRazorpayRenewal()" style="border:1px solid var(--amber)">Upgrade Now</button>`;
   } else {
     banner.className = 'sub-banner active';
     banner.style.background = 'var(--green2)';
