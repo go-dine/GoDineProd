@@ -928,10 +928,10 @@ function showAuthError(prefix, msg) {
 
 async function resumeRegistration(restId, planId, qrCount) {
   try {
-    let baseAmount = 20000; 
-    if (planId === 2) baseAmount = 30000;
-    else if (planId === 3) baseAmount = 40000;
-    else if (planId === 4) baseAmount = 350000;
+    let baseAmount = 24900; 
+    if (planId === 2) baseAmount = 34900;
+    else if (planId === 3) baseAmount = 44900;
+    else if (planId === 4) baseAmount = 399900;
     
     const amount = baseAmount + (qrCount * 10000);
 
@@ -1280,7 +1280,7 @@ async function openRazorpayRenewal() {
   btn.disabled = true;
 
   try {
-    const amount = 24900; // Default Pro plan renewal
+    const amount = 34900; // Default Pro plan renewal
     const selectedPlanId = 2; 
 
     let orderRes;

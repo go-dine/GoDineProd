@@ -138,25 +138,25 @@ class _OverviewScreenState extends State<OverviewScreen> {
             
             _PlanOption(
               title: 'Advanced Pro',
-              price: '₹249',
+              price: '₹349',
               subtitle: 'Monthly • All premium features',
               onTap: () {
                 Navigator.pop(ctx);
                 _selectedPlanId = 2;
-                _startRazorpayCheckout(24900);
+                _startRazorpayCheckout(34900);
               },
             ),
             const SizedBox(height: 12),
             
             _PlanOption(
               title: 'Lifetime Access',
-              price: '₹3,500',
+              price: '₹3,999',
               subtitle: 'One-time • Never pay again',
               isBestValue: true,
               onTap: () {
                 Navigator.pop(ctx);
                 _selectedPlanId = 3;
-                _startRazorpayCheckout(350000);
+                _startRazorpayCheckout(399900);
               },
             ),
             const SizedBox(height: 20),

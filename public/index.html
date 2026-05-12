@@ -738,7 +738,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   <div class="dark-price-grid">
     <div class="dark-price-card">
       <div class="dp-plan">Basic</div>
-      <div class="dp-price">₹200<sub>/mo</sub></div>
+      <div class="dp-price">₹249<sub>/mo</sub></div>
       <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Billed: Monthly<br>Save: —</div>
       <ul class="dp-features">
         <li><i data-lucide="check" style="width:16px;height:16px"></i> 5 Tables</li>
@@ -751,7 +751,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     
     <div class="dark-price-card" style="border-color: rgba(182,255,42,0.3);">
       <div class="dp-plan">Pro <span class="pro-badge">Popular</span></div>
-      <div class="dp-price">₹300<sub>/mo</sub></div>
+      <div class="dp-price">₹349<sub>/mo</sub></div>
       <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Billed: Monthly<br>Save: —</div>
       <ul class="dp-features">
         <li><i data-lucide="check" style="width:16px;height:16px"></i> 20 Tables</li>
@@ -764,7 +764,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 
     <div class="dark-price-card">
       <div class="dp-plan">Advanced</div>
-      <div class="dp-price">₹400<sub>/mo</sub></div>
+      <div class="dp-price">₹449<sub>/mo</sub></div>
       <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Billed: Monthly<br>Save: —</div>
       <ul class="dp-features">
         <li><i data-lucide="check" style="width:16px;height:16px"></i> Unlimited Tables</li>
@@ -777,7 +777,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 
     <div class="dark-price-card">
       <div class="dp-plan">Annual <span class="pro-badge">Best Value — Save 30%</span></div>
-      <div class="dp-price">₹3500<sub>/yr</sub></div>
+      <div class="dp-price">₹3999<sub>/yr</sub></div>
       <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Billed: Annually<br>Save: ₹1100/year saved</div>
       <ul class="dp-features">
         <li><i data-lucide="check" style="width:16px;height:16px"></i> Full Access for 1 Year</li>
@@ -1009,25 +1009,25 @@ a:focus-visible, button:focus-visible, input:focus-visible {
         <div class="pricing-grid">
           <div class="price-card" onclick="selectPlan(1, this)">
             <p class="pc-name">Basic</p>
-            <p class="pc-price">₹200<span>/mo</span></p>
+            <p class="pc-price">₹249<span>/mo</span></p>
             <ul class="pc-features"><li>5 Tables</li><li>QR Menu</li></ul>
             <button class="pc-btn">Select</button>
           </div>
           <div class="price-card selected" onclick="selectPlan(2, this)">
             <p class="pc-name">Pro</p>
-            <p class="pc-price">₹300<span>/mo</span></p>
+            <p class="pc-price">₹349<span>/mo</span></p>
             <ul class="pc-features"><li>20 Tables</li><li>Real-time Orders</li></ul>
             <button class="pc-btn">Select</button>
           </div>
           <div class="price-card" onclick="selectPlan(3, this)">
             <p class="pc-name">Advanced</p>
-            <p class="pc-price">₹400<span>/mo</span></p>
+            <p class="pc-price">₹449<span>/mo</span></p>
             <ul class="pc-features"><li>Unlimited Tables</li><li>AI Insights</li></ul>
             <button class="pc-btn">Select</button>
           </div>
         </div>
         <div style="text-align:center; margin-top:16px;">
-          <a href="#" style="font-size:12px; color:#666; text-decoration:underline;" onclick="selectPlan(4, null); return false;">Or Annual for ₹3500/year</a>
+          <a href="#" style="font-size:12px; color:#666; text-decoration:underline;" onclick="selectPlan(4, null); return false;">Or Annual for ₹3999/year</a>
         </div>
       </div>
 
@@ -1223,7 +1223,7 @@ function showStep(s) {
   
   if(s === 4) updatePlanUI();
   if(s === 6) {
-    const plans = { 1: {n:'Basic', p:200}, 2: {n:'Pro', p:300}, 3: {n:'Advanced', p:400}, 4: {n:'Annual', p:3500} };
+    const plans = { 1: {n:'Basic', p:249}, 2: {n:'Pro', p:349}, 3: {n:'Advanced', p:449}, 4: {n:'Annual', p:3999} };
     const plan = plans[selectedPlanId];
     const qrCount = parseInt(document.getElementById('ob-qr-count').value) || 0;
     const qrPrice = qrCount * 100;
@@ -1363,10 +1363,10 @@ async function handleComplete() {
     // Phase 2: Trigger Razorpay for Paid Plans
     btn.innerHTML = '<span>Initializing Payment...</span>';
     
-    let baseAmount = 20000; 
-    if (selectedPlanId === 2) baseAmount = 30000;
-    else if (selectedPlanId === 3) baseAmount = 40000;
-    else if (selectedPlanId === 4) baseAmount = 350000;
+    let baseAmount = 24900; 
+    if (selectedPlanId === 2) baseAmount = 34900;
+    else if (selectedPlanId === 3) baseAmount = 44900;
+    else if (selectedPlanId === 4) baseAmount = 399900;
     
     const amount = baseAmount + (qrCount * 10000); // add QR price in paise
 

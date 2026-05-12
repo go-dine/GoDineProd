@@ -102,10 +102,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final restId = response['id'];
 
       // Phase 2: Create Razorpay Order
-      int baseAmount = 20000;
-      if (_selectedPlan == 2) baseAmount = 30000;
-      else if (_selectedPlan == 3) baseAmount = 40000;
-      else if (_selectedPlan == 4) baseAmount = 350000;
+      int baseAmount = 24900;
+      if (_selectedPlan == 2) baseAmount = 34900;
+      else if (_selectedPlan == 3) baseAmount = 44900;
+      else if (_selectedPlan == 4) baseAmount = 399900;
 
       final amount = baseAmount + (_qrCount * 10000);
 
@@ -183,10 +183,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    int planPrice = 200;
-    if (_selectedPlan == 2) planPrice = 300;
-    else if (_selectedPlan == 3) planPrice = 400;
-    else if (_selectedPlan == 4) planPrice = 3500;
+    int planPrice = 249;
+    if (_selectedPlan == 2) planPrice = 349;
+    else if (_selectedPlan == 3) planPrice = 449;
+    else if (_selectedPlan == 4) planPrice = 3999;
     
     int total = planPrice + (_qrCount * 100);
 
@@ -222,10 +222,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               spacing: 10,
               runSpacing: 10,
               children: [
-                _planCard('Basic', '₹200/mo', 1),
-                _planCard('Pro', '₹300/mo', 2),
-                _planCard('Advanced', '₹400/mo', 3),
-                _planCard('Annual', '₹3500/yr', 4),
+                _planCard('Basic', '₹249/mo', 1),
+                _planCard('Pro', '₹349/mo', 2),
+                _planCard('Advanced', '₹449/mo', 3),
+                _planCard('Annual', '₹3999/yr', 4),
               ],
             ),
             
