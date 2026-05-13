@@ -695,11 +695,48 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     <p class="s-body">No hardware. No training. No waiting. Just a QR code and a seamless experience.</p>
   </div>
   <div class="feat-grid">
-    <div class="f-card reveal d1"><div class="f-icon"><i data-lucide="smartphone" style="width:24px;height:24px"></i></div><h3>QR Table Menus</h3><p>Each table gets a unique, scannable URL. Customers browse your full menu on their phone — no app needed.</p></div>
-    <div class="f-card wide reveal d2"><div class="f-icon"><i data-lucide="zap" style="width:24px;height:24px"></i></div><h3>Real-time Orders</h3><p>Orders land on your dashboard the instant they're placed. No delays, no middlemen.</p><div class="f-stat">0.3s</div><div class="f-stat-label">Average order delivery time</div></div>
-    <div class="f-card reveal d1"><div class="f-icon"><i data-lucide="palette" style="width:24px;height:24px"></i></div><h3>Your Brand</h3><p>Fully customizable — your logo, colors, and style. Go Dine fades out, your brand shines.</p></div>
-    <div class="f-card reveal d2"><div class="f-icon"><i data-lucide="utensils-crosses" style="width:24px;height:24px"></i></div><h3>Menu Manager</h3><p>Add, hide, or update dishes in seconds. Mark items out of stock in one tap.</p></div>
-    <div class="f-card reveal d3"><div class="f-icon"><i data-lucide="layout-dashboard" style="width:24px;height:24px"></i></div><h3>Owner Dashboard</h3><p>All tables, all orders, all stats — one clean panel. Know exactly what's selling.</p></div>
+    <div class="f-card reveal d1">
+      <div class="f-icon"><i data-lucide="smartphone" style="width:24px;height:24px"></i></div>
+      <h3>QR Table Menus</h3>
+      <p>Give your customers a touchless experience. Each table receives a unique, secure QR code that opens your digital menu instantly — no app downloads required.</p>
+    </div>
+    <div class="f-card wide reveal d2">
+      <div class="f-icon"><i data-lucide="zap" style="width:24px;height:24px"></i></div>
+      <h3>Real-time Live Orders</h3>
+      <p>Orders land in your kitchen the second they're placed. Reduce human error, eliminate wait times, and keep your kitchen humming with a live, synchronized order stream.</p>
+      <div class="f-stat">0.3s</div>
+      <div class="f-stat-label">Average order delivery to dashboard</div>
+    </div>
+    <div class="f-card reveal d1">
+      <div class="f-icon"><i data-lucide="box" style="width:24px;height:24px"></i></div>
+      <h3>Inventory Management</h3>
+      <p>Stay ahead of your supply chain. Track ingredient levels in real-time, set low-stock alerts, and automatically hide dishes when essential items are unavailable.</p>
+    </div>
+    <div class="f-card reveal d2">
+      <div class="f-icon"><i data-lucide="utensils-crosses" style="width:24px;height:24px"></i></div>
+      <h3>Dynamic Menu Manager</h3>
+      <p>Your menu is alive. Update prices, add seasonal specials, or mark items as "Sold Out" in one tap. Changes reflect instantly on every customer's phone.</p>
+    </div>
+    <div class="f-card reveal d3">
+      <div class="f-icon"><i data-lucide="bell" style="width:24px;height:24px"></i></div>
+      <h3>Digital Waiter Call</h3>
+      <p>Boost service efficiency. Customers can request water, cutlery, or the bill directly from their phone, sending instant push notifications to your staff's devices.</p>
+    </div>
+    <div class="f-card reveal d1">
+      <div class="f-icon"><i data-lucide="brain-circuit" style="width:24px;height:24px"></i></div>
+      <h3>AI Smart Suggestions</h3>
+      <p>Increase your average order value. Our AI analyzes customer patterns to suggest perfect pairings and upsells, just like a seasoned waiter would.</p>
+    </div>
+    <div class="f-card reveal d2">
+      <div class="f-icon"><i data-lucide="bar-chart-3" style="width:24px;height:24px"></i></div>
+      <h3>Deep Analytics</h3>
+      <p>Make data-driven decisions. Understand your peak hours, most profitable dishes, and customer retention rates with beautiful, easy-to-read reports.</p>
+    </div>
+    <div class="f-card reveal d3">
+      <div class="f-icon"><i data-lucide="shield-check" style="width:24px;height:24px"></i></div>
+      <h3>Multi-Tenant Secure</h3>
+      <p>Enterprise-grade security for restaurants of all sizes. Your data is encrypted and isolated, ensuring your business information stays yours.</p>
+    </div>
   </div>
 </section>
 
@@ -926,33 +963,96 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 </style>
 
 <!-- FOOTER -->
-<footer id="footer">
-  <div style="width:100%; display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:40px; flex-wrap:wrap; gap:40px;">
-    <div>
-      <a href="/" class="logo" style="font-size:24px;">Go <b>Dine</b></a>
-      <p style="margin-top:12px; max-width:240px; line-height:1.6;">The ultimate smart dining platform for modern restaurants.</p>
-    </div>
-    <div style="display:flex; gap:64px; flex-wrap:wrap;">
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <span style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--white);">Product</span>
-        <a href="#features" style="font-size:13px; color:var(--muted);">Features</a>
-        <a href="#pricing" style="font-size:13px; color:var(--muted);">Pricing</a>
+<footer id="footer" style="padding: 100px 5% 40px; background: linear-gradient(180deg, transparent 0%, rgba(182,255,42,0.02) 100%); border-top: 1px solid var(--border); margin-top: 80px;">
+  <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr; gap: 48px; margin-bottom: 80px; flex-wrap: wrap;">
+    <div style="min-width: 240px;">
+      <a href="/" class="logo" style="font-size: 28px; margin-bottom: 20px; display: inline-block;">Go <b>Dine</b></a>
+      <p style="color: var(--muted); line-height: 1.8; font-size: 15px; margin-bottom: 32px;">Transforming the dining experience with intelligence and elegance. Empowering restaurants to go digital in minutes.</p>
+      <div style="display: flex; gap: 16px;">
+        <a href="https://linkedin.com/company/go-dinee" target="_blank" class="f-social"><i data-lucide="linkedin" style="width:20px;height:20px"></i></a>
+        <a href="#" class="f-social"><i data-lucide="instagram" style="width:20px;height:20px"></i></a>
+        <a href="#" class="f-social"><i data-lucide="twitter" style="width:20px;height:20px"></i></a>
+        <a href="#" class="f-social"><i data-lucide="facebook" style="width:20px;height:20px"></i></a>
       </div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <span style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--white);">Company</span>
-        <a href="https://linkedin.com/company/go-dinee" rel="nofollow noopener noreferrer" target="_blank" style="font-size:13px; color:var(--muted);">LinkedIn</a>
-        <a href="#" style="font-size:13px; color:var(--muted);">Privacy Policy</a>
+    </div>
+    
+    <div>
+      <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--white); margin-bottom: 24px;">Product</h4>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px;">
+        <li><a href="#features" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">Features</a></li>
+        <li><a href="#how" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">How it Works</a></li>
+        <li><a href="#pricing" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">Pricing</a></li>
+        <li><a href="dashboard" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">Dashboard</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--white); margin-bottom: 24px;">Company</h4>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px;">
+        <li><a href="#" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">About Us</a></li>
+        <li><a href="#" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">Contact</a></li>
+        <li><a href="#" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">Partner Program</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--white); margin-bottom: 24px;">Legal</h4>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px;">
+        <li><a href="#" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">Privacy Policy</a></li>
+        <li><a href="#" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">Terms of Service</a></li>
+        <li><a href="#" style="color: var(--muted); font-size: 14px; transition: color 0.2s;" onmouseenter="this.style.color='var(--lime)'" onmouseleave="this.style.color='var(--muted)'">Refund Policy</a></li>
+      </ul>
+    </div>
+
+    <div style="min-width: 200px;">
+      <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--white); margin-bottom: 24px;">Stay Updated</h4>
+      <p style="color: var(--muted); font-size: 13px; margin-bottom: 20px;">Get the latest updates on smart dining and restaurant tech.</p>
+      <div style="display: flex; gap: 8px;">
+        <input type="email" placeholder="Email address" style="background: var(--s2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 13px; color: var(--white); outline: none; flex-grow: 1;">
+        <button style="background: var(--lime); color: #050505; border: none; border-radius: 8px; padding: 10px; cursor: pointer; transition: transform 0.2s;"><i data-lucide="arrow-right" style="width:18px;height:18px"></i></button>
       </div>
     </div>
   </div>
-  <div style="width:100%; padding-top:32px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-    <p style="font-size:12px; color:var(--muted);">© 2026 Go Dine. All rights reserved.</p>
-    <div style="display:flex; gap:16px; align-items:center;">
-       <span style="width:8px; height:8px; background:#10b981; border-radius:50%;"></span>
-       <span style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#10b981;">Systems Operational</span>
+  
+  <div style="padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px;">
+    <div style="display: flex; align-items: center; gap: 24px;">
+      <p style="font-size: 13px; color: var(--muted);">© 2026 Go Dine. Crafted for the future of dining.</p>
+    </div>
+    <div style="display: flex; gap: 24px; align-items: center;">
+      <div style="display: flex; gap: 10px; align-items: center; background: rgba(16, 185, 129, 0.05); padding: 8px 16px; border-radius: 100px; border: 1px solid rgba(16, 185, 129, 0.1);">
+        <span class="status-pulse"></span>
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #10b981;">All Systems Live</span>
+      </div>
     </div>
   </div>
 </footer>
+
+<style>
+.f-social {
+  width: 40px; height: 40px; border-radius: 12px; background: var(--s2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; color: var(--muted); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.f-social:hover {
+  background: var(--lime2); border-color: var(--lime); color: var(--lime); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(182,255,42,0.1);
+}
+.status-pulse {
+  width: 8px; height: 8px; background: #10b981; border-radius: 50%; position: relative;
+}
+.status-pulse::after {
+  content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid #10b981; animation: statusRipple 2s infinite;
+}
+@keyframes statusRipple {
+  0% { transform: scale(0.5); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+@media (max-width: 900px) {
+  #footer > div:first-child { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  #footer > div:first-child { grid-template-columns: 1fr; gap: 40px; }
+  #footer > div:last-child { justify-content: center; text-align: center; }
+}
+</style>
 
 <!-- ONBOARDING & LOGIN MODALS -->
 <div id="modal-bg" onclick="if(event.target===this)closeModals()">
