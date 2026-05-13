@@ -4,6 +4,7 @@
   "description": "> **Scan. Order. Enjoy.** — A multi-tenant platform for restaurant owners to manage menus, and for customers to order seamlessly via QR codes.",
   "main": "config.js",
   "scripts": {
+    "dev": "npm run dev --prefix web",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

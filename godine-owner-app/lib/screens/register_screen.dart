@@ -111,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       // In a real app, this should fetch from your Supabase config or env
       const supabaseUrl = 'https://qqnrucnsvupfywyzlofa.supabase.co'; 
-      const razorpayKeyId = 'rzp_test_Sftzc4oWuOEUPH'; // Placeholder from config.js
+      final razorpayKeyId = AppConfig.razorpayKeyId; 
 
       final orderRes = await http.post(
         Uri.parse('$supabaseUrl/functions/v1/create-razorpay-order'),
@@ -205,7 +205,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             // Section A: Profile
             const Text('Section A: Profile & Security', style: TextStyle(color: AppColors.lime, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            _input(_nameCtrl, 'Restaurant Name', (v) {
+            _input(_nameCtrl, 'Restaurant Name', onChanged: (v) {
               _slugCtrl.text = v.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'^-|-$'), '');
             }),
             _input(_locationCtrl, 'City / Location'),
@@ -317,7 +317,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _input(TextEditingController ctrl, String hint, [Function(String)? onChanged, TextInputType? keyboardType, bool obscure = false]) {
+  Widget _input(TextEditingController ctrl, String hint, {Function(String)? onChanged, TextInputType? keyboardType, bool obscure = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
