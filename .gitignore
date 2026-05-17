@@ -35,3 +35,9 @@ yarn-error.*
 *.tsbuildinfo
 /godine-owner-app/Apks/*.apk
 supabase/.temp/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
