@@ -6,6 +6,8 @@ interface WaiterCall {
   restaurant_id: string
   table_number: string
   called_at: string
+  reason?: string
+  priority?: string
 }
 
 interface WebhookPayload {
@@ -80,6 +82,10 @@ Deno.serve(async (req) => {
 
     // Send Notification to all tokens
     const results = []
+    const alertBody = payload.record.reason 
+      ? `Reason: ${payload.record.reason}` 
+      : `Customer needs assistance`;
+      
     for (const token of tokens) {
       try {
         const fcmRes = await fetch(
@@ -95,7 +101,7 @@ Deno.serve(async (req) => {
                 token: token,
                 notification: {
                   title: `🔔 Waiter Call — Table ${payload.record.table_number}`,
-                  body: `A customer at Table ${payload.record.table_number} needs assistance`,
+                  body: alertBody,
                 },
                 android: {
                   priority: 'high',
@@ -110,7 +116,7 @@ Deno.serve(async (req) => {
                     aps: {
                       alert: {
                         title: `🔔 Waiter Call — Table ${payload.record.table_number}`,
-                        body: `Customer needs assistance`,
+                        body: alertBody,
                       },
                       sound: 'default',
                       badge: 1,

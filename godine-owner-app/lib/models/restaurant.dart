@@ -19,6 +19,7 @@ class Restaurant {
   final String? deliveryAddress;
   final String? deliveryPincode;
   final String? deliveryPhone;
+  final String? shutdownReason;
 
   Restaurant({
     required this.id,
@@ -41,6 +42,7 @@ class Restaurant {
     this.deliveryAddress,
     this.deliveryPincode,
     this.deliveryPhone,
+    this.shutdownReason,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -69,6 +71,7 @@ class Restaurant {
       deliveryAddress: json['delivery_address'] as String?,
       deliveryPincode: json['delivery_pincode'] as String?,
       deliveryPhone: json['delivery_phone'] as String?,
+      shutdownReason: json['shutdown_reason'] as String?,
     );
   }
 
@@ -92,5 +95,6 @@ class Restaurant {
         'delivery_address': deliveryAddress,
         'delivery_pincode': deliveryPincode,
         'delivery_phone': deliveryPhone,
+        'shutdown_reason': shutdownReason,
       };
 }

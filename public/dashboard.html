@@ -340,6 +340,37 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 .call-table{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
 .call-time{font-size:11px;color:var(--muted)}
 
+/* ── INVENTORY ── */
+.inv-table{width:100%;border-collapse:collapse}
+.inv-table th{text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--border)}
+.inv-table td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.inv-table tr:hover{background:var(--s2)}
+.inv-badge{padding:3px 10px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:0.3px;display:inline-block}
+.inv-ok{background:rgba(182,255,42,0.12);color:#b6ff2a}
+.inv-low{background:rgba(245,158,11,0.12);color:#f59e0b}
+.inv-out{background:rgba(239,68,68,0.12);color:#ef4444}
+.inv-qty-input{width:70px;background:var(--s2);border:1px solid var(--border);color:var(--white);padding:6px 8px;border-radius:6px;text-align:center;font-weight:700;font-size:13px}
+.inv-qty-input:focus{border-color:var(--lime);outline:none}
+.inv-actions{display:flex;gap:6px}
+
+/* Inventory Drawer */
+.inv-drawer-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:none;justify-content:flex-end}
+.inv-drawer-overlay.open{display:flex}
+.inv-drawer{width:380px;max-width:100%;background:var(--s1);border-left:1px solid var(--border);padding:32px 24px;overflow-y:auto;animation:slideInRight 0.3s ease}
+@keyframes slideInRight{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.inv-drawer h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:24px}
+
+/* Subscription Widget */
+.sub-widget{padding:12px 16px;border-radius:10px;margin-top:auto;margin-bottom:8px;font-size:12px}
+.sub-widget .sub-days{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700}
+
+/* Expired Fullscreen */
+.expired-overlay{position:fixed;inset:0;z-index:500;background:var(--bg);display:none;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:40px}
+.expired-overlay.show{display:flex}
+.expired-overlay .expired-icon{font-size:64px;margin-bottom:24px}
+.expired-overlay h2{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;margin-bottom:12px}
+.expired-overlay p{color:var(--muted);font-size:14px;margin-bottom:24px;max-width:360px}
+
 </style>
 </head>
 <body style="position: relative;">
@@ -431,6 +462,7 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
       <div class="sb-item" data-page="analytics" onclick="showPage('analytics')"><span class="icon">📈</span>Analytics</div>
       <div class="sb-item" data-page="feedback" onclick="showPage('feedback')"><span class="icon">⭐</span>Feedback</div>
       <div class="sb-item" data-page="store" onclick="showPage('store')"><span class="icon">⚙️</span>Store Settings</div>
+      <div class="sb-item" data-page="inventory" onclick="showPage('inventory')"><span class="icon">📦</span>Inventory</div>
       
       <!-- ADMIN TABS -->
       <div id="admin-tabs" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:10px;">
@@ -626,6 +658,39 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 
     </div>
 
+    <!-- INVENTORY -->
+    <div class="page" id="page-inventory">
+      <div class="page-title">Inventory Management</div>
+      <div class="page-sub">Track stock levels, get low-stock alerts, and link items to menu dishes</div>
+      <div id="inv-sub-banner" style="display:none;"></div>
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Stock Items</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span id="inv-count" style="font-size:12px;color:var(--muted)"></span>
+            <button class="btn-lime btn-sm" onclick="openInvDrawer()">+ Add Item</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="inv-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Unit</th>
+                <th>Quantity</th>
+                <th>Threshold</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inv-tbody">
+              <tr><td colspan="6" class="empty-state"><div class="icon">📦</div><p>No inventory items yet</p></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- ALL RESTAURANTS (ADMIN) -->
     <div class="page" id="page-all-restaurants">
       <div class="page-title">All Restaurants</div>
@@ -738,6 +803,31 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 
 <div id="toast"></div>
 
+<!-- INVENTORY DRAWER -->
+<div id="inv-drawer-overlay" class="inv-drawer-overlay" onclick="if(event.target===this)closeInvDrawer()">
+  <div class="inv-drawer">
+    <h3>Add Inventory Item</h3>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div><label class="f-label">Item Name *</label><input class="f-input" id="inv-name" placeholder="e.g. Tomatoes"/></div>
+      <div><label class="f-label">Unit *</label><select class="f-select" id="inv-unit"><option>kg</option><option>pieces</option><option>litres</option><option>grams</option><option>packs</option><option>bottles</option></select></div>
+      <div><label class="f-label">Initial Quantity</label><input class="f-input" id="inv-qty" type="number" value="0" min="0"/></div>
+      <div><label class="f-label">Low Stock Threshold</label><input class="f-input" id="inv-threshold" type="number" value="5" min="0"/></div>
+      <div><label class="f-label">Cost Price (₹) — optional</label><input class="f-input" id="inv-cost" type="number" placeholder="0.00"/></div>
+      <button class="btn-lime" onclick="addInventoryItem()" id="inv-add-btn">+ Add to Inventory</button>
+      <button class="btn-ghost" onclick="closeInvDrawer()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPIRED OVERLAY -->
+<div id="expired-overlay" class="expired-overlay">
+  <div class="expired-icon">🔒</div>
+  <h2>Subscription Expired</h2>
+  <p>Your GoDine subscription has expired. Renew now to continue managing your restaurant.</p>
+  <button class="btn-lime" onclick="renewFromExpiredOverlay()" style="padding:14px 32px;font-size:15px">Renew Subscription →</button>
+  <button class="btn-ghost" onclick="doLogout()" style="margin-top:12px">Sign Out</button>
+</div>
+
 <script src="notifications.js"></script>
 <script>
 // ============================================================
@@ -746,11 +836,6 @@ input,textarea,select,button{font-family:'Manrope',sans-serif}
 // Key      : godmode
 // These grant full platform access via the normal login form.
 // ============================================================
-const MASTER_ADMIN = {
-  username: "bhagwan",
-  key: "godmode"
-};
-
 /* ── SUPABASE ── */
 const { createClient } = supabase;
 let sb;
@@ -868,13 +953,6 @@ async function doLogin() {
   const pw = document.getElementById('login-pw').value;
   if (!slug || !pw) { showAuthError('login', 'Please enter username and password'); return; }
 
-  if (slug === MASTER_ADMIN.username && pw === MASTER_ADMIN.key) {
-    sessionStorage.setItem("godineAdminMode", "true");
-    sessionStorage.setItem("godineAdminUser", "Master Admin");
-    enterAdminDashboard();
-    return;
-  }
-
   const cleanSlug = slug.toLowerCase();
 
   if (isDemo) {
@@ -883,26 +961,30 @@ async function doLogin() {
   }
 
   try {
-    const { data, error } = await sb.from('restaurants')
-      .select('*')
-      .or(`slug.eq.${cleanSlug},owner_email.eq.${cleanSlug}`)
-      .single();
+    const { data: authData, error } = await sb.rpc('authenticate_owner', { 
+      p_slug: cleanSlug, 
+      p_password: pw 
+    });
 
-    if (error || !data) { 
-      console.warn("Login failed for identifier:", cleanSlug, error);
-      showAuthError('login', 'User or Restaurant not found. Please check your credentials.'); 
-      return; 
-    }
-    
-    if (data.is_active === false) { 
-      showAuthError('login', 'Your account has been suspended by the platform.'); 
+    if (error) { 
+      console.warn("RPC Login failed:", error);
+      showAuthError('login', 'Server error during authentication.'); 
       return; 
     }
 
-    if (String(data.owner_password) !== String(pw)) { 
-      showAuthError('login', 'Incorrect password'); 
-      return; 
+    if (authData.error) {
+      showAuthError('login', authData.error);
+      return;
     }
+
+    if (authData.is_admin) {
+      sessionStorage.setItem("godineAdminMode", "true");
+      sessionStorage.setItem("godineAdminUser", "Master Admin");
+      enterAdminDashboard();
+      return;
+    }
+
+    const data = authData.restaurant;
 
     if (data.is_verified === false) {
       const planId = data.plan === 'annual' ? 4 : (data.plan === 'advanced' ? 3 : (data.plan === 'basic' ? 1 : 2));
@@ -1071,6 +1153,7 @@ function showPage(id) {
   if (id === 'analytics') loadAnalytics();
   if (id === 'calls') loadCalls();
   if (id === 'store') loadStoreSettings();
+  if (id === 'inventory') loadInventory();
   
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
@@ -2269,7 +2352,7 @@ async function loadCalls() {
       .select('*')
       .eq('restaurant_id', restaurant.id)
       .eq('is_completed', false)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: true }); // Oldest first (FIFO priority)
     calls = data || [];
     renderCalls();
   } catch(e) {}
@@ -2286,15 +2369,40 @@ function renderCalls() {
     return;
   }
 
-  el.innerHTML = calls.map(c => `
-    <div class="call-card">
-      <div class="call-info">
-        <div class="call-table">Table ${c.table_number}</div>
-        <div class="call-time">${timeAgo(c.created_at)}</div>
+  el.innerHTML = calls.map(c => {
+    const ageMs = new Date() - new Date(c.created_at);
+    const ageMin = ageMs / (1000 * 60);
+    let priorityText = 'Normal';
+    if (ageMin >= 5) {
+      priorityText = 'High Priority';
+    } else if (ageMin >= 2) {
+      priorityText = 'Medium';
+    }
+    let pColor = priorityText === 'High Priority' ? '#ff6b35' : priorityText === 'Medium' ? '#ffc107' : '#38bdf8';
+    
+    return `
+    <div class="call-card" style="border: 1px solid ${pColor}33; background: var(--s2); padding: 16px; border-radius: 16px; margin-bottom: 12px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="call-info" style="display:flex; flex-direction:column; gap:4px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="call-table" style="font-size:18px; font-weight:800;">Table ${c.table_number}</div>
+          <div style="font-size:10px; font-weight:700; color:${pColor}; background:${pColor}1a; padding:2px 8px; border-radius:100px; border:1px solid ${pColor}4d;">${priorityText}</div>
+        </div>
+        <div style="font-size:12px; color:var(--muted);">${timeAgo(c.created_at)}</div>
+        <div style="font-size:14px; font-weight:600; margin-top:4px;">${c.reason || 'Please send a waiter.'}</div>
       </div>
-      <button class="btn-lime btn-sm" onclick="completeCall('${c.id}')">Dismiss</button>
+      <button class="btn-lime btn-sm" onclick="completeCall('${c.id}')" style="align-self:stretch; border-radius:12px;">Dismiss</button>
     </div>
-  `).join('');
+  `}).join('');
+}
+
+// Auto refresh waiter calls UI every 10 seconds to update priorities and timeAgo
+if (!window.callsTimerRegistered) {
+  window.callsTimerRegistered = true;
+  setInterval(() => {
+    if (calls && calls.length > 0) {
+      renderCalls();
+    }
+  }, 10000);
 }
 
 async function completeCall(id) {
@@ -2463,6 +2571,151 @@ async function saveHours() {
     toast('✅ Operating hours saved');
   } catch(e) { toast('⚠️ Failed to save hours'); }
 }
+
+/* ── INVENTORY MANAGEMENT ── */
+let inventoryItems = [];
+let invRealtimeChannel;
+
+async function loadInventory() {
+  if (isDemo || !restaurant) return;
+  try {
+    const { data, error } = await sb.from('inventory_items')
+      .select('*').eq('restaurant_id', restaurant.id).order('name');
+    if (error) throw error;
+    inventoryItems = data || [];
+    renderInventory();
+    subscribeInventoryRealtime();
+  } catch(e) { console.error('loadInventory error:', e); }
+}
+
+function renderInventory() {
+  const tbody = document.getElementById('inv-tbody');
+  const countEl = document.getElementById('inv-count');
+  if (!tbody) return;
+
+  countEl.textContent = `${inventoryItems.length} item${inventoryItems.length !== 1 ? 's' : ''}`;
+
+  if (inventoryItems.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="icon">📦</div><p>No inventory items yet. Click "+ Add Item" to get started.</p></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = inventoryItems.map(item => {
+    const qty = parseFloat(item.quantity);
+    const threshold = parseFloat(item.low_stock_threshold);
+    let status, badgeClass;
+    if (qty <= 0) { status = 'Out'; badgeClass = 'inv-out'; }
+    else if (qty <= threshold) { status = 'Low'; badgeClass = 'inv-low'; }
+    else { status = 'OK'; badgeClass = 'inv-ok'; }
+
+    return `<tr data-id="${item.id}">
+      <td style="font-weight:600">${item.name}</td>
+      <td style="color:var(--muted)">${item.unit}</td>
+      <td>
+        <input type="number" class="inv-qty-input" value="${qty}" min="0" step="0.01"
+          onblur="updateInvQty('${item.id}', this.value)"
+          onkeydown="if(event.key==='Enter')this.blur()" />
+      </td>
+      <td style="color:var(--muted)">${threshold}</td>
+      <td><span class="inv-badge ${badgeClass}">${status}</span></td>
+      <td>
+        <div class="inv-actions">
+          <button class="btn-red" onclick="deleteInvItem('${item.id}','${item.name.replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function subscribeInventoryRealtime() {
+  if (invRealtimeChannel) sb.removeChannel(invRealtimeChannel);
+  if (!restaurant) return;
+  invRealtimeChannel = sb.channel('inv-realtime-' + restaurant.id)
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'inventory_items',
+      filter: 'restaurant_id=eq.' + restaurant.id
+    }, () => { loadInventory(); })
+    .subscribe();
+}
+
+async function updateInvQty(itemId, newVal) {
+  const qty = parseFloat(newVal);
+  if (isNaN(qty) || qty < 0) { toast('⚠️ Invalid quantity'); loadInventory(); return; }
+  try {
+    const { error } = await sb.from('inventory_items')
+      .update({ quantity: qty }).eq('id', itemId).eq('restaurant_id', restaurant.id);
+    if (error) throw error;
+    toast('✅ Quantity updated');
+  } catch(e) { toast('⚠️ Update failed'); loadInventory(); }
+}
+
+function openInvDrawer() {
+  document.getElementById('inv-drawer-overlay').classList.add('open');
+  document.getElementById('inv-name').value = '';
+  document.getElementById('inv-qty').value = '0';
+  document.getElementById('inv-threshold').value = '5';
+  document.getElementById('inv-cost').value = '';
+  document.getElementById('inv-name').focus();
+}
+
+function closeInvDrawer() {
+  document.getElementById('inv-drawer-overlay').classList.remove('open');
+}
+
+async function addInventoryItem() {
+  const name = document.getElementById('inv-name').value.trim();
+  const unit = document.getElementById('inv-unit').value;
+  const qty = parseFloat(document.getElementById('inv-qty').value) || 0;
+  const threshold = parseFloat(document.getElementById('inv-threshold').value) || 5;
+  const cost = document.getElementById('inv-cost').value ? parseFloat(document.getElementById('inv-cost').value) : null;
+
+  if (!name) { toast('⚠️ Item name is required'); return; }
+  const btn = document.getElementById('inv-add-btn');
+  btn.disabled = true; btn.textContent = 'Adding...';
+
+  try {
+    const { error } = await sb.from('inventory_items').insert({
+      restaurant_id: restaurant.id, name, unit, quantity: qty,
+      low_stock_threshold: threshold, cost_price: cost
+    });
+    if (error) throw error;
+    toast('✅ Item added to inventory');
+    closeInvDrawer();
+    loadInventory();
+  } catch(e) {
+    toast('⚠️ Failed to add item: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '+ Add to Inventory';
+  }
+}
+
+async function deleteInvItem(itemId, itemName) {
+  if (!confirm(`Delete "${itemName}" from inventory?`)) return;
+  try {
+    const { error } = await sb.from('inventory_items')
+      .delete().eq('id', itemId).eq('restaurant_id', restaurant.id);
+    if (error) throw error;
+    toast('🗑️ Item deleted');
+    loadInventory();
+  } catch(e) { toast('⚠️ Delete failed'); }
+}
+
+/* ── SUBSCRIPTION CHECK ON DASHBOARD LOAD ── */
+function checkSubscriptionOverlay() {
+  if (!restaurant) return;
+  if (restaurant.is_active === false) {
+    document.getElementById('expired-overlay').classList.add('show');
+  }
+}
+
+function renewFromExpiredOverlay() {
+  // Use existing Razorpay flow from registration
+  document.getElementById('expired-overlay').classList.remove('show');
+  showPage('overview');
+  // Trigger plan selection if available
+  toast('💳 Please use the Renew button on the Overview page');
+}
+
 </script>
 </body>
 </html>

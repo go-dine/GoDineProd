@@ -385,7 +385,7 @@ class SupabaseService {
         .select()
         .eq('restaurant_id', restaurantId)
         .eq('is_completed', false)
-        .order('called_at', ascending: false);
+        .order('created_at', ascending: true); // Oldest first (FIFO)
     return List<Map<String, dynamic>>.from(res as List);
   }
 

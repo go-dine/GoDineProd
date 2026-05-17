@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,6 +20,7 @@ class _WaiterCallsScreenState extends State<WaiterCallsScreen> {
   List<Map<String, dynamic>> _activeCalls = [];
   bool _loading = true;
   RealtimeChannel? _channel;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
@@ -29,10 +31,16 @@ class _WaiterCallsScreenState extends State<WaiterCallsScreen> {
       widget.restaurant.id,
       (_) => _load(),
     );
+    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted && _activeCalls.isNotEmpty) {
+        setState(() {}); // Trigger rebuild to update timeAgo and dynamic priorities
+      }
+    });
   }
 
   @override
   void dispose() {
+    _refreshTimer?.cancel();
     if (_channel != null) SupabaseService.unsubscribe(_channel!);
     super.dispose();
   }
@@ -175,6 +183,8 @@ class _WaiterCallsScreenState extends State<WaiterCallsScreen> {
                       return _WaiterCallCard(
                         tableNumber: call['table_number']?.toString() ?? '?',
                         timeAgo: _timeAgo(call['called_at']?.toString() ?? call['created_at']?.toString()),
+                        createdAt: call['created_at']?.toString() ?? call['called_at']?.toString(),
+                        reason: call['reason']?.toString(),
                         onDismiss: () => _dismiss(call['id']),
                       );
                     },
@@ -187,11 +197,15 @@ class _WaiterCallsScreenState extends State<WaiterCallsScreen> {
 class _WaiterCallCard extends StatefulWidget {
   final String tableNumber;
   final String timeAgo;
+  final String? createdAt;
+  final String? reason;
   final VoidCallback onDismiss;
 
   const _WaiterCallCard({
     required this.tableNumber,
     required this.timeAgo,
+    this.createdAt,
+    this.reason,
     required this.onDismiss,
   });
 
@@ -223,27 +237,47 @@ class _WaiterCallCardState extends State<_WaiterCallCard> with SingleTickerProvi
 
   @override
   Widget build(BuildContext context) {
+    Color priorityColor;
+    String priorityText = 'Normal';
+    
+    if (widget.createdAt != null) {
+      try {
+        final created = DateTime.parse(widget.createdAt!).toLocal();
+        final diffMinutes = DateTime.now().difference(created).inMinutes;
+        if (diffMinutes >= 5) {
+          priorityText = 'High Priority';
+        } else if (diffMinutes >= 2) {
+          priorityText = 'Medium';
+        }
+      } catch (_) {}
+    }
+    
+    if (priorityText == 'High Priority') {
+      priorityColor = const Color(0xFFFF6B35);
+    } else if (priorityText == 'Medium') {
+      priorityColor = const Color(0xFFFFC107);
+    } else {
+      priorityColor = const Color(0xFF38BDF8);
+      priorityText = 'Normal';
+    }
+
     return AnimatedBuilder(
       animation: _pulseAnimation,
       builder: (context, child) {
-        final glowOpacity = 0.08 + (_pulseAnimation.value * 0.12);
+        final glowOpacity = 0.04 + (_pulseAnimation.value * 0.08);
         return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(20),
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: AppColors.surface1,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Color.lerp(
-                const Color(0xFFFF6B35).withOpacity(0.2),
-                const Color(0xFFFF6B35).withOpacity(0.5),
-                _pulseAnimation.value,
-              )!,
+              color: priorityColor.withOpacity(0.2 + (_pulseAnimation.value * 0.15)),
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFF6B35).withOpacity(glowOpacity),
-                blurRadius: 20,
+                color: priorityColor.withOpacity(glowOpacity),
+                blurRadius: 16,
                 spreadRadius: 0,
               ),
             ],
@@ -251,94 +285,111 @@ class _WaiterCallCardState extends State<_WaiterCallCard> with SingleTickerProvi
           child: child,
         );
       },
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              // Bell icon with animated background
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF6B35).withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFFF6B35).withOpacity(0.2)),
-                ),
-                child: const Center(
-                  child: Text('🔔', style: TextStyle(fontSize: 26)),
-                ),
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: AppColors.bg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: priorityColor.withOpacity(0.3),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.table_restaurant_outlined, 
+                  color: priorityColor, 
+                  size: 20
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'T${widget.tableNumber}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: priorityColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
                     Text(
                       'Table ${widget.tableNumber}',
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
-                        letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFF6B35),
-                            borderRadius: BorderRadius.circular(3),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.5),
-                                blurRadius: 4,
-                              ),
-                            ],
-                          ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: priorityColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: priorityColor.withOpacity(0.3),
                         ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Needs assistance • ${widget.timeAgo}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFFFF6B35),
-                            fontWeight: FontWeight.w600,
-                          ),
+                      ),
+                      child: Text(
+                        priorityText,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: priorityColor,
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: widget.onDismiss,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.lime,
-                foregroundColor: const Color(0xFF050505),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.check_circle_outline, size: 18),
-                  SizedBox(width: 8),
-                  Text(
-                    'Mark as Attended',
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                const SizedBox(height: 4),
+                Text(
+                  widget.timeAgo,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.muted,
                   ),
-                ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  widget.reason ?? 'Please send a waiter.',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: widget.onDismiss,
+            icon: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.lime.withOpacity(0.15),
+                border: Border.all(
+                  color: AppColors.lime.withOpacity(0.5),
+                ),
+              ),
+              child: const Icon(
+                Icons.check,
+                color: AppColors.lime,
+                size: 20,
               ),
             ),
           ),

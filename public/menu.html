@@ -730,7 +730,7 @@ a{color:inherit;text-decoration:none}
   <div class="header-top">
     <a href="https://godine.in" target="_blank" rel="noopener" class="logo">Go <b>Dine</b></a>
     <div style="display:flex;align-items:center;gap:8px">
-      <button onclick="callWaiter()" class="table-badge">
+      <button onclick="openWaiterModal()" class="table-badge">
         <i data-lucide="bell" style="width:14px;height:14px;"></i>Call
       </button>
       <a href="customer" id="view-orders-link" class="table-badge" style="display:none;">
@@ -1014,11 +1014,14 @@ async function boot() {
     // GUARD: Check if restaurant is active
     if (restData.is_active === false) {
       document.body.innerHTML = `
-        <div style="display:grid;place-items:center;height:100vh;font-family:sans-serif;text-align:center;color:#fff;">
-          <div>
-            <div style="font-size:3rem">🚫</div>
-            <h2>${restData.name}</h2>
-            <p style="color:#888;margin-top:10px;">This restaurant is currently closed. Please check back later.</p>
+        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Space Grotesk','Manrope',sans-serif;text-align:center;color:#fff;background:#0a0a0a;padding:40px;">
+          <div style="max-width:400px;">
+            <div style="width:80px;height:80px;border-radius:50%;background:rgba(182,255,42,0.08);border:1px solid rgba(182,255,42,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:36px;">🔒</div>
+            <h2 style="font-size:26px;font-weight:700;margin:0 0 8px;letter-spacing:-0.3px;">${restData.name}</h2>
+            <div style="width:40px;height:3px;background:#b6ff2a;border-radius:2px;margin:0 auto 20px;"></div>
+            <p style="color:#888;font-size:15px;line-height:1.6;margin:0 0 8px;">This restaurant is temporarily unavailable.</p>
+            <p style="color:#555;font-size:13px;margin:0;">Please contact the restaurant directly or check back later.</p>
+            <div style="margin-top:32px;padding:12px 20px;background:rgba(182,255,42,0.06);border:1px solid rgba(182,255,42,0.12);border-radius:8px;font-size:11px;color:#b6ff2a;letter-spacing:0.5px;font-weight:600;">POWERED BY GODINE</div>
           </div>
         </div>`;
       return;
@@ -1145,18 +1148,35 @@ async function syncStoreStatus() {
   } catch (e) { console.error("Status check failed", e); }
 }
 
-async function callWaiter() {
+function openWaiterModal() {
+  document.getElementById('waiter-modal').classList.add('open');
+}
+function closeWaiterModal() {
+  document.getElementById('waiter-modal').classList.remove('open');
+}
+async function callWaiterWithReason(reason) {
+  closeWaiterModal();
   if (isDemo) { showToast('🔔 Waiter called! (Demo)'); return; }
   try {
     const { error } = await sb.from('waiter_calls').insert({
       restaurant_id: restaurant.id,
-      table_number: tableNum.toString()
+      table_number: tableNum.toString(),
+      reason: reason
     });
     if (error) throw error;
     showToast('Waiter is notified');
   } catch (e) {
     showToast('⚠️ Failed to call waiter');
   }
+}
+
+function callCustomWaiter() {
+  const customMsg = document.getElementById('custom-waiter-msg').value.trim();
+  if (!customMsg) {
+    showToast('Please enter a message');
+    return;
+  }
+  callWaiterWithReason(customMsg);
 }
 
 /* ── CATEGORIES ── */
@@ -1977,6 +1997,35 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.error('[GoDine SW] Failed:', err));
 }
 </script>
+
+<!-- WAITER CALL MODAL -->
+<div id="waiter-modal" class="category-drawer" onclick="if(event.target===this)closeWaiterModal()">
+  <div class="cat-list-card" style="padding: 24px; position:relative;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;">Need assistance?</div>
+      <button class="modal-close" onclick="closeWaiterModal()" style="position:static;">×</button>
+    </div>
+    <div style="color:var(--muted); font-size:14px; margin-bottom:20px;">Choose a reason so our team can serve you better.</div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <button onclick="callWaiterWithReason('Please send a waiter.')" style="background:var(--s2); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px; text-align:left; color:white; cursor:pointer; font-size:15px; font-weight:600; box-shadow:0 4px 12px rgba(0,0,0,0.05); transition: all 0.2s ease;">
+        Please send a waiter
+      </button>
+      <button onclick="callWaiterWithReason('Need extra napkins.')" style="background:var(--s2); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px; text-align:left; color:white; cursor:pointer; font-size:15px; font-weight:600; box-shadow:0 4px 12px rgba(0,0,0,0.05); transition: all 0.2s ease;">
+        Need extra napkins
+      </button>
+      <button onclick="callWaiterWithReason('Water refill please.')" style="background:var(--s2); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px; text-align:left; color:white; cursor:pointer; font-size:15px; font-weight:600; box-shadow:0 4px 12px rgba(0,0,0,0.05); transition: all 0.2s ease;">
+        Water refill please
+      </button>
+      <button onclick="callWaiterWithReason('Bill check please.')" style="background:var(--s2); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px; text-align:left; color:white; cursor:pointer; font-size:15px; font-weight:600; box-shadow:0 4px 12px rgba(0,0,0,0.05); transition: all 0.2s ease;">
+        Bill check please
+      </button>
+      <div style="margin-top:8px;">
+        <input type="text" id="custom-waiter-msg" class="modal-input" placeholder="Or type a custom message..." style="margin-bottom:8px;">
+        <button onclick="callCustomWaiter()" class="place-order-btn" style="background:var(--s3);color:var(--white);padding:12px;border:none;">Send Custom Request</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 `

@@ -19,6 +19,7 @@ import 'announcement_screen.dart';
 import 'suggestions_screen.dart';
 import '../app_config.dart';
 import '../services/notification_service.dart';
+import 'inventory_screen.dart';
 
 class OverviewScreen extends StatefulWidget {
   final Restaurant restaurant;
@@ -511,6 +512,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
               icon: Icons.auto_awesome_rounded,
               color: AppColors.lime,
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SuggestionsScreen(restaurant: _restaurant))),
+            ),
+            _ManagementCard(
+              title: 'Inventory',
+              icon: Icons.inventory_2_rounded,
+              color: Colors.tealAccent,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => InventoryScreen(restaurant: _restaurant))),
             ),
           ],
         ),
