@@ -182,44 +182,119 @@ const GoDineCustomer = (() => {
       #gd-status-banner {
         position: fixed; top: 0; left: 0; right: 0;
         z-index: 9999;
-        padding: 14px 20px;
-        display: flex; align-items: center; gap: 12px;
-        font-family: sans-serif;
+        padding: 16px 24px;
+        display: flex; align-items: center; gap: 14px;
+        font-family: 'Space Grotesk', sans-serif;
         transform: translateY(-100%);
-        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
       }
       #gd-status-banner.show { transform: translateY(0); }
-      #gd-status-banner .gd-banner-emoji { font-size: 22px; flex-shrink: 0; }
+      #gd-status-banner .gd-banner-emoji { font-size: 24px; flex-shrink: 0; }
       #gd-status-banner .gd-banner-text  { flex: 1; }
-      #gd-status-banner .gd-banner-title { font-weight: 700; font-size: 15px; color: #fff; }
-      #gd-status-banner .gd-banner-body  { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 2px; }
+      #gd-status-banner .gd-banner-title { font-weight: 800; font-size: 16px; color: #fff; letter-spacing: -0.3px; }
+      #gd-status-banner .gd-banner-body  { font-size: 13px; color: rgba(255,255,255,0.9); margin-top: 3px; font-family: 'Manrope', sans-serif; font-weight: 500; }
       #gd-status-banner .gd-banner-close {
-        color: rgba(255,255,255,0.7); font-size: 18px;
+        color: rgba(255,255,255,0.8); font-size: 20px;
         cursor: pointer; padding: 4px; flex-shrink: 0;
+        transition: color 0.2s;
       }
+      #gd-status-banner .gd-banner-close:hover { color: #fff; }
+
       #gd-status-tracker {
-        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-        background: #1a1a2e; color: #fff;
-        border-radius: 40px; padding: 10px 20px;
-        display: flex; align-items: center; gap: 16px;
-        font-family: sans-serif; font-size: 13px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+        background: rgba(15, 15, 25, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #f0f0ec;
+        border-radius: 40px; padding: 12px 28px;
+        display: flex; align-items: center; gap: 18px;
+        font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(182, 255, 42, 0.04);
         z-index: 9998; white-space: nowrap;
-        transition: opacity 0.3s;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        opacity: 0;
       }
+      
       .gd-step {
-        display: flex; align-items: center; gap: 5px;
-        opacity: 0.35; transition: opacity 0.4s;
+        display: flex; align-items: center; gap: 8px;
+        opacity: 0.35; transition: all 0.4s ease;
+        position: relative;
       }
-      .gd-step.active  { opacity: 1; }
-      .gd-step.done    { opacity: 0.6; }
+      
       .gd-step-dot {
-        width: 8px; height: 8px; border-radius: 50%;
-        background: #fff;
+        width: 10px; height: 10px; border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.4s ease;
       }
-      .gd-step.active .gd-step-dot { background: #f97316; }
-      .gd-divider { opacity: 0.25; }
+      
+      /* Active & Completed States */
+      .gd-step.active {
+        opacity: 1;
+        text-shadow: 0 0 10px currentColor;
+      }
+      
+      .gd-step.done {
+        opacity: 0.7;
+        color: #10b981;
+      }
+      
+      .gd-step.done .gd-step-dot {
+        background: #10b981;
+        box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+      }
+      
+      /* Active specific styles */
+      #gd-step-accepted.active {
+        color: #10b981;
+      }
+      #gd-step-accepted.active .gd-step-dot {
+        background: #10b981;
+        box-shadow: 0 0 12px #10b981;
+        animation: gd-pulse-green 1.5s infinite alternate;
+      }
+      
+      #gd-step-preparing.active {
+        color: #f59e0b;
+      }
+      #gd-step-preparing.active .gd-step-dot {
+        background: #f59e0b;
+        box-shadow: 0 0 12px #f59e0b;
+        animation: gd-pulse-amber 1.5s infinite alternate;
+      }
+      
+      #gd-step-ready.active {
+        color: #b6ff2a;
+      }
+      #gd-step-ready.active .gd-step-dot {
+        background: #b6ff2a;
+        box-shadow: 0 0 16px #b6ff2a;
+        animation: gd-pulse-lime 1.5s infinite alternate;
+      }
+
+      /* Pulse Keyframe Animations */
+      @keyframes gd-pulse-green {
+        0% { transform: scale(1); box-shadow: 0 0 6px rgba(16, 185, 129, 0.4); }
+        100% { transform: scale(1.3); box-shadow: 0 0 16px rgba(16, 185, 129, 0.8); }
+      }
+      @keyframes gd-pulse-amber {
+        0% { transform: scale(1); box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
+        100% { transform: scale(1.3); box-shadow: 0 0 16px rgba(245, 158, 11, 0.8); }
+      }
+      @keyframes gd-pulse-lime {
+        0% { transform: scale(1); box-shadow: 0 0 8px rgba(182, 255, 42, 0.5); }
+        100% { transform: scale(1.3); box-shadow: 0 0 20px rgba(182, 255, 42, 1); }
+      }
+      
+      .gd-divider {
+        opacity: 0.15;
+        color: #f0f0ec;
+        margin: 0 4px;
+        font-weight: 300;
+      }
     `;
     document.head.appendChild(s);
 
@@ -262,6 +337,18 @@ const GoDineCustomer = (() => {
   const stepOrder = ['accepted', 'preparing', 'ready'];
 
   function updateTracker(currentKey) {
+    const tracker = document.getElementById('gd-status-tracker');
+    if (!tracker) return;
+
+    if (currentKey === 'completed' || currentKey === 'cancelled') {
+      tracker.style.opacity = '0';
+      setTimeout(() => { tracker.style.display = 'none'; }, 400);
+      return;
+    } else {
+      tracker.style.display = 'flex';
+      setTimeout(() => { tracker.style.opacity = '1'; }, 50);
+    }
+
     const idx = stepOrder.indexOf(currentKey);
     stepOrder.forEach((key, i) => {
       const el = document.getElementById(`gd-step-${key}`);
@@ -308,10 +395,16 @@ const GoDineCustomer = (() => {
     requestPermission();
     injectBannerStyles();
 
-    // 1. Fetch order details to get customer phone for push targeting
-    supabase.from('orders').select('customer_phone').eq('id', orderId).single().then(({data}) => {
-      if (data?.customer_phone) {
-        registerWebPush(supabase, data.customer_phone);
+    // 1. Fetch order details to get initial status and customer phone for push targeting
+    supabase.from('orders').select('status, customer_phone').eq('id', orderId).single().then(({data}) => {
+      if (data) {
+        if (data.customer_phone) {
+          registerWebPush(supabase, data.customer_phone);
+        }
+        const resolved = resolveStatus(data.status);
+        if (resolved) {
+          updateTracker(resolved);
+        }
       }
     });
 

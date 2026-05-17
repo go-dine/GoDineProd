@@ -182,6 +182,49 @@ const GoDineNotify = (() => {
     }, 6000);
   }
 
+  function showLowStockToast(item) {
+    injectToastStyles();
+    const container = document.getElementById('gd-toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'gd-toast low-stock';
+    toast.style.borderLeftColor = '#ff4444';
+    toast.style.background = 'linear-gradient(135deg, #181111 0%, #110909 100%)';
+    toast.style.boxShadow = '0 12px 40px rgba(255, 68, 68, 0.18)';
+    
+    // Add pulsing red animation if not defined
+    if (!document.getElementById('gd-pulse-red-style')) {
+      const s = document.createElement('style');
+      s.id = 'gd-pulse-red-style';
+      s.textContent = `
+        @keyframes gd-pulse-red {
+          0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255,68,68,0.5)); }
+          100% { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(255,68,68,1)); }
+        }
+      `;
+      document.head.appendChild(s);
+    }
+    
+    toast.innerHTML = `
+      <div class="gd-toast-icon" style="animation: gd-pulse-red 1s infinite alternate; font-size: 22px;">⚠️</div>
+      <div class="gd-toast-content">
+        <div class="gd-toast-title" style="color: #ff5555; font-weight: 800;">Low Stock Alert</div>
+        <div class="gd-toast-body" style="font-size: 12px; line-height: 1.4;">
+          Item "<b>${item.name}</b>" is running low!<br>
+          Current Qty: <span style="color: #ff5555; font-weight: 700; font-size: 13px;">${item.quantity} ${item.unit || ''}</span> 
+          (Threshold: ${item.low_stock_threshold})
+        </div>
+      </div>
+    `;
+    
+    container.appendChild(toast);
+    playStatusTone();
+    
+    setTimeout(() => {
+      toast.style.animation = 'gd-slide-in 0.4s reverse forwards';
+      setTimeout(() => toast.remove(), 400);
+    }, 6500);
+  }
+
 
   // ── 4.  FIRE ALERTS  ─────────────────────────
 
@@ -218,6 +261,6 @@ const GoDineNotify = (() => {
       .subscribe();
   }
 
-  return { init, fireNewOrder, fireStatusUpdate, playOrderTone, playStatusTone, requestPermission };
+  return { init, fireNewOrder, fireStatusUpdate, playOrderTone, playStatusTone, requestPermission, showLowStockToast };
 
 })();
